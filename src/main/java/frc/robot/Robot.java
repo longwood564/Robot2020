@@ -7,9 +7,13 @@
 
 package frc.robot;
 
+import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
+import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -24,6 +28,18 @@ public class Robot extends TimedRobot {
   private String m_autoSelected;
   private final SendableChooser<String> m_chooser = new SendableChooser<>();
 
+  // Talons and Victors
+  WPI_TalonSRX rightTalon = new WPI_TalonSRX(6);   
+  WPI_TalonSRX leftTalon = new WPI_TalonSRX(5); 
+  WPI_VictorSPX rightVictor = new WPI_VictorSPX(1);
+  WPI_VictorSPX leftVictor = new WPI_VictorSPX(4);
+
+  // Differential Drive
+  DifferentialDrive differentialDrive = new DifferentialDrive(leftTalon, rightTalon);
+
+  // Joysticks
+  Joystick driveController = new Joystick(0);
+  Joystick manipulateController = new Joystick(1);
   /**
    * This function is run when the robot is first started up and should be
    * used for any initialization code.
@@ -33,6 +49,9 @@ public class Robot extends TimedRobot {
     m_chooser.setDefaultOption("Default Auto", kDefaultAuto);
     m_chooser.addOption("My Auto", kCustomAuto);
     SmartDashboard.putData("Auto choices", m_chooser);
+
+    rightVictor.follow(rightTalon);
+    leftVictor.follow(leftTalon);
   }
 
   /**
@@ -86,6 +105,11 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void teleopPeriodic() {
+    driveSpeed();
+  }
+
+  public void driveSpeed() {
+    differentialDrive.arcadeDrive(driveController.getRawAxis(1) * 0.7, driveController.getRawAxis(4) * 0.7);
   }
 
   /**
