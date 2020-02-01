@@ -159,32 +159,32 @@ public class Robot extends TimedRobot {
    */
   public void driveSpeed() {
     if (!colorWheelMode) {
-    double rawAxis1 = driveController.getRawAxis(1);
-    double rawAxis4 = driveController.getRawAxis(4);
+      double rawAxis1 = driveController.getRawAxis(1);
+      double rawAxis4 = driveController.getRawAxis(4);
 
-    // Enabling slow speed toggle on the joystick for drive speed
-    if (driveController.getRawAxis(2) > 0.5) {
-      slowToggle = true;
-    } else {
-      slowToggle = false;
-    }
+      // Enabling slow speed toggle on the joystick for drive speed
+      if (driveController.getRawAxis(2) > 0.5) {
+        slowToggle = true;
+      } else {
+        slowToggle = false;
+      }
 
-    // Enabling high speed toggle on the joystick for drive speed
-    if (driveController.getRawAxis(3) > 0.5) {
-      highToggle = true;
-    } else {
-      highToggle = false;
-    }
+      // Enabling high speed toggle on the joystick for drive speed
+      if (driveController.getRawAxis(3) > 0.5) {
+        highToggle = true;
+      } else {
+        highToggle = false;
+      }
 
-    // Setting robot drive speed
-    if (slowToggle) {
-      differentialDrive.arcadeDrive(rawAxis1 * slowSpeed, rawAxis4 * slowSpeed);
-    } else if (highToggle) {
-      differentialDrive.arcadeDrive(rawAxis1 * highSpeed, rawAxis4 * highSpeed);
-    } else {
-      differentialDrive.arcadeDrive(rawAxis1, rawAxis4);
+      // Setting robot drive speed
+      if (slowToggle) {
+        differentialDrive.arcadeDrive(rawAxis1 * slowSpeed, rawAxis4 * slowSpeed);
+      } else if (highToggle) {
+        differentialDrive.arcadeDrive(rawAxis1 * highSpeed, rawAxis4 * highSpeed);
+      } else {
+        differentialDrive.arcadeDrive(rawAxis1, rawAxis4);
+      }
     }
-  }
   }
 
   /*
@@ -213,22 +213,22 @@ public class Robot extends TimedRobot {
     if (colorWheelMode) {
       if (a) {
         colorSensorDetectGreen = true;
-      } else {
+      } else if (b || x || y) {
         colorSensorDetectGreen = false;
       }
       if (b) {
         colorSensorDetectRed = true;
-      } else {
+      } else if (a || x || y) {
         colorSensorDetectRed = false;
       }
       if (x) {
         colorSensorDetectBlue = true;
-      } else {
+      } else if (a || b || y) {
         colorSensorDetectBlue = false;
       }
       if (y) {
         colorSensorDetectYellow = true;
-      } else {
+      } else if (a || b || x) {
         colorSensorDetectYellow = false;
       }
     }
@@ -263,26 +263,26 @@ public class Robot extends TimedRobot {
    */
   public void colorDetector() {
     if (colorWheelMode) {
-    String colorString;
-    Color detectedColor = m_colorSensor.getColor();
-    ColorMatchResult match = m_colorMatcher.matchClosestColor(detectedColor);
+      String colorString;
+      Color detectedColor = m_colorSensor.getColor();
+      ColorMatchResult match = m_colorMatcher.matchClosestColor(detectedColor);
 
-    if (match.color == kBlueTarget) {
-      colorString = "Blue";
-    } else if (match.color == kRedTarget) {
-      colorString = "Red";
-    } else if (match.color == kGreenTarget) {
-      colorString = "Green";
-    } else if (match.color == kYellowTarget) {
-      colorString = "Yellow";
-    } else {
-      colorString = "Unknown";
-    }
-    SmartDashboard.putNumber("Red", detectedColor.red);
-    SmartDashboard.putNumber("Green", detectedColor.green);
-    SmartDashboard.putNumber("Blue", detectedColor.blue);
-    SmartDashboard.putNumber("Confidence", match.confidence);
-    SmartDashboard.putString("Detected Color", colorString);
+      if (match.color == kBlueTarget) {
+        colorString = "Blue";
+      } else if (match.color == kRedTarget) {
+        colorString = "Red";
+      } else if (match.color == kGreenTarget) {
+        colorString = "Green";
+      } else if (match.color == kYellowTarget) {
+        colorString = "Yellow";
+      } else {
+        colorString = "Unknown";
+      }
+      SmartDashboard.putNumber("Red", detectedColor.red);
+      SmartDashboard.putNumber("Green", detectedColor.green);
+      SmartDashboard.putNumber("Blue", detectedColor.blue);
+      SmartDashboard.putNumber("Confidence", match.confidence);
+      SmartDashboard.putString("Detected Color", colorString);
 
       if (colorSensorDetectGreen == true) {
         while (colorString != "Green" && colorWheelSpins > 0) {
@@ -303,7 +303,7 @@ public class Robot extends TimedRobot {
         while (colorString != "Yellow") {
           // Wheel spinner = true
         }
-  }
+      }
     }
   }
 }
