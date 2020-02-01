@@ -7,6 +7,12 @@
 
 package frc.robot;
 
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
+import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
+import com.revrobotics.ColorMatch;
+import com.revrobotics.ColorMatchResult;
+import com.revrobotics.ColorSensorV3;
+
 import edu.wpi.first.wpilibj.I2C;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.TimedRobot;
@@ -35,6 +41,9 @@ public class Robot extends TimedRobot {
   private final SendableChooser<String> m_chooser = new SendableChooser<>();
 
   // Talons and Victors
+  /**
+   * @TODO add how the ports works
+   */
   WPI_TalonSRX rightTalon = new WPI_TalonSRX(6);   
   WPI_TalonSRX leftTalon = new WPI_TalonSRX(5); 
   WPI_VictorSPX rightVictor = new WPI_VictorSPX(1);
@@ -47,6 +56,11 @@ public class Robot extends TimedRobot {
   Joystick driveController = new Joystick(0);
   Joystick manipulateController = new Joystick(1);
 
+  // Drive speed toggles
+  private static final double slowSpeed = 0.5;
+  private static final double highSpeed = 0.75;
+  boolean slowToggle, highToggle = false;
+
   // Color Sensor 
   private final I2C.Port i2cPort = I2C.Port.kOnboard;
   private final ColorSensorV3 m_colorSensor = new ColorSensorV3(i2cPort);
@@ -57,8 +71,8 @@ public class Robot extends TimedRobot {
   private final Color kYellowTarget = ColorMatch.makeColor(0.361, 0.524, 0.113);
 
   /**
-   * This function is run when the robot is first started up and should be
-   * used for any initialization code.
+   * This function is run when the robot is first started up and should be used
+   * for any initialization code.
    */
   @Override
   public void robotInit() {
@@ -66,9 +80,11 @@ public class Robot extends TimedRobot {
     m_chooser.addOption("My Auto", kCustomAuto);
     SmartDashboard.putData("Auto choices", m_chooser);
 
+    // Slave follows master
     rightVictor.follow(rightTalon);
     leftVictor.follow(leftTalon);
 
+    // Color Sensor
     m_colorMatcher.addColorMatch(kBlueTarget);
     m_colorMatcher.addColorMatch(kGreenTarget);
     m_colorMatcher.addColorMatch(kRedTarget);
@@ -76,12 +92,13 @@ public class Robot extends TimedRobot {
   }
 
   /**
-   * This function is called every robot packet, no matter the mode. Use
-   * this for items like diagnostics that you want ran during disabled,
-   * autonomous, teleoperated and test.
+   * This function is called every robot packet, no matter the mode. Use this for
+   * items like diagnostics that you want ran during disabled, autonomous,
+   * teleoperated and test.
    *
-   * <p>This runs after the mode specific periodic functions, but before
-   * LiveWindow and SmartDashboard integrated updating.
+   * <p>
+   * This runs after the mode specific periodic functions, but before LiveWindow
+   * and SmartDashboard integrated updating.
    */
   @Override
   public void robotPeriodic() {
@@ -90,14 +107,15 @@ public class Robot extends TimedRobot {
 
   /**
    * This autonomous (along with the chooser code above) shows how to select
-   * between different autonomous modes using the dashboard. The sendable
-   * chooser code works with the Java SmartDashboard. If you prefer the
-   * LabVIEW Dashboard, remove all of the chooser code and uncomment the
-   * getString line to get the auto name from the text box below the Gyro
+   * between different autonomous modes using the dashboard. The sendable chooser
+   * code works with the Java SmartDashboard. If you prefer the LabVIEW Dashboard,
+   * remove all of the chooser code and uncomment the getString line to get the
+   * auto name from the text box below the Gyro
    *
-   * <p>You can add additional auto modes by adding additional comparisons to
-   * the switch structure below with additional strings. If using the
-   * SendableChooser make sure to add them to the chooser code above as well.
+   * <p>
+   * You can add additional auto modes by adding additional comparisons to the
+   * switch structure below with additional strings. If using the SendableChooser
+   * make sure to add them to the chooser code above as well.
    */
   @Override
   public void autonomousInit() {
@@ -130,10 +148,40 @@ public class Robot extends TimedRobot {
     driveSpeed();
   }
 
+  /**
+   * This function drives the robot at a certain speed.
+   */
   public void driveSpeed() {
-    differentialDrive.arcadeDrive(driveController.getRawAxis(1) * 0.7, driveController.getRawAxis(4) * 0.7);
+    double rawAxis1 = driveController.getRawAxis(1);
+    double rawAxis4 = driveController.getRawAxis(4);
+
+    // Enabling slow speed toggle on the joystick for drive speed
+    if (driveController.getRawAxis(2) > 0.5) {
+      slowToggle = true;
+    } else {
+      slowToggle = false;
+    }
+
+    // Enabling high speed toggle on the joystick for drive speed
+    if (driveController.getRawAxis(3) > 0.5) {
+      highToggle = true;
+    } else {
+      highToggle = false;
+    }
+
+    // Setting robot drive speed
+    if (slowToggle) {
+      differentialDrive.arcadeDrive(rawAxis1 * slowSpeed, rawAxis4 * slowSpeed);
+    } else if (highToggle) {
+      differentialDrive.arcadeDrive(rawAxis1 * highSpeed, rawAxis4 * highSpeed);
+    } else {
+      differentialDrive.arcadeDrive(rawAxis1, rawAxis4);
+    }
   }
 
+  /**
+   * This function detects color using the REVRobotics library and sensor.
+   */
   public void colorDetector() {
     String colorString;
     Color detectedColor = m_colorSensor.getColor();
