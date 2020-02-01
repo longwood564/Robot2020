@@ -21,8 +21,6 @@ import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 import com.revrobotics.ColorSensorV3;
 import com.revrobotics.ColorMatchResult;
 import com.revrobotics.ColorMatch;
-import com.revrobotics.ColorMatchResult;
-import com.revrobotics.ColorSensorV3;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -41,8 +39,8 @@ public class Robot extends TimedRobot {
   /**
    * @TODO add how the ports works
    */
-  WPI_TalonSRX rightTalon = new WPI_TalonSRX(6);   
-  WPI_TalonSRX leftTalon = new WPI_TalonSRX(5); 
+  WPI_TalonSRX rightTalon = new WPI_TalonSRX(6);
+  WPI_TalonSRX leftTalon = new WPI_TalonSRX(5);
   WPI_VictorSPX rightVictor = new WPI_VictorSPX(1);
   WPI_VictorSPX leftVictor = new WPI_VictorSPX(4);
 
@@ -58,7 +56,7 @@ public class Robot extends TimedRobot {
   private static final double highSpeed = 0.75;
   boolean slowToggle, highToggle = false;
 
-  // Color Sensor 
+  // Color Sensor
   private final I2C.Port i2cPort = I2C.Port.kOnboard;
   private final ColorSensorV3 m_colorSensor = new ColorSensorV3(i2cPort);
   private final ColorMatch m_colorMatcher = new ColorMatch();
@@ -85,7 +83,7 @@ public class Robot extends TimedRobot {
     m_colorMatcher.addColorMatch(kBlueTarget);
     m_colorMatcher.addColorMatch(kGreenTarget);
     m_colorMatcher.addColorMatch(kRedTarget);
-    m_colorMatcher.addColorMatch(kYellowTarget);   
+    m_colorMatcher.addColorMatch(kYellowTarget);
   }
 
   /**
@@ -127,13 +125,13 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousPeriodic() {
     switch (m_autoSelected) {
-      case kCustomAuto:
-        // Put custom auto code here
-        break;
-      case kDefaultAuto:
-      default:
-        // Put default auto code here
-        break;
+    case kCustomAuto:
+      // Put custom auto code here
+      break;
+    case kDefaultAuto:
+    default:
+      // Put default auto code here
+      break;
     }
   }
 
@@ -200,6 +198,10 @@ public class Robot extends TimedRobot {
     SmartDashboard.putNumber("Blue", detectedColor.blue);
     SmartDashboard.putNumber("Confidence", match.confidence);
     SmartDashboard.putString("Detected Color", colorString);
+  }
+
+  public void projectileMotion() {
+
   }
 
   /**
