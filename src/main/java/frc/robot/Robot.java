@@ -36,9 +36,7 @@ public class Robot extends TimedRobot {
   private final SendableChooser<String> m_chooser = new SendableChooser<>();
 
   // Talons and Victors
-  /**
-   * @TODO add how the ports works
-   */
+  // @TODO: Document these ports.
   WPI_TalonSRX rightTalon = new WPI_TalonSRX(6);
   WPI_TalonSRX leftTalon = new WPI_TalonSRX(5);
   WPI_VictorSPX rightVictor = new WPI_VictorSPX(1);
@@ -51,12 +49,12 @@ public class Robot extends TimedRobot {
   Joystick driveController = new Joystick(0);
   Joystick manipulateController = new Joystick(1);
 
-  // Drive speed toggles
+  // Drive Motors
   private static final double slowSpeed = 0.5;
   private static final double highSpeed = 0.75;
   boolean slowToggle, highToggle = false;
 
-  // Color Sensor
+  // Color Sensor and Wheel
   private final I2C.Port i2cPort = I2C.Port.kOnboard;
   private final ColorSensorV3 m_colorSensor = new ColorSensorV3(i2cPort);
   private final ColorMatch m_colorMatcher = new ColorMatch();
@@ -64,8 +62,8 @@ public class Robot extends TimedRobot {
   private final Color kGreenTarget = ColorMatch.makeColor(0.197, 0.561, 0.240);
   private final Color kRedTarget = ColorMatch.makeColor(0.561, 0.232, 0.114);
   private final Color kYellowTarget = ColorMatch.makeColor(0.361, 0.524, 0.113);
-  boolean colorSensorDetectGreen, colorSensorDetectRed, colorSensorDetectBlue, colorSensorDetectYellow = false;
-  boolean colorWheelMode = false;
+  boolean isLookingForColorGreen, isLookingForColorRed, isLookingForColorBlue, isLookingForColorYellow = false;
+  boolean isInControlPanelMode = false;
   int colorWheelSpins;
 
   /**
@@ -144,6 +142,7 @@ public class Robot extends TimedRobot {
   public void teleopPeriodic() {
     driveSpeed();
     selectColor();
+    selectColorWheelSpinAmount();
     colorDetector();
   }
 
@@ -158,7 +157,7 @@ public class Robot extends TimedRobot {
    * This function drives the robot at a certain speed.
    */
   public void driveSpeed() {
-    if (!colorWheelMode) {
+    if (!isInControlPanelMode) {
       double rawAxis1 = driveController.getRawAxis(1);
       double rawAxis4 = driveController.getRawAxis(4);
 
@@ -203,33 +202,33 @@ public class Robot extends TimedRobot {
     boolean y = manipulateController.getRawButton(4);
 
     if (lb) {
-      if (colorWheelMode) {
-        colorWheelMode = false;
-      } else if (!colorWheelMode) {
-        colorWheelMode = true;
+      if (isInControlPanelMode) {
+        isInControlPanelMode = false;
+      } else if (!isInControlPanelMode) {
+        isInControlPanelMode = true;
       }
     }
 
-    if (colorWheelMode) {
+    if (isInControlPanelMode) {
       if (a) {
-        colorSensorDetectGreen = true;
+        isLookingForColorGreen = true;
       } else if (b || x || y) {
-        colorSensorDetectGreen = false;
+        isLookingForColorGreen = false;
       }
       if (b) {
-        colorSensorDetectRed = true;
+        isLookingForColorRed = true;
       } else if (a || x || y) {
-        colorSensorDetectRed = false;
+        isLookingForColorRed = false;
       }
       if (x) {
-        colorSensorDetectBlue = true;
+        isLookingForColorBlue = true;
       } else if (a || b || y) {
-        colorSensorDetectBlue = false;
+        isLookingForColorBlue = false;
       }
       if (y) {
-        colorSensorDetectYellow = true;
+        isLookingForColorYellow = true;
       } else if (a || b || x) {
-        colorSensorDetectYellow = false;
+        isLookingForColorYellow = false;
       }
     }
   }
@@ -237,7 +236,7 @@ public class Robot extends TimedRobot {
   /**
    * This function sets how many spins are required on the color wheel.
    */
-  public void setColorWheelSpinAmount() {
+  public void selectColorWheelSpinAmount() {
     // Button six (rb) is used as the button to activate spin amount setter.
     boolean rb = manipulateController.getRawButton(6);
     // Button one (A) selects the spin amount to three.
@@ -262,7 +261,7 @@ public class Robot extends TimedRobot {
    * This function detects color using the REVRobotics library and sensor.
    */
   public void colorDetector() {
-    if (colorWheelMode) {
+    if (isInControlPanelMode) {
       String colorString;
       Color detectedColor = m_colorSensor.getColor();
       ColorMatchResult match = m_colorMatcher.matchClosestColor(detectedColor);
@@ -284,22 +283,22 @@ public class Robot extends TimedRobot {
       SmartDashboard.putNumber("Confidence", match.confidence);
       SmartDashboard.putString("Detected Color", colorString);
 
-      if (colorSensorDetectGreen == true) {
+      if (isLookingForColorGreen == true) {
         while (colorString != "Green" && colorWheelSpins > 0) {
           // Wheel spinner = true
         }
       }
-      if (colorSensorDetectRed == true && colorWheelSpins > 0) {
+      if (isLookingForColorRed == true && colorWheelSpins > 0) {
         while (colorString != "Red") {
           // Wheel spinner = true
         }
       }
-      if (colorSensorDetectBlue == true && colorWheelSpins > 0) {
+      if (isLookingForColorBlue == true && colorWheelSpins > 0) {
         while (colorString != "Blue") {
           // Wheel spinner = true
         }
       }
-      if (colorSensorDetectYellow == true && colorWheelSpins > 0) {
+      if (isLookingForColorYellow == true && colorWheelSpins > 0) {
         while (colorString != "Yellow") {
           // Wheel spinner = true
         }
