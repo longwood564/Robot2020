@@ -64,6 +64,9 @@ public class Robot extends TimedRobot {
   private final Color kGreenTarget = ColorMatch.makeColor(0.197, 0.561, 0.240);
   private final Color kRedTarget = ColorMatch.makeColor(0.561, 0.232, 0.114);
   private final Color kYellowTarget = ColorMatch.makeColor(0.361, 0.524, 0.113);
+  boolean colorSensorDetectGreen, colorSensorDetectRed, colorSensorDetectBlue, colorSensorDetectYellow = false;
+  boolean colorWheelMode = false;
+  int colorWheelSpins;
 
   /**
    * This function is run when the robot is first started up and should be used
@@ -141,12 +144,22 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopPeriodic() {
     driveSpeed();
+    selectColor();
+    colorDetector();
+  }
+
+  /**
+   * This function is called periodically during test mode.
+   */
+  @Override
+  public void testPeriodic() {
   }
 
   /**
    * This function drives the robot at a certain speed.
    */
   public void driveSpeed() {
+    if (!colorWheelMode) {
     double rawAxis1 = driveController.getRawAxis(1);
     double rawAxis4 = driveController.getRawAxis(4);
 
@@ -173,11 +186,84 @@ public class Robot extends TimedRobot {
       differentialDrive.arcadeDrive(rawAxis1, rawAxis4);
     }
   }
+  }
+
+  /*
+   * This function is used to select the color for the color wheel.
+   */
+  public void selectColor() {
+    // Button five (lb) is used as the button to activate color selection.
+    boolean lb = manipulateController.getRawButton(5);
+    // Button one (A) selects the color green.
+    boolean a = manipulateController.getRawButton(1);
+    // Button two (B) selects the color red.
+    boolean b = manipulateController.getRawButton(2);
+    // Button three (X) selects the color blue.
+    boolean x = manipulateController.getRawButton(3);
+    // Button four (Y) selects the color yellow.
+    boolean y = manipulateController.getRawButton(4);
+
+    if (lb) {
+      if (colorWheelMode) {
+        colorWheelMode = false;
+      } else if (!colorWheelMode) {
+        colorWheelMode = true;
+      }
+    }
+
+    if (colorWheelMode) {
+      if (a) {
+        colorSensorDetectGreen = true;
+      } else {
+        colorSensorDetectGreen = false;
+      }
+      if (b) {
+        colorSensorDetectRed = true;
+      } else {
+        colorSensorDetectRed = false;
+      }
+      if (x) {
+        colorSensorDetectBlue = true;
+      } else {
+        colorSensorDetectBlue = false;
+      }
+      if (y) {
+        colorSensorDetectYellow = true;
+      } else {
+        colorSensorDetectYellow = false;
+      }
+    }
+  }
+
+  /**
+   * This function sets how many spins are required on the color wheel.
+   */
+  public void setColorWheelSpinAmount() {
+    // Button six (rb) is used as the button to activate spin amount setter.
+    boolean rb = manipulateController.getRawButton(6);
+    // Button one (A) selects the spin amount to three.
+    boolean a = manipulateController.getRawButton(1);
+    // Button one (A) selects the spin amount to four.
+    boolean b = manipulateController.getRawButton(2);
+    // Button one (A) selects the spin amount to five.
+    boolean x = manipulateController.getRawButton(3);
+
+    if (rb && a) {
+      colorWheelSpins = 3;
+    }
+    if (rb && b) {
+      colorWheelSpins = 4;
+    }
+    if (rb && x) {
+      colorWheelSpins = 5;
+    }
+  }
 
   /**
    * This function detects color using the REVRobotics library and sensor.
    */
   public void colorDetector() {
+    if (colorWheelMode) {
     String colorString;
     Color detectedColor = m_colorSensor.getColor();
     ColorMatchResult match = m_colorMatcher.matchClosestColor(detectedColor);
@@ -198,12 +284,27 @@ public class Robot extends TimedRobot {
     SmartDashboard.putNumber("Blue", detectedColor.blue);
     SmartDashboard.putNumber("Confidence", match.confidence);
     SmartDashboard.putString("Detected Color", colorString);
-  }
 
-  /**
-   * This function is called periodically during test mode.
-   */
-  @Override
-  public void testPeriodic() {
+      if (colorSensorDetectGreen == true) {
+        while (colorString != "Green" && colorWheelSpins > 0) {
+          // Wheel spinner = true
+        }
+      }
+      if (colorSensorDetectRed == true && colorWheelSpins > 0) {
+        while (colorString != "Red") {
+          // Wheel spinner = true
+        }
+      }
+      if (colorSensorDetectBlue == true && colorWheelSpins > 0) {
+        while (colorString != "Blue") {
+          // Wheel spinner = true
+        }
+      }
+      if (colorSensorDetectYellow == true && colorWheelSpins > 0) {
+        while (colorString != "Yellow") {
+          // Wheel spinner = true
+        }
+  }
+    }
   }
 }
