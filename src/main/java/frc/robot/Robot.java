@@ -200,10 +200,6 @@ public class Robot extends TimedRobot {
     SmartDashboard.putString("Detected Color", colorString);
   }
 
-  public void projectileMotion() {
-
-  }
-
   /**
    * This function is called periodically during test mode.
    */
