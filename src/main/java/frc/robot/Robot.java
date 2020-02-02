@@ -64,7 +64,7 @@ public class Robot extends TimedRobot {
   private final Color kYellowTarget = ColorMatch.makeColor(0.361, 0.524, 0.113);
   boolean isLookingForColorGreen, isLookingForColorRed, isLookingForColorBlue, isLookingForColorYellow = false;
   boolean isInControlPanelMode = false;
-  int colorWheelSpins;
+  int controlPanelSpins;
 
   /**
    * This function is run when the robot is first started up and should be used
@@ -247,13 +247,13 @@ public class Robot extends TimedRobot {
     boolean x = manipulateController.getRawButton(3);
 
     if (rb && a) {
-      colorWheelSpins = 3;
+      controlPanelSpins = 3;
     }
     if (rb && b) {
-      colorWheelSpins = 4;
+      controlPanelSpins = 4;
     }
     if (rb && x) {
-      colorWheelSpins = 5;
+      controlPanelSpins = 5;
     }
   }
 
@@ -284,21 +284,21 @@ public class Robot extends TimedRobot {
       SmartDashboard.putString("Detected Color", colorString);
 
       if (isLookingForColorGreen == true) {
-        while (colorString != "Green" && colorWheelSpins > 0) {
+        while (colorString != "Green" && controlPanelSpins > 0) {
           // Wheel spinner = true
         }
       }
-      if (isLookingForColorRed == true && colorWheelSpins > 0) {
+      if (isLookingForColorRed == true && controlPanelSpins > 0) {
         while (colorString != "Red") {
           // Wheel spinner = true
         }
       }
-      if (isLookingForColorBlue == true && colorWheelSpins > 0) {
+      if (isLookingForColorBlue == true && controlPanelSpins > 0) {
         while (colorString != "Blue") {
           // Wheel spinner = true
         }
       }
-      if (isLookingForColorYellow == true && colorWheelSpins > 0) {
+      if (isLookingForColorYellow == true && controlPanelSpins > 0) {
         while (colorString != "Yellow") {
           // Wheel spinner = true
         }
