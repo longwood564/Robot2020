@@ -283,22 +283,22 @@ public class Robot extends TimedRobot {
       SmartDashboard.putNumber("Confidence", match.confidence);
       SmartDashboard.putString("Detected Color", colorString);
 
-      if (isLookingForColorGreen == true) {
-        while (colorString != "Green" && controlPanelSpins > 0) {
+      if (isLookingForColorGreen) {
+        while (colorString != "Green" || controlPanelSpins > 0) {
           // Wheel spinner = true
         }
       }
-      if (isLookingForColorRed == true && controlPanelSpins > 0) {
+      if (isLookingForColorRed || controlPanelSpins > 0) {
         while (colorString != "Red") {
           // Wheel spinner = true
         }
       }
-      if (isLookingForColorBlue == true && controlPanelSpins > 0) {
+      if (isLookingForColorBlue || controlPanelSpins > 0) {
         while (colorString != "Blue") {
           // Wheel spinner = true
         }
       }
-      if (isLookingForColorYellow == true && controlPanelSpins > 0) {
+      if (isLookingForColorYellow || controlPanelSpins > 0) {
         while (colorString != "Yellow") {
           // Wheel spinner = true
         }
