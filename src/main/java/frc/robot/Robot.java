@@ -237,7 +237,7 @@ public class Robot extends TimedRobot {
    * This function sets how many spins are required on the color wheel.
    */
   public void selectColorWheelSpinAmount() {
-    // Button six (rb) is used as the button to activate spin amount setter.
+    // Button six (rb) is used as the button to activate spin amount selector.
     boolean rb = manipulateController.getRawButton(6);
     // Button one (A) selects the spin amount to three.
     boolean a = manipulateController.getRawButton(1);
