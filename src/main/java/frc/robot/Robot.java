@@ -54,7 +54,7 @@ public class Robot extends TimedRobot {
   private static final double highSpeed = 0.75;
   boolean slowToggle, highToggle = false;
 
-  // Color Sensor and Wheel
+  // Color Sensor and Wheel (Control Panel)
   private final I2C.Port i2cPort = I2C.Port.kOnboard;
   private final ColorSensorV3 m_colorSensor = new ColorSensorV3(i2cPort);
   private final ColorMatch m_colorMatcher = new ColorMatch();
