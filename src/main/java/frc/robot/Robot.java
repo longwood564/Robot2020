@@ -52,7 +52,6 @@ public class Robot extends TimedRobot {
   // Drive Motors
   private static final double slowSpeed = 0.5;
   private static final double highSpeed = 0.75;
-  boolean slowToggle, highToggle = false;
 
   // Color Sensor and Wheel (Control Panel)
   private final I2C.Port i2cPort = I2C.Port.kOnboard;
