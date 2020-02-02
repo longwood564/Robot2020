@@ -158,27 +158,17 @@ public class Robot extends TimedRobot {
    */
   public void driveSpeed() {
     if (!isInControlPanelMode) {
+      // Left thumb stick
       double rawAxis1 = driveController.getRawAxis(1);
+      // Right thumb stick
       double rawAxis4 = driveController.getRawAxis(4);
-
-      // Enabling slow speed toggle on the joystick for drive speed
-      if (driveController.getRawAxis(2) > 0.5) {
-        slowToggle = true;
-      } else {
-        slowToggle = false;
-      }
-
-      // Enabling high speed toggle on the joystick for drive speed
-      if (driveController.getRawAxis(3) > 0.5) {
-        highToggle = true;
-      } else {
-        highToggle = false;
-      }
+      double rawAxis2 = driveController.getRawAxis(2);
+      double rawAxis3 = driveController.getRawAxis(3);
 
       // Setting robot drive speed
-      if (slowToggle) {
+      if (rawAxis2 > 0.5) {
         differentialDrive.arcadeDrive(rawAxis1 * slowSpeed, rawAxis4 * slowSpeed);
-      } else if (highToggle) {
+      } else if (rawAxis3 > 0.5) {
         differentialDrive.arcadeDrive(rawAxis1 * highSpeed, rawAxis4 * highSpeed);
       } else {
         differentialDrive.arcadeDrive(rawAxis1, rawAxis4);
