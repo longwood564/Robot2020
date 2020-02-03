@@ -189,6 +189,8 @@ public class Robot extends TimedRobot {
     boolean x = manipulateController.getRawButton(3);
     // Button four (Y) selects the color yellow.
     boolean y = manipulateController.getRawButton(4);
+    // Button six (rb) is used to select spin amount, which cannot be called here.
+    boolean rb = manipulateController.getRawButton(6);
 
     if (lb) {
       if (isInControlPanelMode) {
@@ -199,22 +201,22 @@ public class Robot extends TimedRobot {
     }
 
     if (isInControlPanelMode) {
-      if (a) {
+      if (a && !rb) {
         isLookingForColorGreen = true;
       } else if (b || x || y) {
         isLookingForColorGreen = false;
       }
-      if (b) {
+      if (b && !rb) {
         isLookingForColorRed = true;
       } else if (a || x || y) {
         isLookingForColorRed = false;
       }
-      if (x) {
+      if (x && !rb) {
         isLookingForColorBlue = true;
       } else if (a || b || y) {
         isLookingForColorBlue = false;
       }
-      if (y) {
+      if (y && !rb) {
         isLookingForColorYellow = true;
       } else if (a || b || x) {
         isLookingForColorYellow = false;
@@ -236,14 +238,16 @@ public class Robot extends TimedRobot {
     // Button one (A) selects the spin amount to five.
     boolean x = manipulateController.getRawButton(3);
 
-    if (rb && a) {
-      controlPanelSpins = 3;
-    }
-    if (rb && b) {
-      controlPanelSpins = 4;
-    }
-    if (rb && x) {
-      controlPanelSpins = 5;
+    if (isInControlPanelMode) {
+      if (rb && a) {
+        controlPanelSpins = 3;
+      }
+      if (rb && b) {
+        controlPanelSpins = 4;
+      }
+      if (rb && x) {
+        controlPanelSpins = 5;
+      }
     }
   }
 
