@@ -259,7 +259,6 @@ public class Robot extends TimedRobot {
       String colorString;
       Color detectedColor = m_colorSensor.getColor();
       ColorMatchResult match = m_colorMatcher.matchClosestColor(detectedColor);
-      
       if (match.color == kBlueTarget) {
         colorString = "Blue";
       } else if (match.color == kRedTarget) {
