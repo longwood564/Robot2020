@@ -193,11 +193,7 @@ public class Robot extends TimedRobot {
     boolean rb = manipulateController.getRawButton(6);
 
     if (lb) {
-      if (isInControlPanelMode) {
-        isInControlPanelMode = false;
-      } else if (!isInControlPanelMode) {
-        isInControlPanelMode = true;
-      }
+      isInControlPanelMode = !isInControlPanelMode;
     }
 
     if (isInControlPanelMode) {
