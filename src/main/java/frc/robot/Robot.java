@@ -227,14 +227,14 @@ public class Robot extends TimedRobot {
     // Button one (A) selects the spin amount to five.
     boolean x = manipulateController.getRawButton(3);
 
-    if (isInControlPanelMode) {
-      if (rb && a) {
+    if (isInControlPanelMode && rb) {
+      if (a) {
         controlPanelSpins = 3;
       }
-      if (rb && b) {
+      if (b) {
         controlPanelSpins = 4;
       }
-      if (rb && x) {
+      if (x) {
         controlPanelSpins = 5;
       }
     }
