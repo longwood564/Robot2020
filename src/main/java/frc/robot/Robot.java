@@ -189,23 +189,23 @@ public class Robot extends TimedRobot {
       isInControlPanelMode = !isInControlPanelMode;
     }
 
-    if (isInControlPanelMode) {
-      if (a && !rb) {
+    if (isInControlPanelMode && !rb) {
+      if (a) {
         isLookingForColorGreen = true;
       } else if (b || x || y) {
         isLookingForColorGreen = false;
       }
-      if (b && !rb) {
+      if (b) {
         isLookingForColorRed = true;
       } else if (a || x || y) {
         isLookingForColorRed = false;
       }
-      if (x && !rb) {
+      if (x) {
         isLookingForColorBlue = true;
       } else if (a || b || y) {
         isLookingForColorBlue = false;
       }
-      if (y && !rb) {
+      if (y) {
         isLookingForColorYellow = true;
       } else if (a || b || x) {
         isLookingForColorYellow = false;
