@@ -270,18 +270,18 @@ public class Robot extends TimedRobot {
           // Wheel spinner = true
         }
       }
-      if (isLookingForColorRed || controlPanelSpins > 0) {
-        while (colorString != "Red") {
+      if (isLookingForColorRed) {
+        while (colorString != "Red" || controlPanelSpins > 0) {
           // Wheel spinner = true
         }
       }
-      if (isLookingForColorBlue || controlPanelSpins > 0) {
-        while (colorString != "Blue") {
+      if (isLookingForColorBlue) {
+        while (colorString != "Blue" || controlPanelSpins > 0) {
           // Wheel spinner = true
         }
       }
-      if (isLookingForColorYellow || controlPanelSpins > 0) {
-        while (colorString != "Yellow") {
+      if (isLookingForColorYellow) {
+        while (colorString != "Yellow" || controlPanelSpins > 0) {
           // Wheel spinner = true
         }
       }
