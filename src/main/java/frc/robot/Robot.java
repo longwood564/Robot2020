@@ -57,7 +57,19 @@ public class Robot extends TimedRobot {
   boolean isLookingForColorGreen, isLookingForColorRed, isLookingForColorBlue, isLookingForColorYellow = false;
   boolean isInControlPanelMode = false;
   int controlPanelSpins;
-
+   
+  // Distance Sensor (pid)
+  // distance in inches the robot wants to stay from an object
+  private static final double kHoldDistance = 3.0;
+  // factor to convert sensor values to a distance in inches
+  private static final double kValueToInches = 0.125;
+  // proportional speed constant
+  private static final double kP = 0.05;
+  private static final int kLeftMotorPort = 0;
+  private static final int kRightMotorPort = 1;
+  private static final int kUltrasonicPort = 0;
+  private final AnalogInput m_ultrasonic = new AnalogInput(kUltrasonicPort);
+// Concludes Distance Sensor Code 
   /**
    * This function is run when the robot is first started up and should be used
    * for any initialization code.
