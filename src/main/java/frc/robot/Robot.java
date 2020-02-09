@@ -43,23 +43,23 @@ public class Robot extends TimedRobot {
   private final Joystick manipulateController = new Joystick(1);
 
   // Drive Motors
-  private final double slowSpeed = 0.5;
-  private final double highSpeed = 0.75;
+  private static final double slowSpeed = 0.5;
+  private static final double highSpeed = 0.75;
 
   // Color Sensor and Wheel (Control Panel)
   private final I2C.Port i2cPort = I2C.Port.kOnboard;
   private final ColorSensorV3 m_colorSensor = new ColorSensorV3(i2cPort);
   private final ColorMatch m_colorMatcher = new ColorMatch();
-  private final Color kBlueTarget = ColorMatch.makeColor(0.143, 0.427, 0.429);
-  private final Color kGreenTarget = ColorMatch.makeColor(0.197, 0.561, 0.240);
-  private final Color kRedTarget = ColorMatch.makeColor(0.561, 0.232, 0.114);
-  private final Color kYellowTarget = ColorMatch.makeColor(0.361, 0.524, 0.113);
-  boolean isLookingForColorGreen = false;
-  boolean isLookingForColorRed = false;
-  boolean isLookingForColorBlue = false;
-  boolean isLookingForColorYellow = false;
-  boolean isInControlPanelMode = false;
-  int controlPanelSpinAmount;
+  private static final Color kBlueTarget = ColorMatch.makeColor(0.143, 0.427, 0.429);
+  private static final Color kGreenTarget = ColorMatch.makeColor(0.197, 0.561, 0.240);
+  private static final Color kRedTarget = ColorMatch.makeColor(0.561, 0.232, 0.114);
+  private static final Color kYellowTarget = ColorMatch.makeColor(0.361, 0.524, 0.113);
+  private boolean isLookingForColorGreen = false;
+  private boolean isLookingForColorRed = false;
+  private boolean isLookingForColorBlue = false;
+  private boolean isLookingForColorYellow = false;
+  private boolean isInControlPanelMode = false;
+  private int controlPanelSpinAmount;
 
   /**
    * This function is run when the robot is first started up and should be used
