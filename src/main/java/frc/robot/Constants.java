@@ -49,7 +49,6 @@ public final class Constants {
    * The distance from the point at which the ball is launched to the inner hoop.
    */
   public static final double kVertDistanceLauncherToHoop = kVertDistanceFloorToHoop - kVertDistanceFloorToLauncher;
-
   /**
    * The angle of the ball launcher.
    * 
