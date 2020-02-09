@@ -57,6 +57,11 @@ public class Robot extends TimedRobot {
   private static final double highSpeed = 0.75;
   private static final double defaultSpeed = 0.65;
 
+  // Launching
+  // TODO: Setup both of these.
+  WPI_TalonSRX leftLauncher = new WPI_TalonSRX(7);
+  WPI_TalonSRX rightLauncher = new WPI_TalonSRX(8);
+
   // Color Sensing
   private final I2C.Port i2cPort = I2C.Port.kOnboard;
   private final ColorSensorV3 colorSensor = new ColorSensorV3(i2cPort);
@@ -188,6 +193,7 @@ public class Robot extends TimedRobot {
     updateInputs();
     handleState();
     driveSpeed();
+    launchBall();
     spinControlPanel();
   }
 
@@ -253,6 +259,46 @@ public class Robot extends TimedRobot {
       } else {
         differentialDrive.arcadeDrive(rawAxis1 * defaultSpeed, rawAxis4 * defaultSpeed);
       }
+    }
+  }
+
+  /**
+   * This function calculates how high the ball will be at a specified distance
+   * away from the robot. See the research document for the derivation of the
+   * formula used here.
+   * 
+   * @param horDistance The horizontal distance from the launcher to the desired
+   *                    point of the trajectory.
+   * @return The calculated height of the ball.
+   */
+  private double calculateHeight(double horDistance) {
+    return horDistance * Math.tan(Constants.kLauncherAngle) - (0.5 * Constants.kAccelDueToGravity
+        * Math.pow((horDistance / (Constants.kInitialVelocityBall * Math.cos(Constants.kLauncherAngle))), 2));
+  }
+
+  /**
+   * This function determines whether or not the ball can be launched into the
+   * power port, and adjusts the robot to make the shot if it can't.
+   */
+  private void launchBall() {
+    // TODO: Allow for this to be configurable from the DS.
+    double tolerance = 1;
+    // TODO: Plug in the ultrasonic sensor reading here.
+    double horDistanceToHex = 13;
+    double horDistanceToHoop = horDistanceToHex + Constants.kHorDistanceHexagonToHoop;
+
+    double projectedVertDistanceToHex = calculateHeight(horDistanceToHex);
+    double projectedHeightToHoop = calculateHeight(horDistanceToHoop);
+
+    if (Math.abs(Constants.kVertDistanceLauncherToHex - projectedVertDistanceToHex) > tolerance
+        || Math.abs(Constants.kVertDistanceLauncherToHoop - projectedHeightToHoop) > tolerance) {
+      if (Constants.kProjectedHorDistanceToApex > horDistanceToHoop) {
+        // Too close.
+      } else {
+        // Too far.
+      }
+    } else {
+      // Shot is lined up!
     }
   }
 
