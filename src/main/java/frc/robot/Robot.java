@@ -45,6 +45,7 @@ public class Robot extends TimedRobot {
   // Drive Motors
   private static final double slowSpeed = 0.5;
   private static final double highSpeed = 0.75;
+  private static final double defaultSpeed = 0.65;
 
   // Color Sensor and Wheel (Control Panel)
   private final I2C.Port i2cPort = I2C.Port.kOnboard;
@@ -152,7 +153,9 @@ public class Robot extends TimedRobot {
    * This function drives the robot at a certain speed.
    */
   private void driveSpeed() {
-    if (!isInControlPanelMode) {
+    if (isInControlPanelMode) {
+      differentialDrive.stopMotor();
+    } else {
       // Left thumb stick
       double rawAxis1 = driveController.getRawAxis(1);
       // Right thumb stick
@@ -168,7 +171,7 @@ public class Robot extends TimedRobot {
       } else if (rawAxis3 > 0.5) {
         differentialDrive.arcadeDrive(rawAxis1 * highSpeed, rawAxis4 * highSpeed);
       } else {
-        differentialDrive.arcadeDrive(rawAxis1, rawAxis4);
+        differentialDrive.arcadeDrive(rawAxis1 * defaultSpeed, rawAxis4 * defaultSpeed);
       }
     }
   }
