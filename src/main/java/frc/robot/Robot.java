@@ -213,15 +213,15 @@ public class Robot extends TimedRobot {
    */
   private void selectColor() {
     // Button five (lb) is used as the button to activate color selection.
-    boolean lb = manipulateController.getRawButton(5);
+    boolean lb = manipulateController.getRawButtonPressed(5);
     // Button one (A) selects the color green.
-    boolean a = manipulateController.getRawButton(1);
+    boolean a = manipulateController.getRawButtonPressed(1);
     // Button two (B) selects the color red.
-    boolean b = manipulateController.getRawButton(2);
+    boolean b = manipulateController.getRawButtonPressed(2);
     // Button three (X) selects the color blue.
-    boolean x = manipulateController.getRawButton(3);
+    boolean x = manipulateController.getRawButtonPressed(3);
     // Button four (Y) selects the color yellow.
-    boolean y = manipulateController.getRawButton(4);
+    boolean y = manipulateController.getRawButtonPressed(4);
     // Button six (rb) is used to select spin amount, which cannot be called here.
     boolean rb = manipulateController.getRawButton(6);
 
@@ -261,11 +261,11 @@ public class Robot extends TimedRobot {
     // Button six (rb) is used as the button to activate spin amount selector.
     boolean rb = manipulateController.getRawButton(6);
     // Button one (A) selects the spin amount to three.
-    boolean a = manipulateController.getRawButton(1);
+    boolean a = manipulateController.getRawButtonPressed(1);
     // Button one (A) selects the spin amount to four.
-    boolean b = manipulateController.getRawButton(2);
+    boolean b = manipulateController.getRawButtonPressed(2);
     // Button one (A) selects the spin amount to five.
-    boolean x = manipulateController.getRawButton(3);
+    boolean x = manipulateController.getRawButtonPressed(3);
 
     if (isInControlPanelMode && rb) {
       if (a) {
