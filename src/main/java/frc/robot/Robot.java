@@ -15,6 +15,9 @@ import com.revrobotics.ColorSensorV3;
 import com.revrobotics.ColorMatchResult;
 import com.revrobotics.ColorMatch;
 
+import edu.wpi.first.wpilibj.Encoder;
+import edu.wpi.first.wpilibj.AnalogInput;
+
 /**
  * The VM is configured to automatically run this class, and to call the
  * functions corresponding to each mode, as described in the TimedRobot
@@ -61,6 +64,21 @@ public class Robot extends TimedRobot {
   private boolean isInControlPanelMode = false;
   private int controlPanelSpinAmount;
 
+ // Encoder (DIO pins 0 and 1)
+  Encoder encoder = new Encoder(0,1);
+
+ // Ultrasonic Sensor (distance in inches the robot wants to stay from an object)
+ private static final double kHoldDistance = 12.0; 
+ // Ultrasonic Sensor (factor to convert sensor values to a distance in inches)
+  private static final double kValueToInches = 0.125;
+  // Ultrasonic Sensor (proportional speed constant)
+  private static final double kP = 0.05;
+   
+  private static final int kLeftMotorPort = 0;
+  private static final int kRightMotorPort = 1;
+  private static final int kUltrasonicPort = 0;
+   
+  private final AnalogInput m_ultrasonic = new AnalogInput(kUltrasonicPort);
   /**
    * This function is run when the robot is first started up and should be used
    * for any initialization code.
@@ -80,6 +98,15 @@ public class Robot extends TimedRobot {
     m_colorMatcher.addColorMatch(kGreenTarget);
     m_colorMatcher.addColorMatch(kRedTarget);
     m_colorMatcher.addColorMatch(kYellowTarget);
+
+    // Configure Encoder Parameters (current parameters are derived from sample code. will be updated for our needs ASAP.)
+   encoder.setDistancePerPulse(4./256.);
+   encoder.setMaxPeriod(.1);
+   encoder.setMinRate(10);
+   encoder.setReverseDirection(true);
+   encoder.setSamplesToAverage(5);
+ 
+   encoder.reset();
   }
 
   /**
@@ -139,6 +166,13 @@ public class Robot extends TimedRobot {
     selectColor();
     selectControlPanelSpinAmount();
     colorDetector();
+
+    // sensor returns a value from 0-4095 that is scaled to inches
+    double currentDistance = m_ultrasonic.getValue() * kValueToInches;
+ 
+    // convert distance error to a motor speed
+    double currentSpeed = (kHoldDistance - currentDistance) * kP;
+    
   }
 
   /**
