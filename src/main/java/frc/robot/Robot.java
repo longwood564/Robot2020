@@ -60,7 +60,7 @@ public class Robot extends TimedRobot {
   private boolean isLookingForColorBlue = false;
   private boolean isLookingForColorYellow = false;
   private boolean isInControlPanelMode = false;
-  private int controlPanelSpinAmount;
+  private int controlPanelSpinAmount = 0;
 
   /**
    * This function is run when the robot is first started up and should be used
@@ -278,25 +278,18 @@ public class Robot extends TimedRobot {
       SmartDashboard.putNumber("Confidence", match.confidence);
       SmartDashboard.putString("Detected Color", colorString);
 
-      if (isLookingForColorGreen) {
-        if (colorString != "Green" || controlPanelSpinAmount > 0) {
-          // @TODO: Add wheel spinner code (currently waiting for more details on this).
-        }
+      double doubleContolPanelSpinAmount = controlPanelSpinAmount * 2;
+      if (isLookingForColorGreen && (colorString != "Green" || doubleContolPanelSpinAmount > 0)) {
+        // @TODO: Add wheel spinner code (currently waiting for more details on this).
       }
-      if (isLookingForColorRed) {
-        if (colorString != "Red" || controlPanelSpinAmount > 0) {
-          // @TODO: Add wheel spinner code (currently waiting for more details on this).
-        }
+      if (isLookingForColorRed && (colorString != "Red" || doubleContolPanelSpinAmount > 0)) {
+        // @TODO: Add wheel spinner code (currently waiting for more details on this).
       }
-      if (isLookingForColorBlue) {
-        if (colorString != "Blue" || controlPanelSpinAmount > 0) {
-          // @TODO: Add wheel spinner code (currently waiting for more details on this).
-        }
+      if (isLookingForColorBlue && (colorString != "Blue" || doubleContolPanelSpinAmount > 0)) {
+        // @TODO: Add wheel spinner code (currently waiting for more details on this).
       }
-      if (isLookingForColorYellow) {
-        if (colorString != "Yellow" || controlPanelSpinAmount > 0) {
-          // @TODO: Add wheel spinner code (currently waiting for more details on this).
-        }
+      if (isLookingForColorYellow && (colorString != "Yellow" || doubleContolPanelSpinAmount > 0)) {
+        // @TODO: Add wheel spinner code (currently waiting for more details on this).
       }
     }
   }
