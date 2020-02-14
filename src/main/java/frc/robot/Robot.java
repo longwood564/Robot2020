@@ -281,14 +281,11 @@ public class Robot extends TimedRobot {
       double doubleContolPanelSpinAmount = controlPanelSpinAmount * 2;
       if (isLookingForColorGreen && (colorString != "Green" || doubleContolPanelSpinAmount > 0)) {
         // @TODO: Add wheel spinner code (currently waiting for more details on this).
-      }
-      if (isLookingForColorRed && (colorString != "Red" || doubleContolPanelSpinAmount > 0)) {
+      } else if (isLookingForColorRed && (colorString != "Red" || doubleContolPanelSpinAmount > 0)) {
         // @TODO: Add wheel spinner code (currently waiting for more details on this).
-      }
-      if (isLookingForColorBlue && (colorString != "Blue" || doubleContolPanelSpinAmount > 0)) {
+      } else if (isLookingForColorBlue && (colorString != "Blue" || doubleContolPanelSpinAmount > 0)) {
         // @TODO: Add wheel spinner code (currently waiting for more details on this).
-      }
-      if (isLookingForColorYellow && (colorString != "Yellow" || doubleContolPanelSpinAmount > 0)) {
+      } else if (isLookingForColorYellow && (colorString != "Yellow" || doubleContolPanelSpinAmount > 0)) {
         // @TODO: Add wheel spinner code (currently waiting for more details on this).
       }
     }
