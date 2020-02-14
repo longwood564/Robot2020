@@ -154,6 +154,9 @@ public class Robot extends TimedRobot {
    */
   private void driveSpeed() {
     if (isInControlPanelMode) {
+      // While isInControlPanelMode, the differential drive must be updated to stop
+      // the drive motors in order to prevent an issue regarding the differential
+      // drive updating from occurring.
       differentialDrive.stopMotor();
     } else {
       // Left thumb stick
