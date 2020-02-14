@@ -28,21 +28,12 @@ public class Robot extends TimedRobot {
   private String m_autoSelected;
   private final SendableChooser<String> m_chooser = new SendableChooser<>();
 
-  // Talons and Victors
-  // @TODO: Document these ports.
+  // Driving
   private final WPI_TalonSRX rightTalon = new WPI_TalonSRX(6);
   private final WPI_TalonSRX leftTalon = new WPI_TalonSRX(5);
   private final WPI_VictorSPX rightVictor = new WPI_VictorSPX(1);
   private final WPI_VictorSPX leftVictor = new WPI_VictorSPX(4);
-
-  // Differential Drive
   private final DifferentialDrive differentialDrive = new DifferentialDrive(leftTalon, rightTalon);
-
-  // Joysticks
-  private final Joystick driveController = new Joystick(0);
-  private final Joystick manipulateController = new Joystick(1);
-
-  // Drive Motors
   private static final double slowSpeed = 0.5;
   private static final double highSpeed = 0.75;
   private static final double defaultSpeed = 0.65;
@@ -61,6 +52,10 @@ public class Robot extends TimedRobot {
   private boolean isLookingForColorYellow = false;
   private boolean isInControlPanelMode = false;
   private int controlPanelSpinAmount = 0;
+
+  // Joysticks
+  private final Joystick driveController = new Joystick(0);
+  private final Joystick manipulateController = new Joystick(1);
 
   /**
    * This function is run when the robot is first started up and should be used
