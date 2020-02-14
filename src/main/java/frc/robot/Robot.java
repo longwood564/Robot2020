@@ -159,13 +159,13 @@ public class Robot extends TimedRobot {
       // for every iteration of the loop.
       differentialDrive.stopMotor();
     } else {
-      // Left thumb stick
+      // Left thumb stick of the manipulator's joystick.
       double rawAxis1 = driveController.getRawAxis(1);
-      // Right thumb stick
+      // Right thumb stick of the manipulator's joystick.
       double rawAxis4 = driveController.getRawAxis(4);
-      // @TODO: Document this axis.
+      // Left trigger of the manipulator's joystick.
       double rawAxis2 = driveController.getRawAxis(2);
-      // @TODO: Document this axis.
+      // Right trigger of the manipulator's joystick.
       double rawAxis3 = driveController.getRawAxis(3);
 
       // Setting robot drive speed
