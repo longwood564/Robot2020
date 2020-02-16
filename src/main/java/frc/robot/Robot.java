@@ -92,6 +92,20 @@ public class Robot extends TimedRobot {
   }
 
   /**
+   * This function is called when initializing disabled mode.
+   */
+  @Override
+  public void disabledInit() {
+  }
+
+  /**
+   * This function is called periodically during disabled mode.
+   */
+  @Override
+  public void disabledPeriodic() {
+  }
+
+  /**
    * This autonomous (along with the chooser code above) shows how to select
    * between different autonomous modes using the dashboard. The sendable chooser
    * code works with the Java SmartDashboard. If you prefer the LabVIEW Dashboard,
