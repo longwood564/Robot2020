@@ -30,10 +30,22 @@ import com.revrobotics.ColorMatch;
  * project.
  */
 public class Robot extends TimedRobot {
+  // Joysticks
+  private final Joystick driveController = new Joystick(0);
+  private final Joystick manipController = new Joystick(1);
+  private boolean manipAPress = false;
+  private boolean manipBPress = false;
+  private boolean manipXPress = false;
+  private boolean manipYPress = false;
+  private boolean manipLBPress = false;
+
+  // State
+  private boolean isInControlPanelMode = false;
+
+  // Autonomous
   private static final String kDefaultAuto = "Default";
-  private static final String kCustomAuto = "My Auto";
-  private String m_autoSelected;
-  private final SendableChooser<String> m_chooser = new SendableChooser<>();
+  private String selectedAuto;
+  private final SendableChooser<String> autoChooser = new SendableChooser<>();
 
   // Driving
   private final WPI_TalonSRX rightTalon = new WPI_TalonSRX(6);
@@ -45,24 +57,18 @@ public class Robot extends TimedRobot {
   private static final double highSpeed = 0.75;
   private static final double defaultSpeed = 0.65;
 
-  // Color Sensor and Wheel (Control Panel)
+  // Color Sensing
   private final I2C.Port i2cPort = I2C.Port.kOnboard;
-  private final ColorSensorV3 m_colorSensor = new ColorSensorV3(i2cPort);
-  private final ColorMatch m_colorMatcher = new ColorMatch();
+  private final ColorSensorV3 colorSensor = new ColorSensorV3(i2cPort);
+  private final ColorMatch colorMatcher = new ColorMatch();
   private static final Color kBlueTarget = ColorMatch.makeColor(0.143, 0.427, 0.429);
   private static final Color kGreenTarget = ColorMatch.makeColor(0.197, 0.561, 0.240);
   private static final Color kRedTarget = ColorMatch.makeColor(0.561, 0.232, 0.114);
   private static final Color kYellowTarget = ColorMatch.makeColor(0.361, 0.524, 0.113);
-  private boolean isLookingForColorGreen = false;
-  private boolean isLookingForColorRed = false;
-  private boolean isLookingForColorBlue = false;
-  private boolean isLookingForColorYellow = false;
-  private boolean isInControlPanelMode = false;
+  private String targetControlPanelColor = "N/A";
   private int controlPanelSpinAmount = 0;
 
-  // Joysticks
-  private final Joystick driveController = new Joystick(0);
-  private final Joystick manipulateController = new Joystick(1);
+  // Vision
 
   // Shuffleboard
   private final ShuffleboardTab generalTab = Shuffleboard.getTab("General");
@@ -92,19 +98,25 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotInit() {
-    m_chooser.setDefaultOption("Default Auto", kDefaultAuto);
-    m_chooser.addOption("My Auto", kCustomAuto);
-    SmartDashboard.putData("Auto choices", m_chooser);
-
     // Slave follows master
     rightVictor.follow(rightTalon);
     leftVictor.follow(leftTalon);
 
-    // Color Sensor
-    m_colorMatcher.addColorMatch(kBlueTarget);
-    m_colorMatcher.addColorMatch(kGreenTarget);
-    m_colorMatcher.addColorMatch(kRedTarget);
-    m_colorMatcher.addColorMatch(kYellowTarget);
+    // Add color sensor matches.
+    colorMatcher.addColorMatch(kBlueTarget);
+    colorMatcher.addColorMatch(kGreenTarget);
+    colorMatcher.addColorMatch(kRedTarget);
+    colorMatcher.addColorMatch(kYellowTarget);
+
+    // Add Shuffleboard sendables. We define the NetworkTableEntry objects as member
+    // variables when adding those widgets because we need to access them to update
+    // them. Contrary, we don't assign these widgets to any variables because, as
+    // Sendable interfaces, they will automatically be updated. There is a
+    // distinction to be made between assigning the ComplexWidget to a variable, and
+    // assigning the SendableChooser to a variable - which we *do* do.
+    autoChooser.setDefaultOption("Default Auto", kDefaultAuto);
+    autonomousLayout.add(autoChooser).withWidget(BuiltInWidgets.kSplitButtonChooser);
+    drivingLayout.add(differentialDrive);
   }
 
   /**
@@ -125,6 +137,10 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void disabledInit() {
+    detectedColorEntry.setString("N/A");
+    confidenceEntry.setDouble(0);
+    targetColorEntry.setString("N/A");
+    targetSpinEntry.setDouble(0);
   }
 
   /**
@@ -148,9 +164,7 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void autonomousInit() {
-    m_autoSelected = m_chooser.getSelected();
-    // m_autoSelected = SmartDashboard.getString("Auto Selector", kDefaultAuto);
-    System.out.println("Auto selected: " + m_autoSelected);
+    selectedAuto = autoChooser.getSelected();
   }
 
   /**
@@ -158,10 +172,7 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void autonomousPeriodic() {
-    switch (m_autoSelected) {
-    case kCustomAuto:
-      // Put custom auto code here
-      break;
+    switch (selectedAuto) {
     case kDefaultAuto:
     default:
       // Put default auto code here
@@ -174,10 +185,10 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void teleopPeriodic() {
+    updateInputs();
+    handleState();
     driveSpeed();
-    selectColor();
-    selectControlPanelSpinAmount();
-    colorDetector();
+    spinControlPanel();
   }
 
   /**
@@ -185,6 +196,32 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void testPeriodic() {
+  }
+
+  /**
+   * This function reads pressed states from the gamepads. This is done here
+   * because it is paramount that getRawButtonPressed() is only called once per
+   * loop, because, the second time, it will more than likely just return "false"
+   * for any button.
+   */
+  private void updateInputs() {
+    manipAPress = manipController.getRawButtonPressed(1);
+    manipBPress = manipController.getRawButtonPressed(2);
+    manipXPress = manipController.getRawButtonPressed(3);
+    manipYPress = manipController.getRawButtonPressed(4);
+    manipLBPress = manipController.getRawButtonPressed(5);
+  }
+
+  /**
+   * This function handles general state of the teleoperated mode.
+   */
+  private void handleState() {
+    if (manipLBPress) {
+      isInControlPanelMode = !isInControlPanelMode;
+      controlPanelModeEntry.setBoolean(isInControlPanelMode);
+    } else {
+      isInControlPanelMode = controlPanelModeEntry.getBoolean(isInControlPanelMode);
+    }
   }
 
   /**
@@ -219,88 +256,44 @@ public class Robot extends TimedRobot {
     }
   }
 
-  /*
-   * This function is used to select the color to be targeted on the control panel
-   * (color wheel).
-   */
-  private void selectColor() {
-    // Button five (lb) is used as the button to activate color selection.
-    boolean lb = manipulateController.getRawButtonPressed(5);
-    // Button one (A) selects the color green.
-    boolean a = manipulateController.getRawButtonPressed(1);
-    // Button two (B) selects the color red.
-    boolean b = manipulateController.getRawButtonPressed(2);
-    // Button three (X) selects the color blue.
-    boolean x = manipulateController.getRawButtonPressed(3);
-    // Button four (Y) selects the color yellow.
-    boolean y = manipulateController.getRawButtonPressed(4);
-    // Button six (rb) is used to select spin amount, which cannot be called here.
-    boolean rb = manipulateController.getRawButton(6);
-
-    if (lb) {
-      isInControlPanelMode = !isInControlPanelMode;
-    }
-
-    if (isInControlPanelMode && !rb) {
-      if (a) {
-        isLookingForColorGreen = true;
-      } else if (b || x || y) {
-        isLookingForColorGreen = false;
-      }
-      if (b) {
-        isLookingForColorRed = true;
-      } else if (a || x || y) {
-        isLookingForColorRed = false;
-      }
-      if (x) {
-        isLookingForColorBlue = true;
-      } else if (a || b || y) {
-        isLookingForColorBlue = false;
-      }
-      if (y) {
-        isLookingForColorYellow = true;
-      } else if (a || b || x) {
-        isLookingForColorYellow = false;
-      }
-    }
-  }
-
   /**
-   * This function selects how many spins are required on the control panel (color
-   * wheel).
+   * This function configures the conditions for spinning the control panel, and
+   * spins it if necessary.
    */
-  private void selectControlPanelSpinAmount() {
-    // Button six (rb) is used as the button to activate spin amount selector.
-    boolean rb = manipulateController.getRawButton(6);
-    // Button one (A) selects the spin amount to three.
-    boolean a = manipulateController.getRawButtonPressed(1);
-    // Button one (A) selects the spin amount to four.
-    boolean b = manipulateController.getRawButtonPressed(2);
-    // Button one (A) selects the spin amount to five.
-    boolean x = manipulateController.getRawButtonPressed(3);
-
-    if (isInControlPanelMode && rb) {
-      if (a) {
-        controlPanelSpinAmount = 3;
-      }
-      if (b) {
-        controlPanelSpinAmount = 4;
-      }
-      if (x) {
-        controlPanelSpinAmount = 5;
-      }
-    }
-  }
-
-  /**
-   * This function detects color using the REVRobotics library and sensor, and
-   * then conditionally spins the control panel (color wheel).
-   */
-  private void colorDetector() {
+  private void spinControlPanel() {
     if (isInControlPanelMode) {
+      boolean manipRB = manipController.getRawButton(6);
+      if (manipRB) {
+        int controlPanelSpinAmountInitial = controlPanelSpinAmount;
+        if (manipAPress) {
+          controlPanelSpinAmount = 3;
+        } else if (manipBPress) {
+          controlPanelSpinAmount = 4;
+        } else if (manipXPress) {
+          controlPanelSpinAmount = 5;
+        }
+        if (controlPanelSpinAmountInitial != controlPanelSpinAmount) {
+          targetSpinEntry.setDouble(controlPanelSpinAmount);
+        }
+      } else {
+        String targetControlPanelColorInitial = targetControlPanelColor;
+        if (manipAPress) {
+          targetControlPanelColor = "Green";
+        } else if (manipBPress) {
+          targetControlPanelColor = "Red";
+        } else if (manipXPress) {
+          targetControlPanelColor = "Blue";
+        } else if (manipYPress) {
+          targetControlPanelColor = "Yellow";
+        }
+        if (targetControlPanelColorInitial != targetControlPanelColor) {
+          targetColorEntry.setString(targetControlPanelColor);
+        }
+      }
+
       String colorString;
-      Color detectedColor = m_colorSensor.getColor();
-      ColorMatchResult match = m_colorMatcher.matchClosestColor(detectedColor);
+      Color detectedColor = colorSensor.getColor();
+      ColorMatchResult match = colorMatcher.matchClosestColor(detectedColor);
       if (match.color == kBlueTarget) {
         colorString = "Blue";
       } else if (match.color == kRedTarget) {
@@ -312,22 +305,23 @@ public class Robot extends TimedRobot {
       } else {
         colorString = "Unknown";
       }
-      SmartDashboard.putNumber("Red", detectedColor.red);
-      SmartDashboard.putNumber("Green", detectedColor.green);
-      SmartDashboard.putNumber("Blue", detectedColor.blue);
-      SmartDashboard.putNumber("Confidence", match.confidence);
-      SmartDashboard.putString("Detected Color", colorString);
+      detectedColorEntry.setString(colorString);
+      confidenceEntry.setDouble(match.confidence);
 
       double doubleContolPanelSpinAmount = controlPanelSpinAmount * 2;
-      if (isLookingForColorGreen && (colorString != "Green" || doubleContolPanelSpinAmount > 0)) {
+      if (targetControlPanelColor == "Green" && (colorString != "Green" || doubleContolPanelSpinAmount > 0)) {
         // @TODO: Add wheel spinner code (currently waiting for more details on this).
-      } else if (isLookingForColorRed && (colorString != "Red" || doubleContolPanelSpinAmount > 0)) {
+      } else if (targetControlPanelColor == "Red" && (colorString != "Red" || doubleContolPanelSpinAmount > 0)) {
         // @TODO: Add wheel spinner code (currently waiting for more details on this).
-      } else if (isLookingForColorBlue && (colorString != "Blue" || doubleContolPanelSpinAmount > 0)) {
+      } else if (targetControlPanelColor == "Blue" && (colorString != "Blue" || doubleContolPanelSpinAmount > 0)) {
         // @TODO: Add wheel spinner code (currently waiting for more details on this).
-      } else if (isLookingForColorYellow && (colorString != "Yellow" || doubleContolPanelSpinAmount > 0)) {
+      } else if (targetControlPanelColor == "Yellow" && (colorString != "Yellow" || doubleContolPanelSpinAmount > 0)) {
         // @TODO: Add wheel spinner code (currently waiting for more details on this).
       }
+      targetSpinEntry.setDouble(controlPanelSpinAmount);
+    } else {
+      detectedColorEntry.setString("N/A");
+      confidenceEntry.setDouble(0);
     }
   }
 }
