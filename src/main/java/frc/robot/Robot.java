@@ -48,10 +48,10 @@ public class Robot extends TimedRobot {
   private final SendableChooser<String> autoChooser = new SendableChooser<>();
 
   // Driving
-  private final WPI_TalonSRX rightTalon = new WPI_TalonSRX(6);
-  private final WPI_TalonSRX leftTalon = new WPI_TalonSRX(5);
-  private final WPI_VictorSPX rightVictor = new WPI_VictorSPX(1);
-  private final WPI_VictorSPX leftVictor = new WPI_VictorSPX(4);
+  private final WPI_TalonSRX leftTalon = new WPI_TalonSRX(1);
+  private final WPI_TalonSRX rightTalon = new WPI_TalonSRX(3);
+  private final WPI_VictorSPX leftVictor = new WPI_VictorSPX(2);
+  private final WPI_VictorSPX rightVictor = new WPI_VictorSPX(4);
   private final DifferentialDrive differentialDrive = new DifferentialDrive(leftTalon, rightTalon);
   private static final double slowSpeed = 0.5;
   private static final double highSpeed = 0.75;
