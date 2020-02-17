@@ -310,9 +310,10 @@ public class Robot extends TimedRobot {
       String lastDetectedColorString = detectedColorEntry.toString(); 
       detectedColorEntry.setString(detectedColorString);
       confidenceEntry.setDouble(match.confidence);
-
+      
       int doubleContolPanelSpinAmount = controlPanelSpinAmount * 2;
-      turnControlPanel(detectedColorString, targetControlPanelColor, doubleContolPanelSpinAmount);
+      turnControlPanel(detectedColorString, targetControlPanelColor, lastDetectedColorString,
+          doubleContolPanelSpinAmount);
       targetSpinEntry.setDouble(controlPanelSpinAmount);
     } else {
       detectedColorEntry.setString("N/A");
@@ -323,9 +324,12 @@ public class Robot extends TimedRobot {
   /*
    * This function turns the control panel when called upon in spinControlPanel().
    */
-  public void turnControlPanel(String detectedColor, String targetColor, int spinAmount) {
-    if (targetColor != detectedColor && spinAmount > 0) {
+  public void turnControlPanel(String detectedColor, String targetColor, String lastDetectedColor, int spinAmount) {
+    if (targetColor != detectedColor || spinAmount > 0) {
       controlPanelTalon.set(controlPanelSpinSpeed);
+    }
+    if (targetColor == detectedColor && lastDetectedColor != detectedColor && spinAmount > 0) {
+      spinAmount -= 1;
     }
   }
 }
