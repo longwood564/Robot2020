@@ -57,7 +57,7 @@ public class Robot extends TimedRobot {
   private static final double highSpeed = 0.75;
   private static final double defaultSpeed = 0.65;
 
-  // Color Sensing
+  // Control Panel
   private final I2C.Port i2cPort = I2C.Port.kOnboard;
   private final ColorSensorV3 colorSensor = new ColorSensorV3(i2cPort);
   private final ColorMatch colorMatcher = new ColorMatch();
@@ -65,6 +65,7 @@ public class Robot extends TimedRobot {
   private static final Color kGreenTarget = ColorMatch.makeColor(0.197, 0.561, 0.240);
   private static final Color kRedTarget = ColorMatch.makeColor(0.561, 0.232, 0.114);
   private static final Color kYellowTarget = ColorMatch.makeColor(0.361, 0.524, 0.113);
+  private final WPI_TalonSRX controlPanelTalon = new WPI_TalonSRX(5);
   private String targetControlPanelColor = "N/A";
   private int controlPanelSpinAmount = 0;
 
@@ -291,37 +292,38 @@ public class Robot extends TimedRobot {
         }
       }
 
-      String colorString;
+      String detectedColorString;
       Color detectedColor = colorSensor.getColor();
       ColorMatchResult match = colorMatcher.matchClosestColor(detectedColor);
       if (match.color == kBlueTarget) {
-        colorString = "Blue";
+        detectedColorString = "Blue";
       } else if (match.color == kRedTarget) {
-        colorString = "Red";
+        detectedColorString = "Red";
       } else if (match.color == kGreenTarget) {
-        colorString = "Green";
+        detectedColorString = "Green";
       } else if (match.color == kYellowTarget) {
-        colorString = "Yellow";
+        detectedColorString = "Yellow";
       } else {
-        colorString = "Unknown";
+        detectedColorString = "Unknown";
       }
-      detectedColorEntry.setString(colorString);
+      detectedColorEntry.setString(detectedColorString);
       confidenceEntry.setDouble(match.confidence);
 
       int doubleContolPanelSpinAmount = controlPanelSpinAmount * 2;
-      if (targetControlPanelColor == "Green" && (colorString != "Green" || doubleContolPanelSpinAmount > 0)) {
-        // @TODO: Add wheel spinner code (currently waiting for more details on this).
-      } else if (targetControlPanelColor == "Red" && (colorString != "Red" || doubleContolPanelSpinAmount > 0)) {
-        // @TODO: Add wheel spinner code (currently waiting for more details on this).
-      } else if (targetControlPanelColor == "Blue" && (colorString != "Blue" || doubleContolPanelSpinAmount > 0)) {
-        // @TODO: Add wheel spinner code (currently waiting for more details on this).
-      } else if (targetControlPanelColor == "Yellow" && (colorString != "Yellow" || doubleContolPanelSpinAmount > 0)) {
-        // @TODO: Add wheel spinner code (currently waiting for more details on this).
-      }
+      turnControlPanel(detectedColorString, targetControlPanelColor, doubleContolPanelSpinAmount);
       targetSpinEntry.setDouble(controlPanelSpinAmount);
     } else {
       detectedColorEntry.setString("N/A");
       confidenceEntry.setDouble(0);
+    }
+  }
+
+  /*
+   * This function turns the control panel when called upon in spinControlPanel().
+   */
+  public void turnControlPanel(String detectedColor, String targetColor, int spinAmount) {
+    if (targetColor != detectedColor && spinAmount > 0) {
+
     }
   }
 }
