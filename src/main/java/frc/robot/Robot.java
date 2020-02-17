@@ -67,7 +67,10 @@ public class Robot extends TimedRobot {
   private static final Color kYellowTarget = ColorMatch.makeColor(0.361, 0.524, 0.113);
   private final WPI_TalonSRX controlPanelTalon = new WPI_TalonSRX(6);
   private String targetControlPanelColor = "N/A";
+  private String detectedColorString;
+  private String lastDetectedColorString;
   private int controlPanelSpinAmount = 0;
+  private int doubleContolPanelSpinAmount = controlPanelSpinAmount * 2;
   private final double controlPanelSpinSpeed = 0.25;
 
   // Vision
@@ -293,7 +296,6 @@ public class Robot extends TimedRobot {
         }
       }
 
-      String detectedColorString;
       Color detectedColor = colorSensor.getColor();
       ColorMatchResult match = colorMatcher.matchClosestColor(detectedColor);
       if (match.color == kBlueTarget) {
@@ -307,29 +309,27 @@ public class Robot extends TimedRobot {
       } else {
         detectedColorString = "Unknown";
       }
-      String lastDetectedColorString = detectedColorEntry.toString(); 
       detectedColorEntry.setString(detectedColorString);
       confidenceEntry.setDouble(match.confidence);
-      
-      int doubleContolPanelSpinAmount = controlPanelSpinAmount * 2;
-      turnControlPanel(detectedColorString, targetControlPanelColor, lastDetectedColorString,
-          doubleContolPanelSpinAmount);
+      turnControlPanel();
       targetSpinEntry.setDouble(controlPanelSpinAmount);
+      lastDetectedColorString = detectedColorString;
     } else {
       detectedColorEntry.setString("N/A");
       confidenceEntry.setDouble(0);
     }
   }
 
-  /*
+  /**
    * This function turns the control panel when called upon in spinControlPanel().
    */
-  public void turnControlPanel(String detectedColor, String targetColor, String lastDetectedColor, int spinAmount) {
-    if (targetColor != detectedColor || spinAmount > 0) {
+  public void turnControlPanel() {
+    if (targetControlPanelColor != detectedColorString || doubleContolPanelSpinAmount > 0) {
       controlPanelTalon.set(controlPanelSpinSpeed);
     }
-    if (targetColor == detectedColor && lastDetectedColor != detectedColor && spinAmount > 0) {
-      spinAmount -= 1;
+    if (targetControlPanelColor == detectedColorString && lastDetectedColorString != detectedColorString
+        && doubleContolPanelSpinAmount > 0) {
+      doubleContolPanelSpinAmount -= 1;
     }
   }
 }
