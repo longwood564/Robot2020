@@ -65,7 +65,7 @@ public class Robot extends TimedRobot {
   private static final Color kGreenTarget = ColorMatch.makeColor(0.197, 0.561, 0.240);
   private static final Color kRedTarget = ColorMatch.makeColor(0.561, 0.232, 0.114);
   private static final Color kYellowTarget = ColorMatch.makeColor(0.361, 0.524, 0.113);
-  private final WPI_TalonSRX controlPanelTalon = new WPI_TalonSRX(5);
+  private final WPI_TalonSRX controlPanelTalon = new WPI_TalonSRX(6);
   private String targetControlPanelColor = "N/A";
   private int controlPanelSpinAmount = 0;
   private final double controlPanelSpinSpeed = 0.25;
