@@ -108,8 +108,8 @@ public class Robot extends TimedRobot {
       .addPersistent("Horizontal Distance (m)", 0).getEntry();
   private final NetworkTableEntry runPredEntry = projectileMotionPredLayout.add("Calculate", false)
       .withWidget(BuiltInWidgets.kToggleButton).getEntry();
-  private final NetworkTableEntry verticalDistanceEntry = projectileMotionPredLayout
-      .addPersistent("Vertical Distance (m)", 0).withWidget(BuiltInWidgets.kTextView).getEntry();
+  private final NetworkTableEntry verticalDistanceEntry = projectileMotionPredLayout.add("Vertical Distance (m)", 0)
+      .withWidget(BuiltInWidgets.kTextView).getEntry();
   private final ShuffleboardLayout projectileMotionSimLayout = launchingToolsLayout
       .getLayout("Projectile Motion Simulation", BuiltInLayouts.kList).withSize(2, 5);
   private double initialVelocitySim = 0;
