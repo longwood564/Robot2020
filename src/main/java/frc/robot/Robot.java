@@ -308,7 +308,7 @@ public class Robot extends TimedRobot {
       detectedColorEntry.setString(colorString);
       confidenceEntry.setDouble(match.confidence);
 
-      double doubleContolPanelSpinAmount = controlPanelSpinAmount * 2;
+      int doubleContolPanelSpinAmount = controlPanelSpinAmount * 2;
       if (targetControlPanelColor == "Green" && (colorString != "Green" || doubleContolPanelSpinAmount > 0)) {
         // @TODO: Add wheel spinner code (currently waiting for more details on this).
       } else if (targetControlPanelColor == "Red" && (colorString != "Red" || doubleContolPanelSpinAmount > 0)) {
