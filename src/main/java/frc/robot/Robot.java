@@ -330,21 +330,15 @@ public class Robot extends TimedRobot {
     double horDistanceToHex = 13;
     double horDistanceToHoop = horDistanceToHex + Constants.kHorDistanceHexagonToHoop;
 
-    // double projectedVertDistanceToHex = calculateHeight(horDistanceToHex);
-    // double projectedHeightToHoop = calculateHeight(horDistanceToHoop);
-
-    // if (Math.abs(Constants.kVertDistanceLauncherToHex -
-    // projectedVertDistanceToHex) > tolerance
-    // || Math.abs(Constants.kVertDistanceLauncherToHoop - projectedHeightToHoop) >
-    // tolerance) {
-    // if (Constants.kProjectedHorDistanceToApex > horDistanceToHoop) {
-    // // Too close.
-    // } else {
-    // // Too far.
-    // }
-    // } else {
-    // // Shot is lined up!
-    // }
+    if (Math.abs(Constants.kProjectedHorDistanceToApex - horDistanceToHoop) > tolerance) {
+      if (Constants.kProjectedHorDistanceToApex > horDistanceToHoop) {
+        // Too close.
+      } else {
+        // Too far.
+      }
+    } else {
+      // Shot is lined up!
+    }
   }
 
   /**
