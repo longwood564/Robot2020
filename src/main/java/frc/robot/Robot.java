@@ -88,9 +88,15 @@ public class Robot extends TimedRobot {
   private final ShuffleboardLayout drivingLayout = generalTab.getLayout("Driving", BuiltInLayouts.kGrid)
       .withPosition(0, 1).withSize(3, 3).withProperties(Map.of("Number of columns", 1, "Number of rows", 1));
   private final ShuffleboardLayout launchingLayout = generalTab.getLayout("Launching", BuiltInLayouts.kGrid)
-      .withPosition(3, 1).withSize(1, 1).withProperties(Map.of("Number of columns", 1, "Number of rows", 1));
+      .withPosition(3, 1).withSize(3, 3).withProperties(Map.of("Number of columns", 1, "Number of rows", 3));
+  private final NetworkTableEntry distanceSensorEntry = launchingLayout.add("Distance Sensor Reading", 0)
+      .withWidget(BuiltInWidgets.kNumberBar)
+      .withProperties(Map.of("Min", 0, "Max", Constants.kMaximumDistanceSensorReading, "Center", 0)).getEntry();
+  private final NetworkTableEntry distanceTolerenceEntry = launchingLayout.addPersistent("Distance Tolerance", 1)
+      .withWidget(BuiltInWidgets.kNumberSlider).withProperties(Map.of("Min", 0, "Max", 2, "Block increment", 0.25))
+      .getEntry();
   private final ShuffleboardLayout controlPanelLayout = generalTab.getLayout("Color Sensing", BuiltInLayouts.kGrid)
-      .withPosition(3, 2).withSize(3, 2).withProperties(Map.of("Number of columns", 2, "Number of rows", 2));
+      .withPosition(3, 4).withSize(3, 2).withProperties(Map.of("Number of columns", 2, "Number of rows", 2));
   private final NetworkTableEntry detectedColorEntry = controlPanelLayout.add("Detected color", "N/A").getEntry();
   private final NetworkTableEntry confidenceEntry = controlPanelLayout.add("Confidence", 0).getEntry();
   private final NetworkTableEntry targetColorEntry = controlPanelLayout.add("Target Color", "N/A").getEntry();
@@ -146,6 +152,8 @@ public class Robot extends TimedRobot {
     autoChooser.setDefaultOption("Default Auto", kDefaultAuto);
     autonomousLayout.add(autoChooser).withWidget(BuiltInWidgets.kSplitButtonChooser);
     drivingLayout.add(differentialDrive);
+    launchingLayout.add("Distance to Apex", Constants.kProjectedHorDistanceToApex).withWidget(BuiltInWidgets.kNumberBar)
+        .withProperties(Map.of("Min", 0, "Max", Constants.kMaximumDistanceSensorReading, "Center", 0)).getEntry();
   }
 
   /**
@@ -324,8 +332,7 @@ public class Robot extends TimedRobot {
    * power port, and adjusts the robot to make the shot if it can't.
    */
   private void launchBall() {
-    // TODO: Allow for this to be configurable from the DS.
-    double tolerance = 1;
+    double tolerance = distanceTolerenceEntry.getDouble(1);
     // TODO: Plug in the ultrasonic sensor reading here.
     double horDistanceToHex = 13;
     double horDistanceToHoop = horDistanceToHex + Constants.kHorDistanceHexagonToHoop;
