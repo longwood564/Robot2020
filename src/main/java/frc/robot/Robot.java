@@ -79,18 +79,18 @@ public class Robot extends TimedRobot {
   private final ShuffleboardLayout autonomousLayout = generalTab.getLayout("Autonomous", BuiltInLayouts.kGrid)
       .withPosition(3, 0).withSize(3, 1)
       .withProperties(Map.of("Label position", "HIDDEN", "Number of columns", 1, "Number of rows", 1));
-  private final ShuffleboardLayout drivingLayout = generalTab.getLayout("Driving", BuiltInLayouts.kList)
-      .withPosition(0, 1).withSize(3, 3);
-  private final ShuffleboardLayout launchingLayout = generalTab.getLayout("Launching", BuiltInLayouts.kList)
-      .withPosition(3, 1).withSize(1, 1);
+  private final ShuffleboardLayout drivingLayout = generalTab.getLayout("Driving", BuiltInLayouts.kGrid)
+      .withPosition(0, 1).withSize(3, 3).withProperties(Map.of("Number of columns", 1, "Number of rows", 1));
+  private final ShuffleboardLayout launchingLayout = generalTab.getLayout("Launching", BuiltInLayouts.kGrid)
+      .withPosition(3, 1).withSize(1, 1).withProperties(Map.of("Number of columns", 1, "Number of rows", 1));
   private final ShuffleboardLayout controlPanelLayout = generalTab.getLayout("Color Sensing", BuiltInLayouts.kGrid)
       .withPosition(3, 2).withSize(3, 2).withProperties(Map.of("Number of columns", 2, "Number of rows", 2));
   private final NetworkTableEntry detectedColorEntry = controlPanelLayout.add("Detected color", "N/A").getEntry();
   private final NetworkTableEntry confidenceEntry = controlPanelLayout.add("Confidence", 0).getEntry();
   private final NetworkTableEntry targetColorEntry = controlPanelLayout.add("Target Color", "N/A").getEntry();
   private final NetworkTableEntry targetSpinEntry = controlPanelLayout.add("Target Spins", 0).getEntry();
-  private final ShuffleboardLayout visionLayout = generalTab.getLayout("Vision", BuiltInLayouts.kList).withPosition(6,
-      0);
+  private final ShuffleboardLayout visionLayout = generalTab.getLayout("Vision", BuiltInLayouts.kGrid)
+      .withPosition(6, 0).withSize(1, 1).withProperties(Map.of("Number of columns", 1, "Number of rows", 1));
 
   /**
    * This function is run when the robot is first started up and should be used
