@@ -4,6 +4,9 @@ package frc.robot;
  * This class has constants used in other parts of the robot code. These
  * include: physics constants, field measurements, robot measurements, and
  * constant calculations.
+ * 
+ * All values are in, unless specified otherwise: - m, for distance. - m/s^2,
+ * for acceleration. - rad, for angles.
  */
 public final class Constants {
   // Physics Constants
