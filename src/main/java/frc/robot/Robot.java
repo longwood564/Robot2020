@@ -307,6 +307,7 @@ public class Robot extends TimedRobot {
       } else {
         detectedColorString = "Unknown";
       }
+      String lastDetectedColorString = detectedColorEntry.toString(); 
       detectedColorEntry.setString(detectedColorString);
       confidenceEntry.setDouble(match.confidence);
 
