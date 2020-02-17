@@ -112,13 +112,6 @@ public class Robot extends TimedRobot {
       .withWidget(BuiltInWidgets.kTextView).getEntry();
   private final ShuffleboardLayout projectileMotionSimLayout = launchingToolsLayout
       .getLayout("Projectile Motion Simulation", BuiltInLayouts.kList).withSize(2, 5);
-  private double initialVelocitySim = 0;
-  private final NetworkTableEntry initialVelocityEntry = projectileMotionSimLayout
-      .addPersistent("Initial Velocity (ms^-1)", initialVelocitySim).getEntry();
-  private double initialAngleSim = 0;
-  private double initialAngleSimRad = 0;
-  private final NetworkTableEntry initialAngleEntry = projectileMotionSimLayout
-      .addPersistent("Initial Angle (Degrees)", initialAngleSim).getEntry();
   private final NetworkTableEntry runSimEntry = projectileMotionSimLayout.add("Run Simulation", false)
       .withWidget(BuiltInWidgets.kToggleButton).getEntry();
   private final NetworkTableEntry simGraphEntry = projectileMotionSimLayout.add("Simlulation", new double[] { 0, 0 })
@@ -179,14 +172,11 @@ public class Robot extends TimedRobot {
 
     if (runSimEntry.getBoolean(false) && !runningSim) {
       runningSim = true;
-      // Only set these once. These can't change in the middle of a simulation.
-      initialVelocitySim = initialVelocityEntry.getDouble(initialVelocitySim);
-      initialAngleSimRad = Math.toRadians(initialAngleEntry.getDouble(initialAngleSim));
       simTimer.start();
     } else if (runSimEntry.getBoolean(false) && runningSim) {
       double time = simTimer.get();
-      double horizontalDistance = (initialVelocitySim * Math.cos(initialAngleSimRad)) * time;
-      double verticalDistance = (initialVelocitySim * Math.sin(initialAngleSimRad)) * time
+      double horizontalDistance = (Constants.kInitialVelocityBall * Math.cos(Constants.kLauncherAngle)) * time;
+      double verticalDistance = (Constants.kInitialVelocityBall * Math.sin(Constants.kLauncherAngle)) * time
           + 0.5 * -Constants.kAccelDueToGravity * Math.pow(time, 2);
       if (verticalDistance < 0) {
         runningSim = false;

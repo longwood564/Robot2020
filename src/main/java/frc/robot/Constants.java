@@ -54,7 +54,7 @@ public final class Constants {
    * 
    * @todo Find this measurement.
    */
-  public static final double kLauncherAngle = 45;
+  public static final double kLauncherAngle = Math.toRadians(45);
   /**
    * The initial velocity of the ball as it is launched.
    * 
