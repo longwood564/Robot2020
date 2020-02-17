@@ -68,6 +68,7 @@ public class Robot extends TimedRobot {
   private final WPI_TalonSRX controlPanelTalon = new WPI_TalonSRX(5);
   private String targetControlPanelColor = "N/A";
   private int controlPanelSpinAmount = 0;
+  private final double controlPanelSpinSpeed = 0.25;
 
   // Vision
 
@@ -323,7 +324,7 @@ public class Robot extends TimedRobot {
    */
   public void turnControlPanel(String detectedColor, String targetColor, int spinAmount) {
     if (targetColor != detectedColor && spinAmount > 0) {
-
+      controlPanelTalon.set(controlPanelSpinSpeed);
     }
   }
 }
