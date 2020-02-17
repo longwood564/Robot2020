@@ -5,6 +5,7 @@ import java.util.Map;
 import edu.wpi.first.wpilibj.I2C;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
@@ -75,7 +76,7 @@ public class Robot extends TimedRobot {
 
   // Vision
 
-  // Shuffleboard
+  // Shuffleboard General
   private final ShuffleboardTab generalTab = Shuffleboard.getTab("General");
   private final ShuffleboardLayout stateLayout = generalTab.getLayout("State", BuiltInLayouts.kGrid).withPosition(0, 0)
       .withSize(3, 1).withProperties(Map.of("Number of columns", 1, "Number of rows", 1));
@@ -97,6 +98,18 @@ public class Robot extends TimedRobot {
   private final ShuffleboardLayout visionLayout = generalTab.getLayout("Vision", BuiltInLayouts.kGrid)
       .withPosition(6, 0).withSize(1, 1).withProperties(Map.of("Number of columns", 1, "Number of rows", 1));
 
+  // Shuffleboard Tools
+  private final ShuffleboardTab toolsTab = Shuffleboard.getTab("Tools");
+  private final ShuffleboardLayout launchingToolsLayout = toolsTab.getLayout("Launching Tools", BuiltInLayouts.kGrid)
+      .withPosition(0, 0).withSize(4, 5).withProperties(Map.of("Number of columns", 2, "Number of rows", 1));
+  private final ShuffleboardLayout projectileMotionPredLayout = launchingToolsLayout
+      .getLayout("Projectile Motion Prediction", BuiltInLayouts.kList).withSize(2, 5);
+  private final NetworkTableEntry horizontalDistanceEntry = projectileMotionPredLayout
+      .addPersistent("Horizontal Distance (m)", 0).getEntry();
+  private final NetworkTableEntry runPredEntry = projectileMotionPredLayout.add("Calculate", false)
+      .withWidget(BuiltInWidgets.kToggleButton).getEntry();
+  private final NetworkTableEntry verticalDistanceEntry = projectileMotionPredLayout
+      .addPersistent("Vertical Distance (m)", 0).withWidget(BuiltInWidgets.kTextView).getEntry();
   /**
    * This function is run when the robot is first started up and should be used
    * for any initialization code.
@@ -135,6 +148,16 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotPeriodic() {
+    if (runPredEntry.getBoolean(false)) {
+      runPredEntry.setBoolean(false);
+      double horDistance = horizontalDistanceEntry.getDouble(0);
+      // This expression calculates how high the ball will be at a specified distance
+      // away from the robot. See the research document for the derivation of the
+      // formula used here.
+      verticalDistanceEntry
+          .setDouble(horDistance * Math.tan(Constants.kLauncherAngle) - (0.5 * Constants.kAccelDueToGravity
+              * Math.pow((horDistance / (Constants.kInitialVelocityBall * Math.cos(Constants.kLauncherAngle))), 2)));
+    }
   }
 
   /**
@@ -263,20 +286,6 @@ public class Robot extends TimedRobot {
   }
 
   /**
-   * This function calculates how high the ball will be at a specified distance
-   * away from the robot. See the research document for the derivation of the
-   * formula used here.
-   * 
-   * @param horDistance The horizontal distance from the launcher to the desired
-   *                    point of the trajectory.
-   * @return The calculated height of the ball.
-   */
-  private double calculateHeight(double horDistance) {
-    return horDistance * Math.tan(Constants.kLauncherAngle) - (0.5 * Constants.kAccelDueToGravity
-        * Math.pow((horDistance / (Constants.kInitialVelocityBall * Math.cos(Constants.kLauncherAngle))), 2));
-  }
-
-  /**
    * This function determines whether or not the ball can be launched into the
    * power port, and adjusts the robot to make the shot if it can't.
    */
@@ -287,19 +296,21 @@ public class Robot extends TimedRobot {
     double horDistanceToHex = 13;
     double horDistanceToHoop = horDistanceToHex + Constants.kHorDistanceHexagonToHoop;
 
-    double projectedVertDistanceToHex = calculateHeight(horDistanceToHex);
-    double projectedHeightToHoop = calculateHeight(horDistanceToHoop);
+    // double projectedVertDistanceToHex = calculateHeight(horDistanceToHex);
+    // double projectedHeightToHoop = calculateHeight(horDistanceToHoop);
 
-    if (Math.abs(Constants.kVertDistanceLauncherToHex - projectedVertDistanceToHex) > tolerance
-        || Math.abs(Constants.kVertDistanceLauncherToHoop - projectedHeightToHoop) > tolerance) {
-      if (Constants.kProjectedHorDistanceToApex > horDistanceToHoop) {
-        // Too close.
-      } else {
-        // Too far.
-      }
-    } else {
-      // Shot is lined up!
-    }
+    // if (Math.abs(Constants.kVertDistanceLauncherToHex -
+    // projectedVertDistanceToHex) > tolerance
+    // || Math.abs(Constants.kVertDistanceLauncherToHoop - projectedHeightToHoop) >
+    // tolerance) {
+    // if (Constants.kProjectedHorDistanceToApex > horDistanceToHoop) {
+    // // Too close.
+    // } else {
+    // // Too far.
+    // }
+    // } else {
+    // // Shot is lined up!
+    // }
   }
 
   /**
