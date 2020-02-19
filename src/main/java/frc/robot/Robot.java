@@ -3,6 +3,8 @@ package frc.robot;
 import java.util.Map;
 
 import edu.wpi.first.wpilibj.I2C;
+import edu.wpi.first.wpilibj.AnalogInput;
+import edu.wpi.first.wpilibj.AnalogPotentiometer;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
@@ -61,6 +63,9 @@ public class Robot extends TimedRobot {
   // Launching
   WPI_VictorSPX motorLeftLauncher = new WPI_VictorSPX(RoboRIO.kPortMotorLeftLauncher);
   WPI_VictorSPX motorRightLauncher = new WPI_VictorSPX(RoboRIO.kPortMotorRightLauncher);
+  private final AnalogInput ultrasonicSensorAnalogInput = new AnalogInput(RoboRIO.kPortUltrasonicSensorAnalogPort);
+  // Leave this uninitialized because we have to configure the analot input.
+  private AnalogPotentiometer ultrasonicSensor;
 
   // Color Sensing
   private final I2C.Port i2cPort = I2C.Port.kOnboard;
@@ -88,11 +93,12 @@ public class Robot extends TimedRobot {
       .withPosition(0, 1).withSize(3, 3).withProperties(Map.of("Number of columns", 1, "Number of rows", 1));
   private final ShuffleboardLayout launchingLayout = generalTab.getLayout("Launching", BuiltInLayouts.kGrid)
       .withPosition(3, 1).withSize(3, 3).withProperties(Map.of("Number of columns", 1, "Number of rows", 3));
-  private final NetworkTableEntry distanceSensorEntry = launchingLayout.add("Distance Sensor Reading", 0)
-      .withWidget(BuiltInWidgets.kNumberBar)
-      .withProperties(Map.of("Min", 0, "Max", Constants.kMaximumDistanceSensorReading, "Center", 0)).getEntry();
+  private static final Map<String, Object> distanceSensorProperties = Map.of("Min", Constants.kMinimumUltrasonicReading,
+      "Max", Constants.kMaximumUltrasonicReading, "Center", Constants.kMinimumUltrasonicReading);
+  private final NetworkTableEntry distanceSensorEntry = launchingLayout.add("Distance Sensor Reading", 0.0)
+      .withWidget(BuiltInWidgets.kNumberBar).withProperties(distanceSensorProperties).getEntry();
   private final NetworkTableEntry distanceTolerenceEntry = launchingLayout.addPersistent("Distance Tolerance", 1)
-      .withWidget(BuiltInWidgets.kNumberSlider).withProperties(Map.of("Min", 0, "Max", 2, "Block increment", 0.25))
+      .withWidget(BuiltInWidgets.kNumberSlider).withProperties(Map.of("Min", 0.0, "Max", 2.0, "Block increment", 0.25))
       .getEntry();
   private final ShuffleboardLayout controlPanelLayout = generalTab.getLayout("Color Sensing", BuiltInLayouts.kGrid)
       .withPosition(3, 4).withSize(3, 2).withProperties(Map.of("Number of columns", 2, "Number of rows", 2));
@@ -136,6 +142,15 @@ public class Robot extends TimedRobot {
     rightVictor.follow(rightTalon);
     leftVictor.follow(leftTalon);
 
+    // Configure the ultrasonic sensor.
+    // Enable 2-bit averaging, for stability,
+    ultrasonicSensorAnalogInput.setAverageBits(2);
+    // Initialize an analog potentiometer, configured for the ultrasonic sensor.
+    // The documentation for this function describes this parameter as a "scale",
+    // although it is not the scale for how many units a volt represent - rather, it
+    // expects the units per 5 volts.
+    ultrasonicSensor = new AnalogPotentiometer(ultrasonicSensorAnalogInput, Constants.kMetersPerVolt * 5);
+
     // Add color sensor matches.
     colorMatcher.addColorMatch(kBlueTarget);
     colorMatcher.addColorMatch(kGreenTarget);
@@ -151,8 +166,10 @@ public class Robot extends TimedRobot {
     autoChooser.setDefaultOption("Default Auto", kDefaultAuto);
     autonomousLayout.add(autoChooser).withWidget(BuiltInWidgets.kSplitButtonChooser);
     drivingLayout.add(differentialDrive);
-    launchingLayout.add("Distance to Apex", Constants.kProjectedHorDistanceToApex).withWidget(BuiltInWidgets.kNumberBar)
-        .withProperties(Map.of("Min", 0, "Max", Constants.kMaximumDistanceSensorReading, "Center", 0)).getEntry();
+    System.out.println(Constants.kProjectedHorDistanceToApex - Constants.kHorDistanceHexagonToHoop);
+    launchingLayout
+        .add("Optimal Distance to Apex", Constants.kProjectedHorDistanceToApex - Constants.kHorDistanceHexagonToHoop)
+        .withWidget(BuiltInWidgets.kNumberBar).withProperties(distanceSensorProperties).getEntry();
   }
 
   /**
@@ -332,18 +349,15 @@ public class Robot extends TimedRobot {
    */
   private void launchBall() {
     double tolerance = distanceTolerenceEntry.getDouble(1);
-    // TODO: Plug in the ultrasonic sensor reading here.
-    double horDistanceToHex = 13;
+    double horDistanceToHex = ultrasonicSensor.get();
+    distanceSensorEntry.setDouble(horDistanceToHex);
     double horDistanceToHoop = horDistanceToHex + Constants.kHorDistanceHexagonToHoop;
 
-    if (Math.abs(Constants.kProjectedHorDistanceToApex - horDistanceToHoop) > tolerance) {
-      if (Constants.kProjectedHorDistanceToApex > horDistanceToHoop) {
-        // Too close.
-      } else {
-        // Too far.
-      }
+    double error = Constants.kProjectedHorDistanceToApex - horDistanceToHoop;
+    if (Math.abs(error) > tolerance) {
+      differentialDrive.arcadeDrive(error * Constants.kP, 0);
     } else {
-      // Shot is lined up!
+      // TODO.
     }
   }
 
