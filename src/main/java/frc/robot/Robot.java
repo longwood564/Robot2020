@@ -59,9 +59,8 @@ public class Robot extends TimedRobot {
   private static final double defaultSpeed = 0.65;
 
   // Launching
-  // TODO: Setup both of these.
-  WPI_TalonSRX leftLauncher = new WPI_TalonSRX(7);
-  WPI_TalonSRX rightLauncher = new WPI_TalonSRX(8);
+  WPI_VictorSPX motorLeftLauncher = new WPI_VictorSPX(RoboRIO.kPortMotorLeftLauncher);
+  WPI_VictorSPX motorRightLauncher = new WPI_VictorSPX(RoboRIO.kPortMotorRightLauncher);
 
   // Color Sensing
   private final I2C.Port i2cPort = I2C.Port.kOnboard;
