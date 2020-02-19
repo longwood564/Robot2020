@@ -2,8 +2,8 @@ package frc.robot;
 
 /**
  * This class has constants used in other parts of the robot code. These
- * include: physics constants, field measurements, robot measurements, and
- * constant calculations.
+ * include: physics constants, field measurements, robot ports, robot
+ * measurements, and constant calculations.
  * 
  * All values are in, unless specified otherwise: - m, for distance. - m/s^2,
  * for acceleration. - rad, for angles.
@@ -64,6 +64,37 @@ public final class Constants {
    * @todo Find this measurement.
    */
   public static final double kInitialVelocityBall = 10;
+  /**
+   * The proportionality constant to use for correcting error in maintaining a
+   * distance from an object.
+   */
+  public static final double kP = 0.05;
+  /**
+   * The conversion from the voltage reading of the analog ultrasonic sensor, to
+   * meters. The voltage / distance range for the MB1013 is 300-mm / 293mV,
+   * 5000-mm / 4.885V. For more info, see the description of pin 3 of the board
+   * here: https://www.maxbotix.com/documents/HRLV-MaxSonar-EZ_Datasheet.pdf
+   */
+  public static final double kMetersPerVolt = (5000 / 4.885) * (1.0 / 1000);
+  /**
+   * The minimum distance that the distance sensor can read.
+   * 
+   * @see #kMetersPerVolt
+   */
+  public static final double kMinimumUltrasonicReading = (300) * (1.0 / 1000);
+  /**
+   * The maximum distance that the distance sensor can read. See above for info on
+   * where this value came from.
+   * 
+   * @see #kMetersPerVolt
+   */
+  public static final double kMaximumUltrasonicReading = (5000) * (1.0 / 1000);
+  /**
+   * The range of values that the ultrasonic sensor will read.
+   * 
+   * @see #kMetersPerVolt
+   */
+  public static final double kUltrasonicRange = kMaximumUltrasonicReading - kMinimumUltrasonicReading;
 
   // Constant Calculations
 
