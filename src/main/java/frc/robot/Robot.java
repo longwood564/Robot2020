@@ -328,6 +328,8 @@ public class Robot extends TimedRobot {
   public void turnControlPanel() {
     if (targetControlPanelColor != detectedColorString || controlPanelSpinAmount > 0) {
       controlPanelTalon.set(controlPanelSpinSpeed);
+    } else {
+      controlPanelTalon.set(0);
     }
     if (targetControlPanelColor == detectedColorString && lastDetectedColorString != detectedColorString
         && controlPanelSpinAmount > 0) {
