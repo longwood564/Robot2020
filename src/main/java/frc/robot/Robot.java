@@ -70,7 +70,6 @@ public class Robot extends TimedRobot {
   private String detectedColorString;
   private String lastDetectedColorString;
   private int controlPanelSpinAmount = 0;
-  private int doubleContolPanelSpinAmount = controlPanelSpinAmount * 2;
   private final double controlPanelSpinSpeed = 0.25;
 
   // Vision
@@ -270,12 +269,15 @@ public class Robot extends TimedRobot {
       boolean manipRB = manipController.getRawButton(6);
       if (manipRB) {
         int controlPanelSpinAmountInitial = controlPanelSpinAmount;
+        // During a match, the amount of revolutions needed to be completed will be
+        // specified as either 3, 4, or 5. The selections below display 6, 8, and 10,
+        // respectively, because each color is represented twice on the control panel.
         if (manipAPress) {
-          controlPanelSpinAmount = 3;
+          controlPanelSpinAmount = 6;
         } else if (manipBPress) {
-          controlPanelSpinAmount = 4;
+          controlPanelSpinAmount = 8;
         } else if (manipXPress) {
-          controlPanelSpinAmount = 5;
+          controlPanelSpinAmount = 10;
         }
         if (controlPanelSpinAmountInitial != controlPanelSpinAmount) {
           targetSpinEntry.setDouble(controlPanelSpinAmount);
@@ -324,12 +326,12 @@ public class Robot extends TimedRobot {
    * This function turns the control panel when called upon in spinControlPanel().
    */
   public void turnControlPanel() {
-    if (targetControlPanelColor != detectedColorString || doubleContolPanelSpinAmount > 0) {
+    if (targetControlPanelColor != detectedColorString || controlPanelSpinAmount > 0) {
       controlPanelTalon.set(controlPanelSpinSpeed);
     }
     if (targetControlPanelColor == detectedColorString && lastDetectedColorString != detectedColorString
-        && doubleContolPanelSpinAmount > 0) {
-      doubleContolPanelSpinAmount -= 1;
+        && controlPanelSpinAmount > 0) {
+      controlPanelSpinAmount -= 1;
     }
   }
 }
