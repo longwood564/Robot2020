@@ -21,21 +21,32 @@ public final class Constants {
   // Field Measurements
 
   /**
-   * The distance from the floor to the outer hexagon of the power port.
+   * The distance from the floor to the bottom of the outer hexagon of the power
+   * port. Field measurements used:
+   * <ul>
+   * <li>Height of hexagon = 24in.
+   * <li>Half height of hexagon = 24in. / 2 = 12in.
+   * <li>Floor to center of hexagon = 98.25in.
+   * <li>Floor to bottom of hexagon = 98.25in. - 12in. = 86.25 in.
+   * </ul>
    */
-  private static final double kVertDistanceFloorToHex = 8;
+  private static final double kVertDistanceFloorToHex = 86.25 / 39.37;
   /**
-   * The distance from the floor to the inner hoop of the power port.
-   * 
-   * @todo Find this measurement.
+   * The distance from the floor to the inner hoop of the power port. Field
+   * measurements used:
+   * <ul>
+   * <li>Floor to center of hoop = 98.25in.
+   * </ul>
    */
-  private static final double kVertDistanceFloorToHoop = 8.5;
+  private static final double kVertDistanceFloorToHoop = 98.25 / 39.37;
   /**
    * The distance from the outer hexagon of the power cell to the inner hoop.
-   * 
-   * @todo Find this measurement.
+   * Field measurements used:
+   * <ul>
+   * <li>Hexagon to hoop = 29.25 in.
+   * </ul>
    */
-  public static final double kHorDistanceHexagonToHoop = 1;
+  public static final double kHorDistanceHexagonToHoop = 29.25 / 39.37;
 
   // Robot Measurements
 
@@ -54,10 +65,8 @@ public final class Constants {
   public static final double kVertDistanceLauncherToHoop = kVertDistanceFloorToHoop - kVertDistanceFloorToLauncher;
   /**
    * The angle of the ball launcher.
-   * 
-   * @todo Find this measurement.
    */
-  public static final double kLauncherAngle = Math.toRadians(45);
+  public static final double kLauncherAngle = Math.toRadians(37);
   /**
    * The initial velocity of the ball as it is launched.
    * 
