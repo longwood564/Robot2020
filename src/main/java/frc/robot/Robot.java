@@ -142,6 +142,11 @@ public class Robot extends TimedRobot {
     rightVictor.follow(rightTalon);
     leftVictor.follow(leftTalon);
 
+    motorRightLauncher.follow(motorLeftLauncher);
+    // Invert one of the launching motors, because they must spin in opposite
+    // directions.
+    motorRightLauncher.setInverted(true);
+
     // Configure the ultrasonic sensor.
     // Enable 2-bit averaging, for stability,
     ultrasonicSensorAnalogInput.setAverageBits(2);
