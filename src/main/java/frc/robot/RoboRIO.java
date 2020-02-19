@@ -20,5 +20,5 @@ public final class RoboRIO {
   /**
    * The port of the ultrasonic sensor.
    */
-  public static final int kPortUltrasonicSensorAnalogPort = 0;
+  public static final int kPortUltrasonicSensorPort = 0;
 }
