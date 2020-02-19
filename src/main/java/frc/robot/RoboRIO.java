@@ -16,7 +16,7 @@ public final class RoboRIO {
    */
   public static final int kPortMotorRightLauncher = 11;
 
-  // Analog Input
+  // Analog Inputs
   /**
    * The port of the ultrasonic sensor.
    */
