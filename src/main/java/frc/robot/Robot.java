@@ -26,10 +26,7 @@ import com.revrobotics.ColorMatchResult;
 import com.revrobotics.ColorMatch;
 
 /**
- * The VM is configured to automatically run this class, and to call the functions corresponding to
- * each mode, as described in the TimedRobot documentation. If you change the name of this class or
- * the package after creating this project, you must also update the build.gradle file in the
- * project.
+ * Runs the robot code. The name of this class is depended upon by build.gradle.
  */
 public class Robot extends TimedRobot {
   // Joysticks
@@ -191,8 +188,7 @@ public class Robot extends TimedRobot {
   private boolean m_isRunningSim = false;
 
   /**
-   * This function is run when the robot is first started up and should be used for any initialization
-   * code.
+   * Initializes the robot code when the robot power is turned on.
    */
   @Override
   public void robotInit() {
@@ -242,12 +238,7 @@ public class Robot extends TimedRobot {
   }
 
   /**
-   * This function is called every robot packet, no matter the mode. Use this for items like
-   * diagnostics that you want ran during disabled, autonomous, teleoperated and test.
-   *
-   * <p>
-   * This runs after the mode specific periodic functions, but before LiveWindow and SmartDashboard
-   * integrated updating.
+   * Updates diagnostics while the robot power is on.
    */
   @Override
   public void robotPeriodic() {
@@ -293,7 +284,7 @@ public class Robot extends TimedRobot {
   }
 
   /**
-   * This function is called when initializing disabled mode.
+   * Initializes disabled mode.
    */
   @Override
   public void disabledInit() {
@@ -304,22 +295,14 @@ public class Robot extends TimedRobot {
   }
 
   /**
-   * This function is called periodically during disabled mode.
+   * Maintains disabled mode.
    */
   @Override
   public void disabledPeriodic() {
   }
 
   /**
-   * This autonomous (along with the chooser code above) shows how to select between different
-   * autonomous modes using the dashboard. The sendable chooser code works with the Java
-   * SmartDashboard. If you prefer the LabVIEW Dashboard, remove all of the chooser code and uncomment
-   * the getString line to get the auto name from the text box below the Gyro
-   *
-   * <p>
-   * You can add additional auto modes by adding additional comparisons to the switch structure below
-   * with additional strings. If using the SendableChooser make sure to add them to the chooser code
-   * above as well.
+   * Initializes autonomous mode.
    */
   @Override
   public void autonomousInit() {
@@ -327,7 +310,7 @@ public class Robot extends TimedRobot {
   }
 
   /**
-   * This function is called periodically during autonomous.
+   * Maintains autonomous mode.
    */
   @Override
   public void autonomousPeriodic() {
@@ -340,7 +323,7 @@ public class Robot extends TimedRobot {
   }
 
   /**
-   * This function is called when initializing teleop mode.
+   * Initializes teleoperated mode.
    */
   @Override
   public void teleopInit() {
@@ -353,7 +336,7 @@ public class Robot extends TimedRobot {
   }
 
   /**
-   * This function is called periodically during operator control.
+   * Maintains teleoperated mode.
    */
   @Override
   public void teleopPeriodic() {
@@ -365,9 +348,9 @@ public class Robot extends TimedRobot {
   }
 
   /**
-   * This function reads pressed states from the gamepads. This is done here because it is paramount
-   * that getRawButtonPressed() is only called once per loop, because, the second time, it will more
-   * than likely just return "false" for any button.
+   * Reads pressed states from the gamepads. This is done here because it is paramount that
+   * getRawButtonPressed() is only called once per loop, because, the second time, it will more than
+   * likely just return "false" for any button.
    */
   private void updateInputs() {
     m_buttonManipPressA =
@@ -383,7 +366,7 @@ public class Robot extends TimedRobot {
   }
 
   /**
-   * This function handles general state of the teleoperated mode.
+   * Handles general state of the teleoperated mode.
    */
   private void handleState() {
     if (m_buttonManipPressLB) {
@@ -396,7 +379,7 @@ public class Robot extends TimedRobot {
   }
 
   /**
-   * This function drives the robot at a certain speed.
+   * Drives the robot at a certain speed inputted by the driver.
    */
   private void driveSpeed() {
     if (m_isInControlPanelMode) {
@@ -436,8 +419,8 @@ public class Robot extends TimedRobot {
   }
 
   /**
-   * This function determines whether or not the ball can be launched into the power port, and adjusts
-   * the robot to make the shot if it can't.
+   * Determines whether or not the ball can be launched into the power port, and adjusts the robot to
+   * make the shot if it can't.
    */
   private void launchBall() {
     double tolerance = m_entryDistanceTolerence.getDouble(1);
@@ -455,8 +438,7 @@ public class Robot extends TimedRobot {
   }
 
   /**
-   * This function configures the conditions for spinning the control panel, and spins it if
-   * necessary.
+   * Configures the conditions for spinning the control panel, and spins it if necessary.
    */
   private void spinControlPanel() {
     if (m_isInControlPanelMode) {
@@ -512,7 +494,7 @@ public class Robot extends TimedRobot {
   }
 
   /**
-   * This function turns the control panel when called upon in spinControlPanel().
+   * Turns the control panel when called upon in spinControlPanel().
    */
   public void turnControlPanel() {
     if (m_targetControlPanelColor != m_detectedColorString
@@ -528,14 +510,14 @@ public class Robot extends TimedRobot {
   }
 
   /**
-   * This function is called when initializing test mode.
+   * Initializes test mode.
    */
   @Override
   public void testInit() {
   }
 
   /**
-   * This function is called periodically during test mode.
+   * Maintains test mode.
    */
   @Override
   public void testPeriodic() {
