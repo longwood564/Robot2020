@@ -52,10 +52,14 @@ public class Robot extends TimedRobot {
   private final SendableChooser<String> m_autoChooser = new SendableChooser<>();
 
   // Driving
-  private final WPI_TalonSRX m_motorDriveFrontLeft = new WPI_TalonSRX(1);
-  private final WPI_TalonSRX m_motorDriveFrontRight = new WPI_TalonSRX(3);
-  private final WPI_VictorSPX m_motorDriveBackLeft = new WPI_VictorSPX(2);
-  private final WPI_VictorSPX m_motorDriveBackRight = new WPI_VictorSPX(4);
+  private final WPI_TalonSRX m_motorDriveFrontLeft =
+      new WPI_TalonSRX(RoboRIO.kPortMotorDriveFrontLeft);
+  private final WPI_TalonSRX m_motorDriveFrontRight =
+      new WPI_TalonSRX(RoboRIO.kPortMotorDriveFrontRight);
+  private final WPI_VictorSPX m_motorDriveBackLeft =
+      new WPI_VictorSPX(RoboRIO.kPortMotorDriveBackLeft);
+  private final WPI_VictorSPX m_motorDriveBackRight =
+      new WPI_VictorSPX(RoboRIO.kPortMotorDriveBackRight);
   private final DifferentialDrive m_differentialDrive =
       new DifferentialDrive(m_motorDriveFrontLeft, m_motorDriveFrontRight);
 
@@ -81,12 +85,12 @@ public class Robot extends TimedRobot {
       ColorMatch.makeColor(0.561, 0.232, 0.114);
   private static final Color kYellowTarget =
       ColorMatch.makeColor(0.361, 0.524, 0.113);
-  private final WPI_TalonSRX m_motorControlPanel = new WPI_TalonSRX(6);
+  private final WPI_TalonSRX m_motorControlPanel =
+      new WPI_TalonSRX(RoboRIO.kPortMotorControlPanel);
   private String m_targetControlPanelColor = "N/A";
   private String m_detectedColorString;
   private String m_lastDetectedColorString;
   private int m_controlPanelSpinAmount = 0;
-  private final double m_controlPanelSpinSpeed = 0.25;
 
   // Vision
 
@@ -117,9 +121,9 @@ public class Robot extends TimedRobot {
           .withPosition(3, 1).withSize(3, 3)
           .withProperties(Map.of("Number of columns", 1, "Number of rows", 3));
   private static final Map<String, Object> kPropertiesDistanceSensor =
-      Map.of("Min", Constants.kMinimumUltrasonicReading, "Max",
-          Constants.kMaximumUltrasonicReading, "Center",
-          Constants.kMinimumUltrasonicReading);
+      Map.of("Min", RoboRIO.kMinimumReadingUltrasonic, "Max",
+          RoboRIO.kMaximumReadingUltrasonic, "Center",
+          RoboRIO.kMinimumReadingUltrasonic);
   private final NetworkTableEntry m_entryDistanceSensor = m_layoutLaunching
       .add("Distance Sensor Reading", 0.0).withWidget(BuiltInWidgets.kNumberBar)
       .withProperties(kPropertiesDistanceSensor).getEntry();
@@ -209,7 +213,7 @@ public class Robot extends TimedRobot {
     // although it is not the scale for how many units a volt represent - rather, it
     // expects the units per 5 volts.
     ultrasonicSensor = new AnalogPotentiometer(m_analogInputUltrasonicSensor,
-        Constants.kMetersPerVolt * 5);
+        RoboRIO.kMetersPerVoltUltrasonic * 5);
 
     // Add color sensor matches.
     m_colorMatcher.addColorMatch(kBlueTarget);
@@ -360,11 +364,16 @@ public class Robot extends TimedRobot {
    * than likely just return "false" for any button.
    */
   private void updateInputs() {
-    m_buttonManipPressA = m_controllerManip.getRawButtonPressed(1);
-    m_buttonManipPressB = m_controllerManip.getRawButtonPressed(2);
-    m_buttonManipPressX = m_controllerManip.getRawButtonPressed(3);
-    m_buttonManipPressY = m_controllerManip.getRawButtonPressed(4);
-    m_buttonManipPressLB = m_controllerManip.getRawButtonPressed(5);
+    m_buttonManipPressA =
+        m_controllerManip.getRawButtonPressed(DriveStation.kIDButtonA);
+    m_buttonManipPressB =
+        m_controllerManip.getRawButtonPressed(DriveStation.kIDButtonB);
+    m_buttonManipPressX =
+        m_controllerManip.getRawButtonPressed(DriveStation.kIDButtonX);
+    m_buttonManipPressY =
+        m_controllerManip.getRawButtonPressed(DriveStation.kIDButtonY);
+    m_buttonManipPressLB =
+        m_controllerManip.getRawButtonPressed(DriveStation.kIDButtonLB);
   }
 
   /**
@@ -393,13 +402,15 @@ public class Robot extends TimedRobot {
       // Left thumb stick of the driver's joystick.
       // The drive controller is negated here due to the y-axes of the joystick being
       // opposite by default.
-      double axisDriveLeftY = -m_controllerDrive.getRawAxis(1);
+      double axisDriveLeftY =
+          -m_controllerDrive.getRawAxis(DriveStation.kIDAxisLeftY);
       // Right thumb stick of the driver's joystick.
-      double axisDriveRightX = m_controllerDrive.getRawAxis(4);
+      double axisDriveRightX =
+          m_controllerDrive.getRawAxis(DriveStation.kIDAxisRightX);
       // Left trigger of the driver's joystick.
-      double axisDriveLT = m_controllerDrive.getRawAxis(2);
+      double axisDriveLT = m_controllerDrive.getRawAxis(DriveStation.kIDAxisLT);
       // Right trigger of the driver's joystick.
-      double axisDriveRT = m_controllerDrive.getRawAxis(3);
+      double axisDriveRT = m_controllerDrive.getRawAxis(DriveStation.kIDAxisRT);
 
       // Setting robot drive speed
       if (axisDriveLT > 0.5) {
@@ -443,8 +454,7 @@ public class Robot extends TimedRobot {
    */
   private void spinControlPanel() {
     if (m_isInControlPanelMode) {
-      boolean manipRB = m_controllerManip.getRawButton(6);
-      if (manipRB) {
+      if (m_controllerManip.getRawButton(DriveStation.kIDButtonRB)) {
         int controlPanelSpinAmountInitial = m_controlPanelSpinAmount;
         // During a match, the amount of revolutions needed to be completed will be
         // specified as either 3, 4, or 5. The selections below display 6, 8, and 10,
@@ -501,7 +511,7 @@ public class Robot extends TimedRobot {
   public void turnControlPanel() {
     if (m_targetControlPanelColor != m_detectedColorString
         || m_controlPanelSpinAmount > 0)
-      m_motorControlPanel.set(m_controlPanelSpinSpeed);
+      m_motorControlPanel.set(Constants.kSpeedControlPanel);
     else
       m_motorControlPanel.set(0);
 
