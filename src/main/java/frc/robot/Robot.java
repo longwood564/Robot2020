@@ -365,13 +365,6 @@ public class Robot extends TimedRobot {
   }
 
   /**
-   * This function is called periodically during test mode.
-   */
-  @Override
-  public void testPeriodic() {
-  }
-
-  /**
    * This function reads pressed states from the gamepads. This is done here because it is paramount
    * that getRawButtonPressed() is only called once per loop, because, the second time, it will more
    * than likely just return "false" for any button.
@@ -532,5 +525,19 @@ public class Robot extends TimedRobot {
         && m_lastDetectedColorString != m_detectedColorString
         && m_controlPanelSpinAmount > 0)
       m_controlPanelSpinAmount -= 1;
+  }
+
+  /**
+   * This function is called when initializing test mode.
+   */
+  @Override
+  public void testInit() {
+  }
+
+  /**
+   * This function is called periodically during test mode.
+   */
+  @Override
+  public void testPeriodic() {
   }
 }
