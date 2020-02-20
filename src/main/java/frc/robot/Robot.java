@@ -33,149 +33,158 @@ import com.revrobotics.ColorMatch;
  */
 public class Robot extends TimedRobot {
   // Joysticks
-  private final Joystick driveController = new Joystick(0);
-  private final Joystick manipController = new Joystick(1);
-  private boolean manipAPress = false;
-  private boolean manipBPress = false;
-  private boolean manipXPress = false;
-  private boolean manipYPress = false;
-  private boolean manipLBPress = false;
+  private final Joystick m_controllerDrive =
+      new Joystick(DriveStation.kPortControllerDrive);
+  private final Joystick m_controllerManip =
+      new Joystick(DriveStation.kPortControllerManip);
+  private boolean m_buttonManipPressA = false;
+  private boolean m_buttonManipPressB = false;
+  private boolean m_buttonManipPressX = false;
+  private boolean m_buttonManipPressY = false;
+  private boolean m_buttonManipPressLB = false;
 
   // State
-  private boolean isInControlPanelMode = false;
+  private boolean m_isInControlPanelMode = false;
 
   // Autonomous
-  private static final String kDefaultAuto = "Default";
-  private String selectedAuto;
-  private final SendableChooser<String> autoChooser = new SendableChooser<>();
+  private static final String kAutoCaseDefault = "Default";
+  private String m_selectedAuto;
+  private final SendableChooser<String> m_autoChooser = new SendableChooser<>();
 
   // Driving
-  private final WPI_TalonSRX leftTalon = new WPI_TalonSRX(1);
-  private final WPI_TalonSRX rightTalon = new WPI_TalonSRX(3);
-  private final WPI_VictorSPX leftVictor = new WPI_VictorSPX(2);
-  private final WPI_VictorSPX rightVictor = new WPI_VictorSPX(4);
-  private final DifferentialDrive differentialDrive = new DifferentialDrive(leftTalon, rightTalon);
-  private static final double slowSpeed = 0.5;
-  private static final double highSpeed = 0.75;
-  private static final double defaultSpeed = 0.65;
+  private final WPI_TalonSRX m_motorDriveFrontLeft = new WPI_TalonSRX(1);
+  private final WPI_TalonSRX m_motorDriveFrontRight = new WPI_TalonSRX(3);
+  private final WPI_VictorSPX m_motorDriveBackLeft = new WPI_VictorSPX(2);
+  private final WPI_VictorSPX m_motorDriveBackRight = new WPI_VictorSPX(4);
+  private final DifferentialDrive m_differentialDrive =
+      new DifferentialDrive(m_motorDriveFrontLeft, m_motorDriveFrontRight);
 
   // Launching
-  WPI_VictorSPX motorLeftLauncher = new WPI_VictorSPX(RoboRIO.kPortMotorLeftLauncher);
-  WPI_VictorSPX motorRightLauncher = new WPI_VictorSPX(RoboRIO.kPortMotorRightLauncher);
-  private final AnalogInput ultrasonicSensorAnalogInput = new AnalogInput(RoboRIO.kPortUltrasonicSensorPort);
-  // Leave this uninitialized because we have to configure the analot input.
+  WPI_VictorSPX m_motorLauncherLeft =
+      new WPI_VictorSPX(RoboRIO.kPortMotorLauncherLeft);
+  WPI_VictorSPX m_motorLauncherRight =
+      new WPI_VictorSPX(RoboRIO.kPortMotorLauncherRight);
+  private final AnalogInput m_analogInputUltrasonicSensor =
+      new AnalogInput(RoboRIO.kPortUltrasonicSensorPort);
+  // Leave this uninitialized because we have to configure the analog input.
   private AnalogPotentiometer ultrasonicSensor;
 
   // Control Panel;
-  private final ColorSensorV3 colorSensor = new ColorSensorV3(I2C.Port.kOnboard);
-  private final ColorMatch colorMatcher = new ColorMatch();
-  private static final Color kBlueTarget = ColorMatch.makeColor(0.143, 0.427, 0.429);
-  private static final Color kGreenTarget = ColorMatch.makeColor(0.197, 0.561, 0.240);
-  private static final Color kRedTarget = ColorMatch.makeColor(0.561, 0.232, 0.114);
-  private static final Color kYellowTarget = ColorMatch.makeColor(0.361, 0.524, 0.113);
-  private final WPI_TalonSRX controlPanelTalon = new WPI_TalonSRX(6);
-  private String targetControlPanelColor = "N/A";
-  private String detectedColorString;
-  private String lastDetectedColorString;
-  private int controlPanelSpinAmount = 0;
-  private final double controlPanelSpinSpeed = 0.25;
+  private final ColorSensorV3 m_colorSensor =
+      new ColorSensorV3(I2C.Port.kOnboard);
+  private static final ColorMatch m_colorMatcher = new ColorMatch();
+  private static final Color kBlueTarget =
+      ColorMatch.makeColor(0.143, 0.427, 0.429);
+  private static final Color kGreenTarget =
+      ColorMatch.makeColor(0.197, 0.561, 0.240);
+  private static final Color kRedTarget =
+      ColorMatch.makeColor(0.561, 0.232, 0.114);
+  private static final Color kYellowTarget =
+      ColorMatch.makeColor(0.361, 0.524, 0.113);
+  private final WPI_TalonSRX m_motorControlPanel = new WPI_TalonSRX(6);
+  private String m_targetControlPanelColor = "N/A";
+  private String m_detectedColorString;
+  private String m_lastDetectedColorString;
+  private int m_controlPanelSpinAmount = 0;
+  private final double m_controlPanelSpinSpeed = 0.25;
 
   // Vision
 
   // Shuffleboard General
 
-  private final ShuffleboardTab generalTab = Shuffleboard.getTab("General");
+  private final ShuffleboardTab m_tabGeneral = Shuffleboard.getTab("General");
 
-  private final ShuffleboardLayout stateLayout =
-      generalTab.getLayout("State", BuiltInLayouts.kGrid).withPosition(0, 0)
+  private final ShuffleboardLayout m_layoutState =
+      m_tabGeneral.getLayout("State", BuiltInLayouts.kGrid).withPosition(0, 0)
           .withSize(3, 1)
           .withProperties(Map.of("Number of columns", 1, "Number of rows", 1));
-  private final NetworkTableEntry controlPanelModeEntry =
-      stateLayout.add("Control panel mode", false)
+  private final NetworkTableEntry m_entryControlPanelMode =
+      m_layoutState.add("Control panel mode", false)
           .withWidget(BuiltInWidgets.kToggleSwitch).getEntry();
 
-  private final ShuffleboardLayout autonomousLayout = generalTab
+  private final ShuffleboardLayout m_layoutAutonomous = m_tabGeneral
       .getLayout("Autonomous", BuiltInLayouts.kGrid).withPosition(3, 0)
       .withSize(3, 1).withProperties(Map.of("Label position", "HIDDEN",
           "Number of columns", 1, "Number of rows", 1));
 
-  private final ShuffleboardLayout drivingLayout =
-      generalTab.getLayout("Driving", BuiltInLayouts.kGrid).withPosition(0, 1)
+  private final ShuffleboardLayout m_layoutDriving =
+      m_tabGeneral.getLayout("Driving", BuiltInLayouts.kGrid).withPosition(0, 1)
           .withSize(3, 3)
           .withProperties(Map.of("Number of columns", 1, "Number of rows", 1));
 
-  private final ShuffleboardLayout launchingLayout =
-      generalTab.getLayout("Launching", BuiltInLayouts.kGrid).withPosition(3, 1)
-          .withSize(3, 3)
+  private final ShuffleboardLayout m_layoutLaunching =
+      m_tabGeneral.getLayout("Launching", BuiltInLayouts.kGrid)
+          .withPosition(3, 1).withSize(3, 3)
           .withProperties(Map.of("Number of columns", 1, "Number of rows", 3));
-  private static final Map<String, Object> distanceSensorProperties =
+  private static final Map<String, Object> kPropertiesDistanceSensor =
       Map.of("Min", Constants.kMinimumUltrasonicReading, "Max",
           Constants.kMaximumUltrasonicReading, "Center",
           Constants.kMinimumUltrasonicReading);
-  private final NetworkTableEntry distanceSensorEntry = launchingLayout
+  private final NetworkTableEntry m_entryDistanceSensor = m_layoutLaunching
       .add("Distance Sensor Reading", 0.0).withWidget(BuiltInWidgets.kNumberBar)
-      .withProperties(distanceSensorProperties).getEntry();
-  private final NetworkTableEntry distanceTolerenceEntry =
-      launchingLayout.addPersistent("Distance Tolerance", 1)
+      .withProperties(kPropertiesDistanceSensor).getEntry();
+  private final NetworkTableEntry m_entryDistanceTolerence =
+      m_layoutLaunching.addPersistent("Distance Tolerance", 1)
           .withWidget(BuiltInWidgets.kNumberSlider)
           .withProperties(
               Map.of("Min", 0.0, "Max", 2.0, "Block increment", 0.25))
           .getEntry();
 
-  private final ShuffleboardLayout controlPanelLayout =
-      generalTab.getLayout("Color Sensing", BuiltInLayouts.kGrid)
+  private final ShuffleboardLayout m_layoutControlPanel =
+      m_tabGeneral.getLayout("Color Sensing", BuiltInLayouts.kGrid)
           .withPosition(3, 4).withSize(3, 2)
           .withProperties(Map.of("Number of columns", 2, "Number of rows", 2));
-  private final NetworkTableEntry detectedColorEntry =
-      controlPanelLayout.add("Detected color", "N/A").getEntry();
-  private final NetworkTableEntry confidenceEntry =
-      controlPanelLayout.add("Confidence", 0).getEntry();
-  private final NetworkTableEntry targetColorEntry =
-      controlPanelLayout.add("Target Color", "N/A").getEntry();
-  private final NetworkTableEntry targetSpinEntry =
-      controlPanelLayout.add("Target Spins", 0).getEntry();
+  private final NetworkTableEntry m_entryDetectedColor =
+      m_layoutControlPanel.add("Detected color", "N/A").getEntry();
+  private final NetworkTableEntry m_entryConfidence =
+      m_layoutControlPanel.add("Confidence", 0).getEntry();
+  private final NetworkTableEntry m_entryTargetColor =
+      m_layoutControlPanel.add("Target Color", "N/A").getEntry();
+  private final NetworkTableEntry m_entryTargetSpin =
+      m_layoutControlPanel.add("Target Spins", 0).getEntry();
 
-  private final ShuffleboardLayout visionLayout =
-      generalTab.getLayout("Vision", BuiltInLayouts.kGrid).withPosition(6, 0)
+  private final ShuffleboardLayout m_layoutVision =
+      m_tabGeneral.getLayout("Vision", BuiltInLayouts.kGrid).withPosition(6, 0)
           .withSize(1, 1)
           .withProperties(Map.of("Number of columns", 1, "Number of rows", 1));
 
   // Shuffleboard Tools
 
-  private final ShuffleboardTab toolsTab = Shuffleboard.getTab("Tools");
+  private final ShuffleboardTab m_tabTools = Shuffleboard.getTab("Tools");
 
-  private final ShuffleboardLayout launchingToolsLayout =
-      toolsTab.getLayout("Launching Tools", BuiltInLayouts.kGrid)
+  private final ShuffleboardLayout m_layoutLaunchingTools =
+      m_tabTools.getLayout("Launching Tools", BuiltInLayouts.kGrid)
           .withPosition(0, 0).withSize(4, 5)
           .withProperties(Map.of("Number of columns", 2, "Number of rows", 1));
-  private final ShuffleboardLayout projectileMotionPredLayout =
-      launchingToolsLayout
+  private final ShuffleboardLayout m_layoutProjectileMotionPred =
+      m_layoutLaunchingTools
           .getLayout("Projectile Motion Prediction", BuiltInLayouts.kList)
           .withSize(2, 5);
-  private final NetworkTableEntry horizontalDistanceEntry =
-      projectileMotionPredLayout.addPersistent("Horizontal Distance (m)", 0)
+  private final NetworkTableEntry m_entryHorizontalDistance =
+      m_layoutProjectileMotionPred.addPersistent("Horizontal Distance (m)", 0)
           .getEntry();
-  private final NetworkTableEntry runPredEntry =
-      projectileMotionPredLayout.add("Calculate", false)
+  private final NetworkTableEntry m_entryRunPred =
+      m_layoutProjectileMotionPred.add("Calculate", false)
           .withWidget(BuiltInWidgets.kToggleButton).getEntry();
-  private final NetworkTableEntry verticalDistanceEntry =
-      projectileMotionPredLayout.add("Vertical Distance (m)", 0)
+  private final NetworkTableEntry m_entryVerticalDistance =
+      m_layoutProjectileMotionPred.add("Vertical Distance (m)", 0)
           .withWidget(BuiltInWidgets.kTextView).getEntry();
-  private final ShuffleboardLayout projectileMotionSimLayout =
-      launchingToolsLayout
+
+  private final ShuffleboardLayout m_layoutProjectileMotionSim =
+      m_layoutLaunchingTools
           .getLayout("Projectile Motion Simulation", BuiltInLayouts.kList)
           .withSize(2, 5);
-  private final NetworkTableEntry runSimEntry =
-      projectileMotionSimLayout.add("Run Simulation", false)
+  private final NetworkTableEntry m_entryRunSim =
+      m_layoutProjectileMotionSim.add("Run Simulation", false)
           .withWidget(BuiltInWidgets.kToggleButton).getEntry();
-  private final NetworkTableEntry simGraphEntry = projectileMotionSimLayout
+  private final NetworkTableEntry m_entrySimGraph = m_layoutProjectileMotionSim
       .add("Simlulation", new double[] {0, 0}).withWidget(BuiltInWidgets.kGraph)
       .withProperties(Map.of("Visible time", 7)).getEntry();
-  private final NetworkTableEntry simTimeEntry =
-      projectileMotionSimLayout.add("Simulation Time (s)", 0)
+  private final NetworkTableEntry m_entrySimTime =
+      m_layoutProjectileMotionSim.add("Simulation Time (s)", 0)
           .withWidget(BuiltInWidgets.kTextView).getEntry();
-  private final Timer simTimer = new Timer();
-  private boolean runningSim = false;
+  private final Timer m_timerSim = new Timer();
+  private boolean m_isRunningSim = false;
 
   /**
    * This function is run when the robot is first started up and should be used for any initialization
@@ -184,29 +193,29 @@ public class Robot extends TimedRobot {
   @Override
   public void robotInit() {
     // Slave follows master
-    rightVictor.follow(rightTalon);
-    leftVictor.follow(leftTalon);
+    m_motorDriveBackRight.follow(m_motorDriveFrontRight);
+    m_motorDriveBackLeft.follow(m_motorDriveFrontLeft);
 
-    motorRightLauncher.follow(motorLeftLauncher);
+    m_motorLauncherRight.follow(m_motorLauncherLeft);
     // Invert one of the launching motors, because they must spin in opposite
     // directions.
-    motorRightLauncher.setInverted(true);
+    m_motorLauncherRight.setInverted(true);
 
     // Configure the ultrasonic sensor.
     // Enable 2-bit averaging, for stability,
-    ultrasonicSensorAnalogInput.setAverageBits(2);
+    m_analogInputUltrasonicSensor.setAverageBits(2);
     // Initialize an analog potentiometer, configured for the ultrasonic sensor.
     // The documentation for this function describes this parameter as a "scale",
     // although it is not the scale for how many units a volt represent - rather, it
     // expects the units per 5 volts.
-    ultrasonicSensor = new AnalogPotentiometer(analogInputUltrasonicSensor,
+    ultrasonicSensor = new AnalogPotentiometer(m_analogInputUltrasonicSensor,
         Constants.kMetersPerVolt * 5);
 
     // Add color sensor matches.
-    colorMatcher.addColorMatch(kBlueTarget);
-    colorMatcher.addColorMatch(kGreenTarget);
-    colorMatcher.addColorMatch(kRedTarget);
-    colorMatcher.addColorMatch(kYellowTarget);
+    m_colorMatcher.addColorMatch(kBlueTarget);
+    m_colorMatcher.addColorMatch(kGreenTarget);
+    m_colorMatcher.addColorMatch(kRedTarget);
+    m_colorMatcher.addColorMatch(kYellowTarget);
 
     // Add Shuffleboard sendables. We define the NetworkTableEntry objects as member
     // variables when adding those widgets because we need to access them to update
@@ -214,18 +223,18 @@ public class Robot extends TimedRobot {
     // Sendable interfaces, they will automatically be updated. There is a
     // distinction to be made between assigning the ComplexWidget to a variable, and
     // assigning the SendableChooser to a variable - which we *do* do.
-    autoChooser.setDefaultOption("Default Auto", kDefaultAuto);
-    autonomousLayout.add(autoChooser)
+    m_autoChooser.setDefaultOption("Default Auto", kAutoCaseDefault);
+    m_layoutAutonomous.add(m_autoChooser)
         .withWidget(BuiltInWidgets.kSplitButtonChooser);
-    drivingLayout.add(differentialDrive);
+    m_layoutDriving.add(m_differentialDrive);
     System.out.println(Constants.kProjectedHorDistanceToApex
         - Constants.kHorDistanceHexagonToHoop);
-    launchingLayout
+    m_layoutLaunching
         .add("Optimal Distance to Apex",
             Constants.kProjectedHorDistanceToApex
                 - Constants.kHorDistanceHexagonToHoop)
         .withWidget(BuiltInWidgets.kNumberBar)
-        .withProperties(distanceSensorProperties).getEntry();
+        .withProperties(kPropertiesDistanceSensor).getEntry();
   }
 
   /**
@@ -238,24 +247,24 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotPeriodic() {
-    if (runPredEntry.getBoolean(false)) {
-      runPredEntry.setBoolean(false);
-      double horDistance = horizontalDistanceEntry.getDouble(0);
+    if (m_entryRunPred.getBoolean(false)) {
+      m_entryRunPred.setBoolean(false);
+      double horDistance = m_entryHorizontalDistance.getDouble(0);
       // This expression calculates how high the ball will be at a specified distance
       // away from the robot. See the research document for the derivation of the
       // formula used here.
-      verticalDistanceEntry
+      m_entryVerticalDistance
           .setDouble(horDistance * Math.tan(Constants.kLauncherAngle)
               - (0.5 * Constants.kAccelDueToGravity
                   * Math.pow((horDistance / (Constants.kInitialVelocityBall
                       * Math.cos(Constants.kLauncherAngle))), 2)));
     }
 
-    if (runSimEntry.getBoolean(false) && !runningSim) {
-      runningSim = true;
-      simTimer.start();
-    } else if (runSimEntry.getBoolean(false) && runningSim) {
-      double time = simTimer.get();
+    if (m_entryRunSim.getBoolean(false) && !m_isRunningSim) {
+      m_isRunningSim = true;
+      m_timerSim.start();
+    } else if (m_entryRunSim.getBoolean(false) && m_isRunningSim) {
+      double time = m_timerSim.get();
       double horizontalDistance =
           (Constants.kInitialVelocityBall * Math.cos(Constants.kLauncherAngle))
               * time;
@@ -263,19 +272,19 @@ public class Robot extends TimedRobot {
           (Constants.kInitialVelocityBall * Math.sin(Constants.kLauncherAngle))
               * time + 0.5 * -Constants.kAccelDueToGravity * Math.pow(time, 2);
       if (verticalDistance < 0) {
-        runningSim = false;
-        runSimEntry.setBoolean(false);
-        simTimer.reset();
+        m_isRunningSim = false;
+        m_entryRunSim.setBoolean(false);
+        m_timerSim.reset();
       } else {
-        simGraphEntry.setDoubleArray(
+        m_entrySimGraph.setDoubleArray(
             new double[] {horizontalDistance, verticalDistance});
-        simTimeEntry.setDouble(time);
+        m_entrySimTime.setDouble(time);
       }
-    } else if (!runSimEntry.getBoolean(false) && runningSim) {
+    } else if (!m_entryRunSim.getBoolean(false) && m_isRunningSim) {
       // Cancel a running simulation.
-      runningSim = false;
-      simTimer.reset();
-      simGraphEntry.setDoubleArray(new double[] {0, 0});
+      m_isRunningSim = false;
+      m_timerSim.reset();
+      m_entrySimGraph.setDoubleArray(new double[] {0, 0});
     }
   }
 
@@ -284,10 +293,10 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void disabledInit() {
-    detectedColorEntry.setString("N/A");
-    confidenceEntry.setDouble(0);
-    targetColorEntry.setString("N/A");
-    targetSpinEntry.setDouble(0);
+    m_entryDetectedColor.setString("N/A");
+    m_entryConfidence.setDouble(0);
+    m_entryTargetColor.setString("N/A");
+    m_entryTargetSpin.setDouble(0);
   }
 
   /**
@@ -310,7 +319,7 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void autonomousInit() {
-    selectedAuto = autoChooser.getSelected();
+    m_selectedAuto = m_autoChooser.getSelected();
   }
 
   /**
@@ -318,8 +327,8 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void autonomousPeriodic() {
-    switch (selectedAuto) {
-      case kDefaultAuto:
+    switch (m_selectedAuto) {
+      case kAutoCaseDefault:
       default:
         // Put default auto code here
         break;
@@ -351,22 +360,23 @@ public class Robot extends TimedRobot {
    * than likely just return "false" for any button.
    */
   private void updateInputs() {
-    manipAPress = manipController.getRawButtonPressed(1);
-    manipBPress = manipController.getRawButtonPressed(2);
-    manipXPress = manipController.getRawButtonPressed(3);
-    manipYPress = manipController.getRawButtonPressed(4);
-    manipLBPress = manipController.getRawButtonPressed(5);
+    m_buttonManipPressA = m_controllerManip.getRawButtonPressed(1);
+    m_buttonManipPressB = m_controllerManip.getRawButtonPressed(2);
+    m_buttonManipPressX = m_controllerManip.getRawButtonPressed(3);
+    m_buttonManipPressY = m_controllerManip.getRawButtonPressed(4);
+    m_buttonManipPressLB = m_controllerManip.getRawButtonPressed(5);
   }
 
   /**
    * This function handles general state of the teleoperated mode.
    */
   private void handleState() {
-    if (manipLBPress) {
-      isInControlPanelMode = !isInControlPanelMode;
-      controlPanelModeEntry.setBoolean(isInControlPanelMode);
+    if (m_buttonManipPressLB) {
+      m_isInControlPanelMode = !m_isInControlPanelMode;
+      m_entryControlPanelMode.setBoolean(m_isInControlPanelMode);
     } else {
-      isInControlPanelMode = controlPanelModeEntry.getBoolean(isInControlPanelMode);
+      m_isInControlPanelMode =
+          m_entryControlPanelMode.getBoolean(m_isInControlPanelMode);
     }
   }
 
@@ -374,30 +384,36 @@ public class Robot extends TimedRobot {
    * This function drives the robot at a certain speed.
    */
   private void driveSpeed() {
-    if (isInControlPanelMode) {
+    if (m_isInControlPanelMode) {
       // Explicitly stop the motors since we are in control panel mode, and do not
       // need to be moving. This is necessary because the motor power must be updated
       // for every iteration of the loop.
-      differentialDrive.stopMotor();
+      m_differentialDrive.stopMotor();
     } else {
-      // Left thumb stick of the manipulator's joystick.
+      // Left thumb stick of the driver's joystick.
       // The drive controller is negated here due to the y-axes of the joystick being
       // opposite by default.
-      double rawAxis1 = -driveController.getRawAxis(1);
-      // Right thumb stick of the manipulator's joystick.
-      double rawAxis4 = driveController.getRawAxis(4);
-      // Left trigger of the manipulator's joystick.
-      double rawAxis2 = driveController.getRawAxis(2);
-      // Right trigger of the manipulator's joystick.
-      double rawAxis3 = driveController.getRawAxis(3);
+      double axisDriveLeftY = -m_controllerDrive.getRawAxis(1);
+      // Right thumb stick of the driver's joystick.
+      double axisDriveRightX = m_controllerDrive.getRawAxis(4);
+      // Left trigger of the driver's joystick.
+      double axisDriveLT = m_controllerDrive.getRawAxis(2);
+      // Right trigger of the driver's joystick.
+      double axisDriveRT = m_controllerDrive.getRawAxis(3);
 
       // Setting robot drive speed
-      if (rawAxis2 > 0.5) {
-        differentialDrive.arcadeDrive(rawAxis1 * slowSpeed, rawAxis4 * slowSpeed);
-      } else if (rawAxis3 > 0.5) {
-        differentialDrive.arcadeDrive(rawAxis1 * highSpeed, rawAxis4 * highSpeed);
+      if (axisDriveLT > 0.5) {
+        m_differentialDrive.arcadeDrive(
+            axisDriveLeftY * Constants.kMultiplierSlowSpeed,
+            axisDriveRightX * Constants.kMultiplierSlowSpeed);
+      } else if (axisDriveRT > 0.5) {
+        m_differentialDrive.arcadeDrive(
+            axisDriveLeftY * Constants.kMultiplierHighSpeed,
+            axisDriveRightX * Constants.kMultiplierHighSpeed);
       } else {
-        differentialDrive.arcadeDrive(rawAxis1 * defaultSpeed, rawAxis4 * defaultSpeed);
+        m_differentialDrive.arcadeDrive(
+            axisDriveLeftY * Constants.kMultiplierNormalSpeed,
+            axisDriveRightX * Constants.kMultiplierNormalSpeed);
       }
     }
   }
@@ -407,15 +423,15 @@ public class Robot extends TimedRobot {
    * the robot to make the shot if it can't.
    */
   private void launchBall() {
-    double tolerance = distanceTolerenceEntry.getDouble(1);
+    double tolerance = m_entryDistanceTolerence.getDouble(1);
     double horDistanceToHex = ultrasonicSensor.get();
-    distanceSensorEntry.setDouble(horDistanceToHex);
+    m_entryDistanceSensor.setDouble(horDistanceToHex);
     double horDistanceToHoop =
         horDistanceToHex + Constants.kHorDistanceHexagonToHoop;
 
     double error = Constants.kProjectedHorDistanceToApex - horDistanceToHoop;
     if (Math.abs(error) > tolerance) {
-      differentialDrive.arcadeDrive(error * Constants.kP, 0);
+      m_differentialDrive.arcadeDrive(error * Constants.kP, 0);
     } else {
       // TODO.
     }
@@ -426,56 +442,56 @@ public class Robot extends TimedRobot {
    * necessary.
    */
   private void spinControlPanel() {
-    if (isInControlPanelMode) {
-      boolean manipRB = manipController.getRawButton(6);
+    if (m_isInControlPanelMode) {
+      boolean manipRB = m_controllerManip.getRawButton(6);
       if (manipRB) {
-        int controlPanelSpinAmountInitial = controlPanelSpinAmount;
+        int controlPanelSpinAmountInitial = m_controlPanelSpinAmount;
         // During a match, the amount of revolutions needed to be completed will be
         // specified as either 3, 4, or 5. The selections below display 6, 8, and 10,
         // respectively, because each color is represented twice on the control panel.
-        if (buttonManipPressA)
-          controlPanelSpinAmount = 6;
-        else if (buttonManipPressB)
-          controlPanelSpinAmount = 8;
-        else if (buttonManipPressX)
-          controlPanelSpinAmount = 10;
+        if (m_buttonManipPressA)
+          m_controlPanelSpinAmount = 6;
+        else if (m_buttonManipPressB)
+          m_controlPanelSpinAmount = 8;
+        else if (m_buttonManipPressX)
+          m_controlPanelSpinAmount = 10;
 
-        if (controlPanelSpinAmountInitial != controlPanelSpinAmount)
-          targetSpinEntry.setDouble(controlPanelSpinAmount);
+        if (controlPanelSpinAmountInitial != m_controlPanelSpinAmount)
+          m_entryTargetSpin.setDouble(m_controlPanelSpinAmount);
       } else {
-        String targetControlPanelColorInitial = targetControlPanelColor;
-        if (buttonManipPressA)
-          targetControlPanelColor = "Green";
-        else if (buttonManipPressB)
-          targetControlPanelColor = "Red";
-        else if (buttonManipPressX)
-          targetControlPanelColor = "Blue";
-        else if (buttonManipPressY)
-          targetControlPanelColor = "Yellow";
-        if (targetControlPanelColorInitial != targetControlPanelColor)
-          targetColorEntry.setString(targetControlPanelColor);
+        String targetControlPanelColorInitial = m_targetControlPanelColor;
+        if (m_buttonManipPressA)
+          m_targetControlPanelColor = "Green";
+        else if (m_buttonManipPressB)
+          m_targetControlPanelColor = "Red";
+        else if (m_buttonManipPressX)
+          m_targetControlPanelColor = "Blue";
+        else if (m_buttonManipPressY)
+          m_targetControlPanelColor = "Yellow";
+        if (targetControlPanelColorInitial != m_targetControlPanelColor)
+          m_entryTargetColor.setString(m_targetControlPanelColor);
       }
 
-      Color detectedColor = colorSensor.getColor();
-      ColorMatchResult match = colorMatcher.matchClosestColor(detectedColor);
+      Color detectedColor = m_colorSensor.getColor();
+      ColorMatchResult match = m_colorMatcher.matchClosestColor(detectedColor);
       if (match.color == kBlueTarget)
-        detectedColorString = "Blue";
+        m_detectedColorString = "Blue";
       else if (match.color == kRedTarget)
-        detectedColorString = "Red";
+        m_detectedColorString = "Red";
       else if (match.color == kGreenTarget)
-        detectedColorString = "Green";
+        m_detectedColorString = "Green";
       else if (match.color == kYellowTarget)
-        detectedColorString = "Yellow";
+        m_detectedColorString = "Yellow";
       else
-        detectedColorString = "Unknown";
-      detectedColorEntry.setString(detectedColorString);
-      confidenceEntry.setDouble(match.confidence);
+        m_detectedColorString = "Unknown";
+      m_entryDetectedColor.setString(m_detectedColorString);
+      m_entryConfidence.setDouble(match.confidence);
       turnControlPanel();
-      targetSpinEntry.setDouble(controlPanelSpinAmount);
-      lastDetectedColorString = detectedColorString;
+      m_entryTargetSpin.setDouble(m_controlPanelSpinAmount);
+      m_lastDetectedColorString = m_detectedColorString;
     } else {
-      detectedColorEntry.setString("N/A");
-      confidenceEntry.setDouble(0);
+      m_entryDetectedColor.setString("N/A");
+      m_entryConfidence.setDouble(0);
     }
   }
 
@@ -483,15 +499,15 @@ public class Robot extends TimedRobot {
    * This function turns the control panel when called upon in spinControlPanel().
    */
   public void turnControlPanel() {
-    if (targetControlPanelColor != detectedColorString
-        || controlPanelSpinAmount > 0)
-      controlPanelTalon.set(controlPanelSpinSpeed);
+    if (m_targetControlPanelColor != m_detectedColorString
+        || m_controlPanelSpinAmount > 0)
+      m_motorControlPanel.set(m_controlPanelSpinSpeed);
     else
-      controlPanelTalon.set(0);
+      m_motorControlPanel.set(0);
 
-    if (targetControlPanelColor == detectedColorString
-        && lastDetectedColorString != detectedColorString
-        && controlPanelSpinAmount > 0)
-      controlPanelSpinAmount -= 1;
+    if (m_targetControlPanelColor == m_detectedColorString
+        && m_lastDetectedColorString != m_detectedColorString
+        && m_controlPanelSpinAmount > 0)
+      m_controlPanelSpinAmount -= 1;
   }
 }
