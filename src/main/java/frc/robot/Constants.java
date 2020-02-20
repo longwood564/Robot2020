@@ -1,28 +1,27 @@
 package frc.robot;
 
 /**
- * This class has constants used in other parts of the robot code. These
- * include: physics constants, field measurements, robot ports, robot
- * measurements, and constant calculations.
+ * This class has constants used in other parts of the robot code.
  * 
- * All values are in, unless specified otherwise: - m, for distance. - m/s^2,
- * for acceleration. - rad, for angles.
+ * All values are in, unless specified otherwise: - m, for distance. - m/s^2, for acceleration. -
+ * rad, for angles.
  */
 public final class Constants {
-  // Physics Constants
+  // Physical Constants
 
+  /** The amount of inches in one meter. */
+  public static final double kInchesPerMeter = 39.37;
   /**
-   * Acceleration due to gravity on Earth. This acceleration is positive here, it
-   * must be interpreted as negative or positive when it is plugged into an
-   * equation.
+   * Acceleration due to gravity on Earth. This acceleration is positive here, it must be interpreted
+   * as negative or positive when it is plugged into an equation.
    */
   public static final double kAccelDueToGravity = 9.80665;
 
   // Field Measurements
 
   /**
-   * The distance from the floor to the bottom of the outer hexagon of the power
-   * port. Field measurements used:
+   * The distance from the floor to the bottom of the outer hexagon of the power port. Field
+   * measurements used:
    * <ul>
    * <li>Height of hexagon = 24in.
    * <li>Half height of hexagon = 24in. / 2 = 12in.
@@ -30,59 +29,46 @@ public final class Constants {
    * <li>Floor to bottom of hexagon = 98.25in. - 12in. = 86.25 in.
    * </ul>
    */
-  private static final double kVertDistanceFloorToHex = 86.25 / 39.37;
+  private static final double kVertDistanceFloorToHex = 86.25 / kInchesPerMeter;
   /**
-   * The distance from the floor to the inner hoop of the power port. Field
-   * measurements used:
+   * The distance from the floor to the inner hoop of the power port. Field measurements used:
    * <ul>
    * <li>Floor to center of hoop = 98.25in.
    * </ul>
    */
-  private static final double kVertDistanceFloorToHoop = 98.25 / 39.37;
+  private static final double kVertDistanceFloorToHoop =
+      98.25 / kInchesPerMeter;
   /**
-   * The distance from the outer hexagon of the power cell to the inner hoop.
-   * Field measurements used:
+   * The distance from the outer hexagon of the power cell to the inner hoop. Field measurements used:
    * <ul>
    * <li>Hexagon to hoop = 29.25 in.
    * </ul>
    */
-  public static final double kHorDistanceHexagonToHoop = 29.25 / 39.37;
+  public static final double kHorDistanceHexagonToHoop =
+      29.25 / kInchesPerMeter;
 
   // Robot Measurements
 
-  /**
-   * The distance from the floor to the point at which the ball is launched.
-   */
+  /** The distance from the floor to the point at which the ball is launched. */
+  // TODO: Verify this measurement.
   private static final double kVertDistanceFloorToLauncher = 0.3;
-  /**
-   * The distance from the point at which the ball is launched to the outer
-   * hexagon.
-   */
-  public static final double kVertDistanceLauncherToHex = kVertDistanceFloorToHex - kVertDistanceFloorToLauncher;
-  /**
-   * The distance from the point at which the ball is launched to the inner hoop.
-   */
-  public static final double kVertDistanceLauncherToHoop = kVertDistanceFloorToHoop - kVertDistanceFloorToLauncher;
-  /**
-   * The angle of the ball launcher.
-   */
+  /** The distance from the point at which the ball is launched to the outer hexagon. */
+  public static final double kVertDistanceLauncherToHex =
+      kVertDistanceFloorToHex - kVertDistanceFloorToLauncher;
+  /** The distance from the point at which the ball is launched to the inner hoop. */
+  public static final double kVertDistanceLauncherToHoop =
+      kVertDistanceFloorToHoop - kVertDistanceFloorToLauncher;
+  /** The angle of the ball launcher. */
+  // TODO: Verify this measurement.
   public static final double kLauncherAngle = Math.toRadians(37);
-  /**
-   * The initial velocity of the ball as it is launched.
-   * 
-   * @todo Find this measurement.
-   */
+  /** The initial velocity of the ball as it is launched. */
+  // TODO: Find this measurement.
   public static final double kInitialVelocityBall = 10;
   /**
-   * The proportionality constant to use for correcting error in maintaining a
-   * distance from an object.
-   */
-  public static final double kP = 0.05;
-  /**
-   * The conversion from the voltage reading of the analog ultrasonic sensor, to
-   * meters. The voltage / distance range for the MB1013 is 300-mm / 293mV,
-   * 5000-mm / 4.885V. For more info, see the description of pin 3 of the board
-   * here: https://www.maxbotix.com/documents/HRLV-MaxSonar-EZ_Datasheet.pdf
+   * The conversion from the voltage reading of the analog ultrasonic sensor, to meters. The voltage /
+   * distance range for the MB1013 is 300-mm / 293mV, 5000-mm / 4.885V. For more info, see the
+   * description of pin 3 of the board here:
+   * https://www.maxbotix.com/documents/HRLV-MaxSonar-EZ_Datasheet.pdf
    */
   public static final double kMetersPerVolt = (5000 / 4.885) * (1.0 / 1000);
   /**
@@ -92,8 +78,8 @@ public final class Constants {
    */
   public static final double kMinimumUltrasonicReading = (300) * (1.0 / 1000);
   /**
-   * The maximum distance that the distance sensor can read. See above for info on
-   * where this value came from.
+   * The maximum distance that the distance sensor can read. See above for info on where this value
+   * came from.
    * 
    * @see #kMetersPerVolt
    */
@@ -103,15 +89,31 @@ public final class Constants {
    * 
    * @see #kMetersPerVolt
    */
-  public static final double kUltrasonicRange = kMaximumUltrasonicReading - kMinimumUltrasonicReading;
+  public static final double kUltrasonicRange =
+      kMaximumUltrasonicReading - kMinimumUltrasonicReading;
+
+  // Configured Constants
+
+  /** The number to multiply the joystick input by for driving at a slow speed. */
+  public static final double kMultiplierSlowSpeed = 0.5;
+  /** The number to multiply the joystick input by for driving at a normal speed. */
+  public static final double kMultiplierNormalSpeed = 0.65;
+  /** The number to multiply the joystick input by for driving at a high speed. */
+  public static final double kMultiplierHighSpeed = 0.75;
+  /**
+   * The proportionality constant to use for correcting error in maintaining a distance from an
+   * object.
+   */
+  // TODO: Tune this measurement.
+  public static final double kP = 0.05;
 
   // Constant Calculations
 
   /**
-   * The projected horizontal distance from the launcher to the top of the
-   * projectile motion. See the research document for the derivation of this
-   * equation.
+   * The projected horizontal distance from the launcher to the top of the projectile motion. See the
+   * research document for the derivation of this equation.
    */
-  public static final double kProjectedHorDistanceToApex = (Math.pow(kInitialVelocityBall, 2) * Math.sin(kLauncherAngle)
-      * Math.cos(kLauncherAngle)) / kAccelDueToGravity;
+  public static final double kProjectedHorDistanceToApex =
+      (Math.pow(kInitialVelocityBall, 2) * Math.sin(kLauncherAngle)
+          * Math.cos(kLauncherAngle)) / kAccelDueToGravity;
 }
