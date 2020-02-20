@@ -433,45 +433,41 @@ public class Robot extends TimedRobot {
         // During a match, the amount of revolutions needed to be completed will be
         // specified as either 3, 4, or 5. The selections below display 6, 8, and 10,
         // respectively, because each color is represented twice on the control panel.
-        if (manipAPress) {
+        if (buttonManipPressA)
           controlPanelSpinAmount = 6;
-        } else if (manipBPress) {
+        else if (buttonManipPressB)
           controlPanelSpinAmount = 8;
-        } else if (manipXPress) {
+        else if (buttonManipPressX)
           controlPanelSpinAmount = 10;
-        }
-        if (controlPanelSpinAmountInitial != controlPanelSpinAmount) {
+
+        if (controlPanelSpinAmountInitial != controlPanelSpinAmount)
           targetSpinEntry.setDouble(controlPanelSpinAmount);
-        }
       } else {
         String targetControlPanelColorInitial = targetControlPanelColor;
-        if (manipAPress) {
+        if (buttonManipPressA)
           targetControlPanelColor = "Green";
-        } else if (manipBPress) {
+        else if (buttonManipPressB)
           targetControlPanelColor = "Red";
-        } else if (manipXPress) {
+        else if (buttonManipPressX)
           targetControlPanelColor = "Blue";
-        } else if (manipYPress) {
+        else if (buttonManipPressY)
           targetControlPanelColor = "Yellow";
-        }
-        if (targetControlPanelColorInitial != targetControlPanelColor) {
+        if (targetControlPanelColorInitial != targetControlPanelColor)
           targetColorEntry.setString(targetControlPanelColor);
-        }
       }
 
       Color detectedColor = colorSensor.getColor();
       ColorMatchResult match = colorMatcher.matchClosestColor(detectedColor);
-      if (match.color == kBlueTarget) {
+      if (match.color == kBlueTarget)
         detectedColorString = "Blue";
-      } else if (match.color == kRedTarget) {
+      else if (match.color == kRedTarget)
         detectedColorString = "Red";
-      } else if (match.color == kGreenTarget) {
+      else if (match.color == kGreenTarget)
         detectedColorString = "Green";
-      } else if (match.color == kYellowTarget) {
+      else if (match.color == kYellowTarget)
         detectedColorString = "Yellow";
-      } else {
+      else
         detectedColorString = "Unknown";
-      }
       detectedColorEntry.setString(detectedColorString);
       confidenceEntry.setDouble(match.confidence);
       turnControlPanel();
@@ -488,15 +484,14 @@ public class Robot extends TimedRobot {
    */
   public void turnControlPanel() {
     if (targetControlPanelColor != detectedColorString
-        || controlPanelSpinAmount > 0) {
+        || controlPanelSpinAmount > 0)
       controlPanelTalon.set(controlPanelSpinSpeed);
-    } else {
+    else
       controlPanelTalon.set(0);
-    }
+
     if (targetControlPanelColor == detectedColorString
         && lastDetectedColorString != detectedColorString
-        && controlPanelSpinAmount > 0) {
+        && controlPanelSpinAmount > 0)
       controlPanelSpinAmount -= 1;
-    }
   }
 }
