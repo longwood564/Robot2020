@@ -38,7 +38,7 @@ public class Robot extends TimedRobot {
   private boolean m_buttonManipPressB = false;
   private boolean m_buttonManipPressX = false;
   private boolean m_buttonManipPressY = false;
-  private boolean m_buttonManipPressLB = false;
+  private boolean m_buttonManipPressStart = false;
 
   // State
   private boolean m_isInControlPanelMode = false;
@@ -359,15 +359,15 @@ public class Robot extends TimedRobot {
         m_controllerManip.getRawButtonPressed(DriveStation.kIDButtonX);
     m_buttonManipPressY =
         m_controllerManip.getRawButtonPressed(DriveStation.kIDButtonY);
-    m_buttonManipPressLB =
-        m_controllerManip.getRawButtonPressed(DriveStation.kIDButtonLB);
+    m_buttonManipPressStart =
+        m_controllerManip.getRawButtonPressed(DriveStation.kIDButtonStart);
   }
 
   /**
    * Handles general state of the teleoperated mode.
    */
   private void handleState() {
-    if (m_buttonManipPressLB) {
+    if (m_buttonManipPressStart) {
       m_isInControlPanelMode = !m_isInControlPanelMode;
       m_entryControlPanelMode.setBoolean(m_isInControlPanelMode);
     } else {
