@@ -6,6 +6,7 @@ package frc.robot;
  */
 public final class RoboRIO {
   // CAN Devices
+
   /**
    * The port of the left launcher motor.
    */
@@ -17,6 +18,7 @@ public final class RoboRIO {
   public static final int kPortMotorRightLauncher = 11;
 
   // Analog Inputs
+
   /**
    * The port of the ultrasonic sensor.
    */
