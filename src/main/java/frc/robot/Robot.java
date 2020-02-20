@@ -72,7 +72,7 @@ public class Robot extends TimedRobot {
   // Control Panel;
   private final ColorSensorV3 m_colorSensor =
       new ColorSensorV3(I2C.Port.kOnboard);
-  private static final ColorMatch m_colorMatcher = new ColorMatch();
+  private final ColorMatch m_colorMatcher = new ColorMatch();
   private static final Color kBlueTarget =
       ColorMatch.makeColor(0.143, 0.427, 0.429);
   private static final Color kGreenTarget =
