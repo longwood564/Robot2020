@@ -85,16 +85,21 @@ public class Robot extends TimedRobot {
   // Vision
 
   // Shuffleboard General
+
   private final ShuffleboardTab generalTab = Shuffleboard.getTab("General");
+
   private final ShuffleboardLayout stateLayout = generalTab.getLayout("State", BuiltInLayouts.kGrid).withPosition(0, 0)
       .withSize(3, 1).withProperties(Map.of("Number of columns", 1, "Number of rows", 1));
   private final NetworkTableEntry controlPanelModeEntry = stateLayout.add("Control panel mode", false)
       .withWidget(BuiltInWidgets.kToggleSwitch).getEntry();
+
   private final ShuffleboardLayout autonomousLayout = generalTab.getLayout("Autonomous", BuiltInLayouts.kGrid)
       .withPosition(3, 0).withSize(3, 1)
       .withProperties(Map.of("Label position", "HIDDEN", "Number of columns", 1, "Number of rows", 1));
+
   private final ShuffleboardLayout drivingLayout = generalTab.getLayout("Driving", BuiltInLayouts.kGrid)
       .withPosition(0, 1).withSize(3, 3).withProperties(Map.of("Number of columns", 1, "Number of rows", 1));
+
   private final ShuffleboardLayout launchingLayout = generalTab.getLayout("Launching", BuiltInLayouts.kGrid)
       .withPosition(3, 1).withSize(3, 3).withProperties(Map.of("Number of columns", 1, "Number of rows", 3));
   private static final Map<String, Object> distanceSensorProperties = Map.of("Min", Constants.kMinimumUltrasonicReading,
@@ -104,17 +109,21 @@ public class Robot extends TimedRobot {
   private final NetworkTableEntry distanceTolerenceEntry = launchingLayout.addPersistent("Distance Tolerance", 1)
       .withWidget(BuiltInWidgets.kNumberSlider).withProperties(Map.of("Min", 0.0, "Max", 2.0, "Block increment", 0.25))
       .getEntry();
+
   private final ShuffleboardLayout controlPanelLayout = generalTab.getLayout("Color Sensing", BuiltInLayouts.kGrid)
       .withPosition(3, 4).withSize(3, 2).withProperties(Map.of("Number of columns", 2, "Number of rows", 2));
   private final NetworkTableEntry detectedColorEntry = controlPanelLayout.add("Detected color", "N/A").getEntry();
   private final NetworkTableEntry confidenceEntry = controlPanelLayout.add("Confidence", 0).getEntry();
   private final NetworkTableEntry targetColorEntry = controlPanelLayout.add("Target Color", "N/A").getEntry();
   private final NetworkTableEntry targetSpinEntry = controlPanelLayout.add("Target Spins", 0).getEntry();
+
   private final ShuffleboardLayout visionLayout = generalTab.getLayout("Vision", BuiltInLayouts.kGrid)
       .withPosition(6, 0).withSize(1, 1).withProperties(Map.of("Number of columns", 1, "Number of rows", 1));
 
   // Shuffleboard Tools
+
   private final ShuffleboardTab toolsTab = Shuffleboard.getTab("Tools");
+
   private final ShuffleboardLayout launchingToolsLayout = toolsTab.getLayout("Launching Tools", BuiltInLayouts.kGrid)
       .withPosition(0, 0).withSize(4, 5).withProperties(Map.of("Number of columns", 2, "Number of rows", 1));
   private final ShuffleboardLayout projectileMotionPredLayout = launchingToolsLayout
