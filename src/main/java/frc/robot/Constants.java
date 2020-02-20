@@ -1,7 +1,8 @@
 package frc.robot;
 
 /**
- * This class has constants used in other parts of the robot code.
+ * This class provides general constants relating to the laws of physics, the measurements of the
+ * field, and the measurements of the robot.
  * 
  * All values are in, unless specified otherwise: - m, for distance. - m/s^2, for acceleration. -
  * rad, for angles.
@@ -64,33 +65,6 @@ public final class Constants {
   /** The initial velocity of the ball as it is launched. */
   // TODO: Find this measurement.
   public static final double kInitialVelocityBall = 10;
-  /**
-   * The conversion from the voltage reading of the analog ultrasonic sensor, to meters. The voltage /
-   * distance range for the MB1013 is 300-mm / 293mV, 5000-mm / 4.885V. For more info, see the
-   * description of pin 3 of the board here:
-   * https://www.maxbotix.com/documents/HRLV-MaxSonar-EZ_Datasheet.pdf
-   */
-  public static final double kMetersPerVolt = (5000 / 4.885) * (1.0 / 1000);
-  /**
-   * The minimum distance that the distance sensor can read.
-   * 
-   * @see #kMetersPerVolt
-   */
-  public static final double kMinimumUltrasonicReading = (300) * (1.0 / 1000);
-  /**
-   * The maximum distance that the distance sensor can read. See above for info on where this value
-   * came from.
-   * 
-   * @see #kMetersPerVolt
-   */
-  public static final double kMaximumUltrasonicReading = (5000) * (1.0 / 1000);
-  /**
-   * The range of values that the ultrasonic sensor will read.
-   * 
-   * @see #kMetersPerVolt
-   */
-  public static final double kUltrasonicRange =
-      kMaximumUltrasonicReading - kMinimumUltrasonicReading;
 
   // Configured Constants
 
@@ -100,6 +74,9 @@ public final class Constants {
   public static final double kMultiplierNormalSpeed = 0.65;
   /** The number to multiply the joystick input by for driving at a high speed. */
   public static final double kMultiplierHighSpeed = 0.75;
+  /** The speed to set the control panel motor to. */
+  // TODO: Tune this value.
+  public static final double kSpeedControlPanel = 0.25;
   /**
    * The proportionality constant to use for correcting error in maintaining a distance from an
    * object.
