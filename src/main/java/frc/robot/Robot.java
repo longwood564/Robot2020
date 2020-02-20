@@ -227,8 +227,6 @@ public class Robot extends TimedRobot {
     m_layoutAutonomous.add(m_autoChooser)
         .withWidget(BuiltInWidgets.kSplitButtonChooser);
     m_layoutDriving.add(m_differentialDrive);
-    System.out.println(Constants.kProjectedHorDistanceToApex
-        - Constants.kHorDistanceHexagonToHoop);
     m_layoutLaunching
         .add("Optimal Distance to Apex",
             Constants.kProjectedHorDistanceToApex
