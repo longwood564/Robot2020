@@ -21,10 +21,10 @@ public final class DriveStation {
   public static final int kIDButtonX = 3;
   /** The button ID of the Y button. */
   public static final int kIDButtonY = 4;
-  /** The button ID of the LB button, the left bumper. */
-  public static final int kIDButtonLB = 5;
   /** The button ID of the RB button, the right bumper. */
   public static final int kIDButtonRB = 6;
+  /** The button ID of the start button. */
+  public static final int kIDButtonStart = 8;
 
   // Axis IDs
 
