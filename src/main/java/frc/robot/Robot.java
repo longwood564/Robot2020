@@ -67,9 +67,8 @@ public class Robot extends TimedRobot {
   // Leave this uninitialized because we have to configure the analot input.
   private AnalogPotentiometer ultrasonicSensor;
 
-  // Control Panel
-  private final I2C.Port i2cPort = I2C.Port.kOnboard;
-  private final ColorSensorV3 colorSensor = new ColorSensorV3(i2cPort);
+  // Control Panel;
+  private final ColorSensorV3 colorSensor = new ColorSensorV3(I2C.Port.kOnboard);
   private final ColorMatch colorMatcher = new ColorMatch();
   private static final Color kBlueTarget = ColorMatch.makeColor(0.143, 0.427, 0.429);
   private static final Color kGreenTarget = ColorMatch.makeColor(0.197, 0.561, 0.240);
