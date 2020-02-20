@@ -87,9 +87,9 @@ public class Robot extends TimedRobot {
       ColorMatch.makeColor(0.361, 0.524, 0.113);
   private final WPI_TalonSRX m_motorControlPanel =
       new WPI_TalonSRX(RoboRIO.kPortMotorControlPanel);
+  private String m_detectedColorString = "N/A";
+  private String m_lastDetectedColorString = "N/A";
   private String m_targetControlPanelColor = "N/A";
-  private String m_detectedColorString;
-  private String m_lastDetectedColorString;
   private int m_controlPanelSpinAmount = 0;
 
   // Vision
@@ -337,6 +337,19 @@ public class Robot extends TimedRobot {
         // Put default auto code here
         break;
     }
+  }
+
+  /**
+   * This function is called when initializing teleop mode.
+   */
+  @Override
+  public void teleopInit() {
+    m_isInControlPanelMode = false;
+
+    m_detectedColorString = "N/A";
+    m_lastDetectedColorString = "N/A";
+    m_targetControlPanelColor = "N/A";
+    m_controlPanelSpinAmount = 0;
   }
 
   /**
