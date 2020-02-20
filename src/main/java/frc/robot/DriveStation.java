@@ -30,10 +30,10 @@ public final class DriveStation {
 
   /** The axis ID of the Y dimension of the left analog stick. */
   public static final int kIDAxisLeftY = 1;
-  /** The axis ID of LT, the left trigger. */
-  public static final int kIDAxisLT = 2;
-  /** The axis ID of RT, the right trigger. */
-  public static final int kIDAxisRT = 3;
   /** The axis ID of the X dimension of the right analog stick. */
-  public static final int kIDAxisRightX = 4;
+  public static final int kIDAxisRightX = 2;
+  /** The axis ID of LT, the left trigger. */
+  public static final int kIDAxisLT = 4;
+  /** The axis ID of RT, the right trigger. */
+  public static final int kIDAxisRT = 5;
 }
