@@ -300,10 +300,20 @@ public class Robot extends TimedRobot {
   }
 
   /**
+   * Sets the compressor in closed loop control to toggle when it is enabled.
+   */
+  private void setCompressor() {
+    // Set the compressor in closed loop control to enable it.
+    compressor.setClosedLoopControl(true);
+    compressor.start();
+  }
+
+  /**
    * Initializes autonomous mode.
    */
   @Override
   public void autonomousInit() {
+    setCompressor();
     m_selectedAuto = m_autoChooser.getSelected();
   }
 
@@ -325,6 +335,8 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void teleopInit() {
+    setCompressor();
+
     m_isInControlPanelMode = false;
 
     m_detectedColorString = "N/A";
