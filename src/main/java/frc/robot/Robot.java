@@ -5,6 +5,7 @@ import java.util.Map;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.AnalogPotentiometer;
+import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.I2C;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.TimedRobot;
@@ -57,6 +58,7 @@ public class Robot extends TimedRobot {
       new WPI_VictorSPX(RoboRIO.kPortMotorDriveBackLeft);
   private final WPI_VictorSPX m_motorDriveBackRight =
       new WPI_VictorSPX(RoboRIO.kPortMotorDriveBackRight);
+  Compressor compressor = new Compressor(1);
   private final DifferentialDrive m_differentialDrive =
       new DifferentialDrive(m_motorDriveFrontLeft, m_motorDriveFrontRight);
 
