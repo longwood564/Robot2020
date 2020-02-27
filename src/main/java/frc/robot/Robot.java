@@ -58,7 +58,7 @@ public class Robot extends TimedRobot {
       new WPI_VictorSPX(RoboRIO.kPortMotorDriveBackLeft);
   private final WPI_VictorSPX m_motorDriveBackRight =
       new WPI_VictorSPX(RoboRIO.kPortMotorDriveBackRight);
-  Compressor compressor = new Compressor(1);
+  Compressor compressor = new Compressor(0);
   private final DifferentialDrive m_differentialDrive =
       new DifferentialDrive(m_motorDriveFrontLeft, m_motorDriveFrontRight);
 
@@ -194,6 +194,8 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotInit() {
+    setCompressor();
+
     // Slave follows master
     m_motorDriveBackRight.follow(m_motorDriveFrontRight);
     m_motorDriveBackLeft.follow(m_motorDriveFrontLeft);
@@ -315,7 +317,6 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void autonomousInit() {
-    setCompressor();
     m_selectedAuto = m_autoChooser.getSelected();
   }
 
@@ -337,8 +338,6 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void teleopInit() {
-    setCompressor();
-
     m_isInControlPanelMode = false;
 
     m_detectedColorString = "N/A";
