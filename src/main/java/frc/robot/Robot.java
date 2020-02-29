@@ -194,7 +194,8 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotInit() {
-    setCompressor();
+    // Set the compressor in closed loop control to enable it.
+    compressor.setClosedLoopControl(true);
 
     // Slave follows master
     m_motorDriveBackRight.follow(m_motorDriveFrontRight);
@@ -304,20 +305,13 @@ public class Robot extends TimedRobot {
   }
 
   /**
-   * Sets the compressor in closed loop control to toggle when it is enabled.
-   */
-  private void setCompressor() {
-    // Set the compressor in closed loop control to enable it.
-    compressor.setClosedLoopControl(true);
-    compressor.start();
-  }
-
-  /**
    * Initializes autonomous mode.
    */
   @Override
   public void autonomousInit() {
     m_selectedAuto = m_autoChooser.getSelected();
+
+    compressor.start();
   }
 
   /**
@@ -344,6 +338,8 @@ public class Robot extends TimedRobot {
     m_lastDetectedColorString = "N/A";
     m_targetControlPanelColor = "N/A";
     m_controlPanelSpinAmount = 0;
+
+    compressor.start();
   }
 
   /**
