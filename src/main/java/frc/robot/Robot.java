@@ -58,7 +58,8 @@ public class Robot extends TimedRobot {
       new WPI_VictorSPX(RoboRIO.kPortMotorDriveBackLeft);
   private final WPI_VictorSPX m_motorDriveBackRight =
       new WPI_VictorSPX(RoboRIO.kPortMotorDriveBackRight);
-  private final Compressor compressor = new Compressor(RoboRIO.kPortCompressor);
+  private final Compressor m_compressor =
+      new Compressor(RoboRIO.kPortCompressor);
   private final DifferentialDrive m_differentialDrive =
       new DifferentialDrive(m_motorDriveFrontLeft, m_motorDriveFrontRight);
 
@@ -70,7 +71,7 @@ public class Robot extends TimedRobot {
   private final AnalogInput m_analogInputUltrasonicSensor =
       new AnalogInput(RoboRIO.kPortUltrasonicSensorPort);
   // Leave this uninitialized because we have to configure the analog input.
-  private AnalogPotentiometer ultrasonicSensor;
+  private AnalogPotentiometer m_ultrasonicSensor;
 
   // Control Panel
   private final ColorSensorV3 m_colorSensor =
@@ -195,7 +196,7 @@ public class Robot extends TimedRobot {
   @Override
   public void robotInit() {
     // Set the compressor in closed loop control to enable it.
-    compressor.setClosedLoopControl(true);
+    m_compressor.setClosedLoopControl(true);
 
     // Slave follows master
     m_motorDriveBackRight.follow(m_motorDriveFrontRight);
@@ -213,7 +214,7 @@ public class Robot extends TimedRobot {
     // The documentation for this function describes this parameter as a "scale",
     // although it is not the scale for how many units a volt represent - rather, it
     // expects the units per 5 volts.
-    ultrasonicSensor = new AnalogPotentiometer(m_analogInputUltrasonicSensor,
+    m_ultrasonicSensor = new AnalogPotentiometer(m_analogInputUltrasonicSensor,
         RoboRIO.kMetersPerVoltUltrasonic * 5);
 
     // Add color sensor matches.
@@ -325,7 +326,7 @@ public class Robot extends TimedRobot {
   public void autonomousInit() {
     m_selectedAuto = m_autoChooser.getSelected();
 
-    compressor.start();
+    m_compressor.start();
   }
 
   /**
@@ -353,7 +354,7 @@ public class Robot extends TimedRobot {
     m_targetControlPanelColor = "N/A";
     m_controlPanelSpinAmount = 0;
 
-    compressor.start();
+    m_compressor.start();
   }
 
   /**
@@ -445,7 +446,7 @@ public class Robot extends TimedRobot {
    */
   private void launchBall() {
     double tolerance = m_entryDistanceTolerence.getDouble(1);
-    double horDistanceToHex = ultrasonicSensor.get();
+    double horDistanceToHex = m_ultrasonicSensor.get();
     m_entryDistanceSensor.setDouble(horDistanceToHex);
     double horDistanceToHoop =
         horDistanceToHex + Constants.kHorDistanceHexagonToHoop;
