@@ -58,7 +58,7 @@ public class Robot extends TimedRobot {
       new WPI_VictorSPX(RoboRIO.kPortMotorDriveBackLeft);
   private final WPI_VictorSPX m_motorDriveBackRight =
       new WPI_VictorSPX(RoboRIO.kPortMotorDriveBackRight);
-  Compressor compressor = new Compressor(0);
+  private final Compressor compressor = new Compressor(RoboRIO.kPortCompressor);
   private final DifferentialDrive m_differentialDrive =
       new DifferentialDrive(m_motorDriveFrontLeft, m_motorDriveFrontRight);
 
