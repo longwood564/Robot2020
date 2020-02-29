@@ -438,7 +438,7 @@ public class Robot extends TimedRobot {
 
     double error = Constants.kProjectedHorDistanceToApex - horDistanceToHoop;
     if (Math.abs(error) > tolerance) {
-      m_differentialDrive.arcadeDrive(error * Constants.kP, 0);
+      // m_differentialDrive.arcadeDrive(error * Constants.kP, 0);
     } else {
       // TODO.
     }
