@@ -286,6 +286,20 @@ public class Robot extends TimedRobot {
   }
 
   /**
+   * Initializes the robot code when the simulation is started.
+   */
+  @Override
+  public void simulationInit() {
+  }
+
+  /**
+   * Updates diagnostics while the simulation is running.
+   */
+  @Override
+  public void simulationPeriodic() {
+  }
+
+  /**
    * Initializes disabled mode.
    */
   @Override
