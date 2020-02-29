@@ -195,7 +195,7 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotInit() {
-    // Set the compressor in closed loop control to enable it.
+    // Set the PCM in closed loop control mode to enable it.
     m_compressor.setClosedLoopControl(true);
 
     // Slave follows master
