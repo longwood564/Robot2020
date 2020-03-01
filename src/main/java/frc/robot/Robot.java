@@ -31,7 +31,12 @@ public class Robot extends TimedRobot {
   private boolean m_buttonManipPressB = false;
   private boolean m_buttonManipPressX = false;
   private boolean m_buttonManipPressY = false;
+  private boolean m_buttonManipPressBack = false;
   private boolean m_buttonManipPressStart = false;
+  private int m_povLastLoop = -1;
+  private boolean m_buttonManipPressDpadLeft = false;
+  private boolean m_buttonManipPressDpadUp = false;
+  private boolean m_buttonManipPressDpadRight = false;
 
   // State
   private boolean m_isInControlPanelMode = false;
@@ -243,8 +248,17 @@ public class Robot extends TimedRobot {
         m_controllerManip.getRawButtonPressed(DriveStation.kIDButtonX);
     m_buttonManipPressY =
         m_controllerManip.getRawButtonPressed(DriveStation.kIDButtonY);
+    m_buttonManipPressBack =
+        m_controllerManip.getRawButtonPressed(DriveStation.kIDButtonBack);
     m_buttonManipPressStart =
         m_controllerManip.getRawButtonPressed(DriveStation.kIDButtonStart);
+    int pov = m_controllerManip.getPOV(DriveStation.kIdPovDpad);
+    if (pov != -1 && pov == m_povLastLoop)
+      pov = -1;
+    m_buttonManipPressDpadLeft = pov == 270;
+    m_buttonManipPressDpadUp = pov == 0;
+    m_buttonManipPressDpadRight = pov == 90;
+    m_povLastLoop = pov;
   }
 
   /**

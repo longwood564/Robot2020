@@ -34,6 +34,11 @@ public final class DriveStation {
   /** The button ID of RS, activated by clicking the right stick. */
   public static final int kIDButtonRS = 10;
 
+  // POV IDs
+
+  /** The POV ID of the D-pad. */
+  public static final int kIdPovDpad = 0;
+
   // Axis IDs
 
   /** The axis ID of the X dimension of the left analog stick. */
