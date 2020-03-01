@@ -39,6 +39,7 @@ public class Robot extends TimedRobot {
   private boolean m_buttonManipPressDpadRight = false;
 
   // State
+  private boolean m_isInLaunchingMode = false;
   private boolean m_isInControlPanelMode = false;
   private boolean m_isInControlPanelModeLastLoop = false;
 
@@ -70,6 +71,7 @@ public class Robot extends TimedRobot {
       new AnalogInput(RoboRIO.kPortUltrasonicSensorPort);
   // Leave this uninitialized because we have to configure the analog input.
   private AnalogPotentiometer m_ultrasonicSensor;
+  private boolean m_launchBall = false;
 
   // Control Panel
   private final ColorSensorV3 m_colorSensor =
@@ -230,7 +232,7 @@ public class Robot extends TimedRobot {
     updateInputs();
     handleState();
     driveSpeed();
-    launchBall();
+    launchBalls();
     spinControlPanel();
   }
 
@@ -265,10 +267,27 @@ public class Robot extends TimedRobot {
    * Handles general state of the teleoperated mode.
    */
   private void handleState() {
+    if (m_buttonManipPressBack) {
+      m_isInLaunchingMode = !m_isInLaunchingMode;
+      ShuffleboardHelper.m_entryLaunchingMode.setBoolean(m_isInLaunchingMode);
+      // Disallow being in both modes simultaneously.
+      if (m_isInControlPanelMode) {
+        m_isInControlPanelMode = false;
+        ShuffleboardHelper.m_entryControlPanelMode.setBoolean(false);
+      }
+    } else {
+      m_isInLaunchingMode = ShuffleboardHelper.m_entryLaunchingMode
+          .getBoolean(m_isInLaunchingMode);
+    }
     if (m_buttonManipPressStart) {
       m_isInControlPanelMode = !m_isInControlPanelMode;
       ShuffleboardHelper.m_entryControlPanelMode
           .setBoolean(m_isInControlPanelMode);
+      // Disallow being in both modes simultaneously.
+      if (m_isInLaunchingMode) {
+        m_isInLaunchingMode = false;
+        ShuffleboardHelper.m_entryLaunchingMode.setBoolean(false);
+      }
     } else {
       m_isInControlPanelMode = ShuffleboardHelper.m_entryControlPanelMode
           .getBoolean(m_isInControlPanelMode);
@@ -336,21 +355,30 @@ public class Robot extends TimedRobot {
   }
 
   /**
-   * Determines whether or not the ball can be launched into the power port, and adjusts the robot to
-   * make the shot if it can't.
+   * This function determines whether or not the ball can be launched into the power port, and adjusts
+   * the robot to make the shot if it can't.
    */
-  private void launchBall() {
-    double tolerance = ShuffleboardHelper.m_entryDistanceTolerence.getDouble(1);
-    double horDistanceToHex = m_ultrasonicSensor.get();
-    ShuffleboardHelper.m_entryDistanceSensor.setDouble(horDistanceToHex);
-    double horDistanceToHoop =
-        horDistanceToHex + Constants.kHorDistanceHexagonToHoop;
+  private void launchBalls() {
+    if (m_isInLaunchingMode) {
+      double tolerance =
+          ShuffleboardHelper.m_entryDistanceTolerence.getDouble(1);
+      double horDistanceToHex = m_ultrasonicSensor.get();
+      ShuffleboardHelper.m_entryDistanceSensor.setDouble(horDistanceToHex);
+      double horDistanceToHoop =
+          horDistanceToHex + Constants.kHorDistanceHexagonToHoop;
 
-    double error = Constants.kProjectedHorDistanceToApex - horDistanceToHoop;
-    if (Math.abs(error) > tolerance) {
-      // m_differentialDrive.arcadeDrive(error * Constants.kP, 0);
+      double error = Constants.kProjectedHorDistanceToApex - horDistanceToHoop;
+      if (Math.abs(error) > tolerance) {
+        // m_differentialDrive.arcadeDrive(error * Constants.kP, 0);
+      } else {
+        m_launchBall = true;
+        ShuffleboardHelper.m_entryLaunchBall.setBoolean(m_launchBall);
+      }
     } else {
-      // TODO.
+      // TODO: Move this stuff into handleState, and only do this when the mode has just been switched.
+      ShuffleboardHelper.m_entryDistanceSensor.setDouble(0);
+      m_launchBall = false;
+      ShuffleboardHelper.m_entryLaunchBall.setBoolean(false);
     }
   }
 
@@ -369,7 +397,8 @@ public class Robot extends TimedRobot {
       else if (m_buttonManipPressY)
         m_targetControlPanelColor = "Yellow";
       if (targetControlPanelColorInitial != m_targetControlPanelColor)
-      ShuffleboardHelper.m_entryTargetColor.setString(m_targetControlPanelColor);
+        ShuffleboardHelper.m_entryTargetColor
+            .setString(m_targetControlPanelColor);
 
       int controlPanelSpinAmountInitial = m_controlPanelSpinAmount;
       // During a match, the amount of revolutions needed to be completed will be
@@ -382,7 +411,8 @@ public class Robot extends TimedRobot {
       else if (m_buttonManipPressDpadRight)
         m_controlPanelSpinAmount = 10;
       if (controlPanelSpinAmountInitial != m_controlPanelSpinAmount)
-      ShuffleboardHelper.m_entryTargetSpin.setDouble(m_controlPanelSpinAmount);
+        ShuffleboardHelper.m_entryTargetSpin
+            .setDouble(m_controlPanelSpinAmount);
 
       Color detectedColor = m_colorSensor.getColor();
       ColorMatchResult match = m_colorMatcher.matchClosestColor(detectedColor);
