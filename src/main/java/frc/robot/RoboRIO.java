@@ -18,8 +18,12 @@ public final class RoboRIO {
   public static final int kPortMotorDriveBackRight = 4;
   /** The port of the control panel motor. */
   public static final int kPortMotorControlPanel = 6;
+  /** The port of the intake motor. */
+  public static final int kPortMotorIntake = 7;
   /** The port of the left launcher motor. */
   public static final int kPortMotorLauncherLeft = 8;
+  /** The port of the conveyor belt. */
+  public static final int kPortMotorBelt = 10;
   /**
    * The port of the right launcher motor. On the electronics board, this is #8b, but this couldn't be
    * replicated due to software limitaitons.
