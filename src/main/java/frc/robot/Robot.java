@@ -3,6 +3,7 @@ package frc.robot;
 import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.AnalogPotentiometer;
 import edu.wpi.first.wpilibj.Compressor;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.I2C;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.TimedRobot;
@@ -62,6 +63,19 @@ public class Robot extends TimedRobot {
   private final DifferentialDrive m_differentialDrive =
       new DifferentialDrive(m_motorDriveFrontLeft, m_motorDriveFrontRight);
 
+  // Ball Intake
+  private final WPI_TalonSRX m_motorIntake =
+      new WPI_TalonSRX(RoboRIO.kPortMotorIntake);
+  private final WPI_VictorSPX m_motorBelt =
+      new WPI_VictorSPX(RoboRIO.kPortMotorBelt);
+  private final DigitalInput photoelectricSensorEnter =
+      new DigitalInput(RoboRIO.kPortPhotoelectricSensorEnter);
+  private final DigitalInput photoelectricSensorExit =
+      new DigitalInput(RoboRIO.kPortPhotoelectricSensorExit);
+  private boolean ballDetectedEnterLastLoop = false;
+  private int ballsInStorage = 0;
+  private boolean ballDetectedExitLastLoop = false;
+
   // Launching
   WPI_VictorSPX m_motorLauncherLeft =
       new WPI_VictorSPX(RoboRIO.kPortMotorLauncherLeft);
@@ -93,6 +107,23 @@ public class Robot extends TimedRobot {
   private int m_controlPanelSpinAmount = 0;
 
   // Vision
+
+  private final ShuffleboardLayout ballIntakeLayout =
+      m_tabGeneral.getLayout("Ball Intake", BuiltInLayouts.kGrid)
+          .withPosition(0, 4).withSize(3, 1)
+          .withProperties(Map.of("Number of columns", 4, "Number of rows", 1));
+  private final NetworkTableEntry ballsInStorageEntry = ballIntakeLayout
+      .add("Balls in storage", 0).withWidget(BuiltInWidgets.kNumberBar)
+      .withProperties(Map.of("Min", 0, "Max", 3, "Center", 0)).getEntry();
+  private final NetworkTableEntry ballDetectedEnterEntry =
+      ballIntakeLayout.add("Ball detected at entrance point", false)
+          .withWidget(BuiltInWidgets.kBooleanBox).getEntry();
+  private final NetworkTableEntry ballDetectedExitEntry =
+      ballIntakeLayout.add("Ball detected at leave", false)
+          .withWidget(BuiltInWidgets.kBooleanBox).getEntry();
+  private final NetworkTableEntry m_entryLaunchBall =
+      ballIntakeLayout.add("Launching balls", false)
+          .withWidget(BuiltInWidgets.kBooleanBox).getEntry();
 
   /**
    * Initializes the robot code when the robot power is turned on.
@@ -219,6 +250,20 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void teleopInit() {
+    m_isInLaunchingMode = false;
+    m_isInControlPanelMode = false;
+    m_isInControlPanelModeLastLoop = false;
+
+    ballDetectedEnterLastLoop = false;
+    ballsInStorage = 0;
+
+    m_launchBall = false;
+
+    m_detectedColorString = "N/A";
+    m_lastDetectedColorString = "N/A";
+    m_targetControlPanelColor = "N/A";
+    m_controlPanelSpinAmount = 0;
+
     m_compressor.start();
 
     disabledInit();
@@ -232,6 +277,7 @@ public class Robot extends TimedRobot {
     updateInputs();
     handleState();
     driveSpeed();
+    intakeBalls();
     launchBalls();
     spinControlPanel();
   }
@@ -352,6 +398,65 @@ public class Robot extends TimedRobot {
       m_differentialDrive.arcadeDrive(speed * Constants.kMultiplierNormalSpeed,
           zRotation * Constants.kMultiplierNormalSpeed, false);
     }
+  }
+
+  private void intakeBalls() {
+    // If the manipulator holds LT, and the storage isn't full, activate the intake.
+    // TODO: Is this ballsInStorage check putting too much trust in the sensor?
+    if (m_controllerDrive.getRawAxis(DriveStation.kIDAxisLT) > 0.50
+        && ballsInStorage < 3)
+      m_motorIntake.set(Constants.kSpeedIntake);
+    else
+      m_motorIntake.set(0);
+
+    // Use this state variable to avoid setting the power of the belt motor more than once.
+    boolean advanceBelt = false;
+    // The digital input returns "true" if the circuit is open. Detecting the
+    // object, the power cell, closes the circuit.
+    boolean ballDetectedEnter = !photoelectricSensorEnter.get();
+    boolean ballDetectedExit = !photoelectricSensorExit.get();
+    // Advance the belt if there's a ball in the enter spot, and more room above.
+    if (ballDetectedEnter) {
+      if (!ballDetectedEnterLastLoop)
+        ++ballsInStorage;
+      if (ballsInStorage < 3)
+        advanceBelt = true;
+      ballDetectedEnterEntry.setBoolean(ballDetectedEnter);
+      ballsInStorageEntry.setDouble(ballsInStorage);
+    } else if (!ballDetectedEnter) {
+      ballDetectedEnterEntry.setBoolean(ballDetectedEnter);
+      advanceBelt = false;
+    }
+    // Keep track of balls exiting.
+    if (!ballDetectedExit) {
+      if (ballDetectedExitLastLoop)
+        --ballsInStorage;
+      // Stop launching the balls if we have finished.
+      if (m_launchBall && ballsInStorage == 0) {
+        m_launchBall = false;
+        m_entryLaunchBall.setBoolean(m_launchBall);
+      }
+      ballDetectedExitEntry.setBoolean(ballDetectedExit);
+      ballsInStorageEntry.setDouble(ballsInStorage);
+    } else if (ballDetectedExit) {
+      ballDetectedExitEntry.setBoolean(ballDetectedExit);
+    }
+
+    // If we are ready to launch the ball, override the false advanceBelt from the storage being full.
+    // TODO: Check to see if the launcher motor has been revved up.
+    if (m_launchBall)
+      advanceBelt = true;
+
+    m_motorBelt.set(advanceBelt ? Constants.kSpeedBelt : 0);
+
+    // Rev up the launcher motors as soon as we start collecting balls.
+    if (ballsInStorage >= 1)
+      m_motorLauncherLeft.set(Constants.kSpeedLauncher);
+    else
+      m_motorLauncherLeft.set(0);
+
+    ballDetectedEnterLastLoop = ballDetectedEnter;
+    ballDetectedExitLastLoop = ballDetectedExit;
   }
 
   /**

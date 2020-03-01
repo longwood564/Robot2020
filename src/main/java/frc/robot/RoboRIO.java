@@ -62,4 +62,16 @@ public final class RoboRIO {
    */
   public static final double kUltrasonicRange =
       kMaximumReadingUltrasonic - kMinimumReadingUltrasonic;
+
+  // Digital Inputs
+  /**
+   * The port of the photoelectric sensor at the bottom of the storage, where balls enter. This is a
+   * 42EF-D1MNAK-A2.
+   */
+  public static final int kPortPhotoelectricSensorEnter = 0;
+  /**
+   * The port of the photoelectric sensor at the top of the storage, where balls leave. This is a
+   * 42JT-F5LET1-A2.
+   */
+  public static final int kPortPhotoelectricSensorExit = 1;
 }
