@@ -359,35 +359,30 @@ public class Robot extends TimedRobot {
    */
   private void spinControlPanel() {
     if (m_isInControlPanelMode) {
-      if (m_controllerManip.getRawButton(DriveStation.kIDButtonRB)) {
-        int controlPanelSpinAmountInitial = m_controlPanelSpinAmount;
-        // During a match, the amount of revolutions needed to be completed will be
-        // specified as either 3, 4, or 5. The selections below display 6, 8, and 10,
-        // respectively, because each color is represented twice on the control panel.
-        if (m_buttonManipPressA)
-          m_controlPanelSpinAmount = 6;
-        else if (m_buttonManipPressB)
-          m_controlPanelSpinAmount = 8;
-        else if (m_buttonManipPressX)
-          m_controlPanelSpinAmount = 10;
+      String targetControlPanelColorInitial = m_targetControlPanelColor;
+      if (m_buttonManipPressA)
+        m_targetControlPanelColor = "Green";
+      else if (m_buttonManipPressB)
+        m_targetControlPanelColor = "Red";
+      else if (m_buttonManipPressX)
+        m_targetControlPanelColor = "Blue";
+      else if (m_buttonManipPressY)
+        m_targetControlPanelColor = "Yellow";
+      if (targetControlPanelColorInitial != m_targetControlPanelColor)
+      ShuffleboardHelper.m_entryTargetColor.setString(m_targetControlPanelColor);
 
-        if (controlPanelSpinAmountInitial != m_controlPanelSpinAmount)
-          ShuffleboardHelper.m_entryTargetSpin
-              .setDouble(m_controlPanelSpinAmount);
-      } else {
-        String targetControlPanelColorInitial = m_targetControlPanelColor;
-        if (m_buttonManipPressA)
-          m_targetControlPanelColor = "Green";
-        else if (m_buttonManipPressB)
-          m_targetControlPanelColor = "Red";
-        else if (m_buttonManipPressX)
-          m_targetControlPanelColor = "Blue";
-        else if (m_buttonManipPressY)
-          m_targetControlPanelColor = "Yellow";
-        if (targetControlPanelColorInitial != m_targetControlPanelColor)
-          ShuffleboardHelper.m_entryTargetColor
-              .setString(m_targetControlPanelColor);
-      }
+      int controlPanelSpinAmountInitial = m_controlPanelSpinAmount;
+      // During a match, the amount of revolutions needed to be completed will be
+      // specified as either 3, 4, or 5. The selections below display 6, 8, and 10,
+      // respectively, because each color is represented twice on the control panel.
+      if (m_buttonManipPressDpadLeft)
+        m_controlPanelSpinAmount = 6;
+      else if (m_buttonManipPressDpadUp)
+        m_controlPanelSpinAmount = 8;
+      else if (m_buttonManipPressDpadRight)
+        m_controlPanelSpinAmount = 10;
+      if (controlPanelSpinAmountInitial != m_controlPanelSpinAmount)
+      ShuffleboardHelper.m_entryTargetSpin.setDouble(m_controlPanelSpinAmount);
 
       Color detectedColor = m_colorSensor.getColor();
       ColorMatchResult match = m_colorMatcher.matchClosestColor(detectedColor);
