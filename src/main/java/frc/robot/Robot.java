@@ -3,7 +3,11 @@ package frc.robot;
 import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.AnalogPotentiometer;
 import edu.wpi.first.wpilibj.Compressor;
+<<<<<<< HEAD
 import edu.wpi.first.wpilibj.DigitalInput;
+=======
+import edu.wpi.first.wpilibj.DoubleSolenoid;
+>>>>>>> d9fddcb... Add initial double solenoid code.
 import edu.wpi.first.wpilibj.I2C;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.TimedRobot;
@@ -103,6 +107,9 @@ public class Robot extends TimedRobot {
       ColorMatch.makeColor(0.361, 0.524, 0.113);
   private final WPI_TalonSRX m_motorControlPanel =
       new WPI_TalonSRX(RoboRIO.kPortMotorControlPanel);
+  private final DoubleSolenoid m_doubleSolenoidControlPanel =
+      new DoubleSolenoid(RoboRIO.kPortDoubleSolenoidForwardControlPanel,
+          RoboRIO.kPortDoubleSolenoidBackwardControlPanel);
   private String m_detectedColorString = "N/A";
   private String m_lastDetectedColorString = "N/A";
   private String m_targetControlPanelColor = "N/A";
@@ -244,6 +251,19 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void teleopInit() {
+<<<<<<< HEAD
+=======
+    m_doubleSolenoidControlPanel.set(DoubleSolenoid.Value.kReverse);
+
+    m_isInControlPanelMode = false;
+    m_isInControlPanelModeLastLoop = false;
+
+    m_detectedColorString = "N/A";
+    m_lastDetectedColorString = "N/A";
+    m_targetControlPanelColor = "N/A";
+    m_controlPanelSpinAmount = 0;
+
+>>>>>>> d9fddcb... Add initial double solenoid code.
     m_compressor.start();
 
     disabledInit();
