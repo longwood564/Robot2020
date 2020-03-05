@@ -1,7 +1,27 @@
 package frc.robot;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
+import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
+import com.revrobotics.ColorMatch;
+import com.revrobotics.ColorMatchResult;
+import com.revrobotics.ColorSensorV3;
+
+import org.opencv.core.Core;
+import org.opencv.core.Mat;
+import org.opencv.core.MatOfPoint;
+import org.opencv.core.Point;
+import org.opencv.core.Rect;
+import org.opencv.core.Scalar;
+import org.opencv.imgproc.Imgproc;
+
+import edu.wpi.cscore.CvSink;
+import edu.wpi.cscore.CvSource;
+import edu.wpi.cscore.UsbCamera;
+import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.AnalogPotentiometer;
@@ -11,20 +31,13 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
-import edu.wpi.first.wpilibj.util.Color;
-import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
-
-import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
-import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
-
-import com.revrobotics.ColorSensorV3;
-import com.revrobotics.ColorMatchResult;
-import com.revrobotics.ColorMatch;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.util.Color;
 
 /**
  * Runs the robot code. The name of this class is depended upon by build.gradle.
@@ -93,6 +106,22 @@ public class Robot extends TimedRobot {
   private int m_controlPanelSpinAmount = 0;
 
   // Vision
+  private boolean doVisionProcessing = false;
+  UsbCamera camera = CameraServer.getInstance().startAutomaticCapture(1);
+  private CvSink m_sink;
+  private CvSource m_source;
+
+  private Mat m_sourceMat = new Mat();
+  private Mat m_hsvMat = new Mat();
+  private Mat m_filteredMat = new Mat();
+
+  private List<MatOfPoint> contours = new ArrayList<MatOfPoint>();
+  private List<Point> points = new ArrayList<Point>();
+
+  private Rect scanArea = new Rect(0, 120, 640, 120);
+
+  private Scalar hsvLow = new Scalar(30, 0, 250);
+  private Scalar hsvHigh = new Scalar(90, 255, 255);
 
   // Shuffleboard General
 
@@ -239,6 +268,15 @@ public class Robot extends TimedRobot {
                 - Constants.kHorDistanceHexagonToHoop)
         .withWidget(BuiltInWidgets.kNumberBar)
         .withProperties(kPropertiesDistanceSensor).getEntry();
+
+    // Vision init
+    // Configure the camera.
+    camera.setResolution(640, 480);
+		
+		// Obtain OpenCV helper objects.
+    m_sink = CameraServer.getInstance().getVideo();
+		m_sink.setEnabled(true);
+		m_source = CameraServer.getInstance().putVideo("Test", 640, 240);
   }
 
   /**
@@ -367,6 +405,7 @@ public class Robot extends TimedRobot {
     driveSpeed();
     launchBall();
     spinControlPanel();
+    processImage();
   }
 
   /**
@@ -529,6 +568,78 @@ public class Robot extends TimedRobot {
         && m_lastDetectedColorString != m_detectedColorString
         && m_controlPanelSpinAmount > 0)
       m_controlPanelSpinAmount -= 1;
+  }
+
+  private void processImage() {
+    m_sink.grabFrame(m_sourceMat);
+    if(doVisionProcessing) {
+      if(!m_sourceMat.empty()) {
+        // Crop out the uneccessary parts of the image
+        Mat m_subMat = new Mat(m_sourceMat, scanArea);
+
+        // Converts m_sourceMat to hsv color
+        Imgproc.cvtColor(m_subMat, m_hsvMat, Imgproc.COLOR_BGR2HSV);
+
+        // Filters for only the color of the tape
+        Core.inRange(m_hsvMat, hsvLow, hsvHigh, m_filteredMat);
+
+        // Find contours
+        Imgproc.findContours(m_filteredMat, contours, new Mat(),
+          Imgproc.RETR_TREE, Imgproc.CHAIN_APPROX_SIMPLE);
+
+        if(contours.size() > 0) {
+          MatOfPoint largestContour = contours.get(0);
+          double largestContourSize = Imgproc.contourArea(largestContour);
+          for(MatOfPoint contour : contours) {
+            double size = Imgproc.contourArea(contour);
+            if(size > largestContourSize) {
+              largestContour = contour;
+              largestContourSize = size;
+            }
+          }
+          contours.clear();
+          contours.add(largestContour);
+
+          Rect bounds = Imgproc.boundingRect(largestContour);
+          Point center = new Point(bounds.x + (bounds.width/2), bounds.y);
+          if(points.size() >= 4) {
+            points.remove(0);
+          }
+          points.add(center);
+          
+          center = new Point(0, 0);
+          for(Point point : points) {
+            center.x += point.x;
+            center.y += point.y;
+          }
+
+          center.x /= points.size();
+          center.y /= points.size();
+          center.y += 120;
+
+          Imgproc.circle(m_sourceMat, center, 5, new Scalar(0, 0, 255), 3);
+          Imgproc.circle(m_sourceMat, new Point(320, center.y), 3, new Scalar(255, 0, 0), -1);
+          Imgproc.rectangle(m_sourceMat, new Point(scanArea.x, scanArea.y), new Point(scanArea.x + scanArea.width, scanArea.y + scanArea.height), new Scalar(0, 255, 0));
+          Imgproc.drawContours(m_sourceMat, contours, -1, new Scalar(255, 0, 0));
+
+          //distance sensing (this can be taken out entirely if it will not be used)
+          //double actualSize = bounds.width/cos(angle);
+
+          //dist = (SizeIn * focal)/SizePx
+          //double dist = (39.25 * 699.516)/bounds.width;
+          //SmartDashboard.putNumber("Dist", dist);
+        }
+      }
+    }
+    m_source.putFrame(m_sourceMat);
+    matCleanup();
+  }
+
+  private void matCleanup() {
+    m_sourceMat.release();
+    m_hsvMat.release();
+    m_filteredMat.release();
+    contours.clear();
   }
 
   /**
