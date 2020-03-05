@@ -3,11 +3,8 @@ package frc.robot;
 import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.AnalogPotentiometer;
 import edu.wpi.first.wpilibj.Compressor;
-<<<<<<< HEAD
 import edu.wpi.first.wpilibj.DigitalInput;
-=======
 import edu.wpi.first.wpilibj.DoubleSolenoid;
->>>>>>> d9fddcb... Add initial double solenoid code.
 import edu.wpi.first.wpilibj.I2C;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.TimedRobot;
@@ -32,6 +29,8 @@ public class Robot extends TimedRobot {
       new Joystick(DriveStation.kPortControllerDrive);
   private final Joystick m_controllerManip =
       new Joystick(DriveStation.kPortControllerManip);
+  private boolean m_buttonDrivePressA = false;
+  private boolean m_buttonDrivePressB = false;
   private boolean m_buttonManipPressA = false;
   private boolean m_buttonManipPressB = false;
   private boolean m_buttonManipPressX = false;
@@ -85,7 +84,10 @@ public class Robot extends TimedRobot {
   // Winch
   private final WPI_VictorSPX m_motorWinch =
       new WPI_VictorSPX(RoboRIO.kPortMotorWinch);
-  private final boolean m_winchRaised = false;
+  private final DoubleSolenoid m_doubleSolenoidWinch =
+      new DoubleSolenoid(RoboRIO.kPortDoubleSolenoidForwardWinch,
+          RoboRIO.kPortDoubleSolenoidBackwardWinch);
+  private boolean m_raiseWinch = false;
 
   // Launching
   WPI_VictorSPX m_motorLauncherLeft =
@@ -256,6 +258,18 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void teleopInit() {
+    m_doubleSolenoidControlPanel.set(DoubleSolenoid.Value.kReverse);
+    m_doubleSolenoidWinch.set(DoubleSolenoid.Value.kReverse);
+
+    m_isInControlPanelMode = false;
+    m_isInControlPanelModeLastLoop = false;
+    m_raiseWinch = false;
+
+    m_detectedColorString = "N/A";
+    m_lastDetectedColorString = "N/A";
+    m_targetControlPanelColor = "N/A";
+    m_controlPanelSpinAmount = 0;
+
     m_compressor.start();
 
     disabledInit();
@@ -271,7 +285,7 @@ public class Robot extends TimedRobot {
     driveSpeed();
     intakeBalls();
     launchBalls();
-    controlWinch();
+    toggleWinch();
     spinControlPanel();
   }
 
@@ -281,6 +295,13 @@ public class Robot extends TimedRobot {
    * likely just return "false" for any button.
    */
   private void updateInputs() {
+    // Driver controller updates.
+    m_buttonDrivePressA =
+        m_controllerDrive.getRawButtonPressed(DriveStation.kIDButtonA);
+    m_buttonDrivePressB =
+        m_controllerDrive.getRawButtonPressed(DriveStation.kIDButtonB);
+
+    // Manipulator controller updates.
     m_buttonManipPressA =
         m_controllerManip.getRawButtonPressed(DriveStation.kIdButtonA);
     m_buttonManipPressB =
@@ -479,13 +500,19 @@ public class Robot extends TimedRobot {
   }
 
   /**
-   * Handles winch control.
+   * Toggles whether or not the winch is raised or declined.
    */
-  private void controlWinch() {
-    if (!m_isInControlPanelMode) {
-      boolean buttonDriveA = m_controllerDrive.getRawButton(DriveStation.kIDButtonA);
-      boolean buttonDriveB = m_controllerDrive.getRawButton(DriveStation.kIDButtonB);
+  private void toggleWinch() {
+    if (m_buttonDrivePressA) {
+      m_raiseWinch = !m_raiseWinch;
+    }
 
+    if (m_raiseWinch) {
+      m_motorWinch.set(1);
+      m_doubleSolenoidWinch.set(DoubleSolenoid.Value.kForward);
+    } else {
+      m_motorWinch.set(0);
+      m_doubleSolenoidWinch.set(DoubleSolenoid.Value.kReverse);
     }
   }
 
