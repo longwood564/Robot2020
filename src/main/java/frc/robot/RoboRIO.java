@@ -4,7 +4,7 @@ package frc.robot;
  * This class provides constants relating to the hardware connected to the RoboRIO.
  */
 public final class RoboRIO {
-  // CAN Devices
+    // CAN Devices
 
   /** The port of the compressor. */
   public static final int kPortCompressor = 0;
@@ -43,7 +43,7 @@ public final class RoboRIO {
    /** The port of the backward channel of the winch double solenoid. */
    public static final int kPortDoubleSolenoidBackwardWinch = 4;
 
-  // Analog Inputs
+    // PCM Devices
 
   /** The port of the ultrasonic sensor. */
   public static final int kPortUltrasonicSensorPort = 0;
