@@ -29,6 +29,13 @@ public final class RoboRIO {
    * replicated due to software limitaitons.
    */
   public static final int kPortMotorLauncherRight = 11;
+  
+  // PCM Devices
+  
+  /** The port of the forward channel of the control panel double solenoid. */
+  public static final int kPortDoubleSolenoidForwardControlPanel = 1;
+  /** The port of the backward channel of the control panel double solenoid. */
+  public static final int kPortDoubleSolenoidBackwardControlPanel = 2;
 
   // Analog Inputs
 
