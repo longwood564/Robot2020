@@ -29,6 +29,8 @@ public final class RoboRIO {
    * replicated due to software limitaitons.
    */
   public static final int kPortMotorLauncherRight = 11;
+  /** The port of the winch motor. */
+  public static final int kPortMotorWinch = 12;
   
   // PCM Devices
   
