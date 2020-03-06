@@ -511,11 +511,11 @@ public class Robot extends TimedRobot {
     }
 
     if (m_raiseWinch) {
-      m_motorWinch.set(1);
       m_doubleSolenoidWinch.set(DoubleSolenoid.Value.kForward);
+      m_motorWinch.set(1);
     } else {
-      m_motorWinch.set(0);
       m_doubleSolenoidWinch.set(DoubleSolenoid.Value.kReverse);
+      m_motorWinch.set(0);
     }
   }
 
