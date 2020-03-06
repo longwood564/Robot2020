@@ -1,23 +1,15 @@
 package frc.robot;
 
-import java.util.Map;
-
-import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.AnalogPotentiometer;
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.I2C;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.TimedRobot;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
-import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
-import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
@@ -94,102 +86,6 @@ public class Robot extends TimedRobot {
 
   // Vision
 
-  // Shuffleboard General
-
-  private final ShuffleboardTab m_tabGeneral = Shuffleboard.getTab("General");
-
-  private final ShuffleboardLayout m_layoutState =
-      m_tabGeneral.getLayout("State", BuiltInLayouts.kGrid).withPosition(0, 0)
-          .withSize(3, 1)
-          .withProperties(Map.of("Number of columns", 1, "Number of rows", 1));
-  private final NetworkTableEntry m_entryControlPanelMode =
-      m_layoutState.add("Control panel mode", false)
-          .withWidget(BuiltInWidgets.kToggleSwitch).getEntry();
-
-  private final ShuffleboardLayout m_layoutAutonomous = m_tabGeneral
-      .getLayout("Autonomous", BuiltInLayouts.kGrid).withPosition(3, 0)
-      .withSize(3, 1).withProperties(Map.of("Label position", "HIDDEN",
-          "Number of columns", 1, "Number of rows", 1));
-
-  private final ShuffleboardLayout m_layoutDriving =
-      m_tabGeneral.getLayout("Driving", BuiltInLayouts.kGrid).withPosition(0, 1)
-          .withSize(3, 3)
-          .withProperties(Map.of("Number of columns", 1, "Number of rows", 1));
-
-  private final ShuffleboardLayout m_layoutLaunching =
-      m_tabGeneral.getLayout("Launching", BuiltInLayouts.kGrid)
-          .withPosition(3, 1).withSize(3, 3)
-          .withProperties(Map.of("Number of columns", 1, "Number of rows", 3));
-  private static final Map<String, Object> kPropertiesDistanceSensor =
-      Map.of("Min", RoboRIO.kMinimumReadingUltrasonic, "Max",
-          RoboRIO.kMaximumReadingUltrasonic, "Center",
-          RoboRIO.kMinimumReadingUltrasonic);
-  private final NetworkTableEntry m_entryDistanceSensor = m_layoutLaunching
-      .add("Distance Sensor Reading", 0.0).withWidget(BuiltInWidgets.kNumberBar)
-      .withProperties(kPropertiesDistanceSensor).getEntry();
-  private final NetworkTableEntry m_entryDistanceTolerence =
-      m_layoutLaunching.addPersistent("Distance Tolerance", 1)
-          .withWidget(BuiltInWidgets.kNumberSlider)
-          .withProperties(
-              Map.of("Min", 0.0, "Max", 2.0, "Block increment", 0.25))
-          .getEntry();
-
-  private final ShuffleboardLayout m_layoutControlPanel =
-      m_tabGeneral.getLayout("Color Sensing", BuiltInLayouts.kGrid)
-          .withPosition(3, 4).withSize(3, 2)
-          .withProperties(Map.of("Number of columns", 2, "Number of rows", 2));
-  private final NetworkTableEntry m_entryDetectedColor =
-      m_layoutControlPanel.add("Detected color", "N/A").getEntry();
-  private final NetworkTableEntry m_entryConfidence =
-      m_layoutControlPanel.add("Confidence", 0).getEntry();
-  private final NetworkTableEntry m_entryTargetColor =
-      m_layoutControlPanel.add("Target Color", "N/A").getEntry();
-  private final NetworkTableEntry m_entryTargetSpin =
-      m_layoutControlPanel.add("Target Spins", 0).getEntry();
-
-  private final ShuffleboardLayout m_layoutVision =
-      m_tabGeneral.getLayout("Vision", BuiltInLayouts.kGrid).withPosition(6, 0)
-          .withSize(1, 1)
-          .withProperties(Map.of("Number of columns", 1, "Number of rows", 1));
-
-  // Shuffleboard Tools
-
-  private final ShuffleboardTab m_tabTools = Shuffleboard.getTab("Tools");
-
-  private final ShuffleboardLayout m_layoutLaunchingTools =
-      m_tabTools.getLayout("Launching Tools", BuiltInLayouts.kGrid)
-          .withPosition(0, 0).withSize(4, 5)
-          .withProperties(Map.of("Number of columns", 2, "Number of rows", 1));
-  private final ShuffleboardLayout m_layoutProjectileMotionPred =
-      m_layoutLaunchingTools
-          .getLayout("Projectile Motion Prediction", BuiltInLayouts.kList)
-          .withSize(2, 5);
-  private final NetworkTableEntry m_entryHorizontalDistance =
-      m_layoutProjectileMotionPred.addPersistent("Horizontal Distance (m)", 0)
-          .getEntry();
-  private final NetworkTableEntry m_entryRunPred =
-      m_layoutProjectileMotionPred.add("Calculate", false)
-          .withWidget(BuiltInWidgets.kToggleButton).getEntry();
-  private final NetworkTableEntry m_entryVerticalDistance =
-      m_layoutProjectileMotionPred.add("Vertical Distance (m)", 0)
-          .withWidget(BuiltInWidgets.kTextView).getEntry();
-
-  private final ShuffleboardLayout m_layoutProjectileMotionSim =
-      m_layoutLaunchingTools
-          .getLayout("Projectile Motion Simulation", BuiltInLayouts.kList)
-          .withSize(2, 5);
-  private final NetworkTableEntry m_entryRunSim =
-      m_layoutProjectileMotionSim.add("Run Simulation", false)
-          .withWidget(BuiltInWidgets.kToggleButton).getEntry();
-  private final NetworkTableEntry m_entrySimGraph = m_layoutProjectileMotionSim
-      .add("Simlulation", new double[] {0, 0}).withWidget(BuiltInWidgets.kGraph)
-      .withProperties(Map.of("Visible time", 7)).getEntry();
-  private final NetworkTableEntry m_entrySimTime =
-      m_layoutProjectileMotionSim.add("Simulation Time (s)", 0)
-          .withWidget(BuiltInWidgets.kTextView).getEntry();
-  private final Timer m_timerSim = new Timer();
-  private boolean m_isRunningSim = false;
-
   /**
    * Initializes the robot code when the robot power is turned on.
    */
@@ -230,15 +126,15 @@ public class Robot extends TimedRobot {
     // distinction to be made between assigning the ComplexWidget to a variable, and
     // assigning the SendableChooser to a variable - which we *do* do.
     m_autoChooser.setDefaultOption("Default Auto", kAutoCaseDefault);
-    m_layoutAutonomous.add(m_autoChooser)
+    ShuffleboardClass.m_layoutAutonomous.add(m_autoChooser)
         .withWidget(BuiltInWidgets.kSplitButtonChooser);
-    m_layoutDriving.add(m_differentialDrive);
-    m_layoutLaunching
+    ShuffleboardClass.m_layoutDriving.add(m_differentialDrive);
+    ShuffleboardClass.m_layoutLaunching
         .add("Optimal Distance to Apex",
             Constants.kProjectedHorDistanceToApex
                 - Constants.kHorDistanceHexagonToHoop)
         .withWidget(BuiltInWidgets.kNumberBar)
-        .withProperties(kPropertiesDistanceSensor).getEntry();
+        .withProperties(ShuffleboardClass.kPropertiesDistanceSensor).getEntry();
   }
 
   /**
@@ -246,45 +142,7 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotPeriodic() {
-    if (m_entryRunPred.getBoolean(false)) {
-      m_entryRunPred.setBoolean(false);
-      double horDistance = m_entryHorizontalDistance.getDouble(0);
-      // This expression calculates how high the ball will be at a specified distance
-      // away from the robot. See the research document for the derivation of the
-      // formula used here.
-      m_entryVerticalDistance
-          .setDouble(horDistance * Math.tan(Constants.kLauncherAngle)
-              - (0.5 * Constants.kAccelDueToGravity
-                  * Math.pow((horDistance / (Constants.kInitialVelocityBall
-                      * Math.cos(Constants.kLauncherAngle))), 2)));
-    }
-
-    if (m_entryRunSim.getBoolean(false) && !m_isRunningSim) {
-      m_isRunningSim = true;
-      m_timerSim.start();
-    } else if (m_entryRunSim.getBoolean(false) && m_isRunningSim) {
-      double time = m_timerSim.get();
-      double horizontalDistance =
-          (Constants.kInitialVelocityBall * Math.cos(Constants.kLauncherAngle))
-              * time;
-      double verticalDistance =
-          (Constants.kInitialVelocityBall * Math.sin(Constants.kLauncherAngle))
-              * time + 0.5 * -Constants.kAccelDueToGravity * Math.pow(time, 2);
-      if (verticalDistance < 0) {
-        m_isRunningSim = false;
-        m_entryRunSim.setBoolean(false);
-        m_timerSim.reset();
-      } else {
-        m_entrySimGraph.setDoubleArray(
-            new double[] {horizontalDistance, verticalDistance});
-        m_entrySimTime.setDouble(time);
-      }
-    } else if (!m_entryRunSim.getBoolean(false) && m_isRunningSim) {
-      // Cancel a running simulation.
-      m_isRunningSim = false;
-      m_timerSim.reset();
-      m_entrySimGraph.setDoubleArray(new double[] {0, 0});
-    }
+    ShuffleboardClass.shuffleboardPeriodic();
   }
 
   /**
@@ -306,10 +164,10 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void disabledInit() {
-    m_entryDetectedColor.setString("N/A");
-    m_entryConfidence.setDouble(0);
-    m_entryTargetColor.setString("N/A");
-    m_entryTargetSpin.setDouble(0);
+    ShuffleboardClass.m_entryDetectedColor.setString("N/A");
+    ShuffleboardClass.m_entryConfidence.setDouble(0);
+    ShuffleboardClass.m_entryTargetColor.setString("N/A");
+    ShuffleboardClass.m_entryTargetSpin.setDouble(0);
   }
 
   /**
@@ -393,10 +251,11 @@ public class Robot extends TimedRobot {
   private void handleState() {
     if (m_buttonManipPressStart) {
       m_isInControlPanelMode = !m_isInControlPanelMode;
-      m_entryControlPanelMode.setBoolean(m_isInControlPanelMode);
+      ShuffleboardClass.m_entryControlPanelMode
+          .setBoolean(m_isInControlPanelMode);
     } else {
-      m_isInControlPanelMode =
-          m_entryControlPanelMode.getBoolean(m_isInControlPanelMode);
+      m_isInControlPanelMode = ShuffleboardClass.m_entryControlPanelMode
+          .getBoolean(m_isInControlPanelMode);
     }
   }
 
@@ -445,9 +304,9 @@ public class Robot extends TimedRobot {
    * make the shot if it can't.
    */
   private void launchBall() {
-    double tolerance = m_entryDistanceTolerence.getDouble(1);
+    double tolerance = ShuffleboardClass.m_entryDistanceTolerence.getDouble(1);
     double horDistanceToHex = m_ultrasonicSensor.get();
-    m_entryDistanceSensor.setDouble(horDistanceToHex);
+    ShuffleboardClass.m_entryDistanceSensor.setDouble(horDistanceToHex);
     double horDistanceToHoop =
         horDistanceToHex + Constants.kHorDistanceHexagonToHoop;
 
@@ -477,7 +336,8 @@ public class Robot extends TimedRobot {
           m_controlPanelSpinAmount = 10;
 
         if (controlPanelSpinAmountInitial != m_controlPanelSpinAmount)
-          m_entryTargetSpin.setDouble(m_controlPanelSpinAmount);
+          ShuffleboardClass.m_entryTargetSpin
+              .setDouble(m_controlPanelSpinAmount);
       } else {
         String targetControlPanelColorInitial = m_targetControlPanelColor;
         if (m_buttonManipPressA)
@@ -489,7 +349,8 @@ public class Robot extends TimedRobot {
         else if (m_buttonManipPressY)
           m_targetControlPanelColor = "Yellow";
         if (targetControlPanelColorInitial != m_targetControlPanelColor)
-          m_entryTargetColor.setString(m_targetControlPanelColor);
+          ShuffleboardClass.m_entryTargetColor
+              .setString(m_targetControlPanelColor);
       }
 
       Color detectedColor = m_colorSensor.getColor();
@@ -504,14 +365,14 @@ public class Robot extends TimedRobot {
         m_detectedColorString = "Yellow";
       else
         m_detectedColorString = "Unknown";
-      m_entryDetectedColor.setString(m_detectedColorString);
-      m_entryConfidence.setDouble(match.confidence);
+      ShuffleboardClass.m_entryDetectedColor.setString(m_detectedColorString);
+      ShuffleboardClass.m_entryConfidence.setDouble(match.confidence);
       turnControlPanel();
-      m_entryTargetSpin.setDouble(m_controlPanelSpinAmount);
+      ShuffleboardClass.m_entryTargetSpin.setDouble(m_controlPanelSpinAmount);
       m_lastDetectedColorString = m_detectedColorString;
     } else {
-      m_entryDetectedColor.setString("N/A");
-      m_entryConfidence.setDouble(0);
+      ShuffleboardClass.m_entryDetectedColor.setString("N/A");
+      ShuffleboardClass.m_entryConfidence.setDouble(0);
     }
   }
 
