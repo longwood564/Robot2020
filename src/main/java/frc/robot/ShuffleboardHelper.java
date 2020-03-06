@@ -13,7 +13,7 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 /**
  * This class deals with variables relating to Shuffleboard.
  */
-public final class ShuffleboardClass {
+public final class ShuffleboardHelper {
         // Shuffleboard General
         public static final ShuffleboardTab m_tabGeneral =
                         Shuffleboard.getTab("General");
@@ -140,31 +140,27 @@ public final class ShuffleboardClass {
          * This function is called upon in the robotPeriodic() method of Robot.java.
          */
         public static void shuffleboardPeriodic() {
-                if (ShuffleboardClass.m_entryRunPred.getBoolean(false)) {
-                        ShuffleboardClass.m_entryRunPred.setBoolean(false);
+                if (m_entryRunPred.getBoolean(false)) {
+                        m_entryRunPred.setBoolean(false);
                         double horDistance =
-                                        ShuffleboardClass.m_entryHorizontalDistance
-                                                        .getDouble(0);
+                                        m_entryHorizontalDistance.getDouble(0);
                         // This expression calculates how high the ball will be at a specified distance
                         // away from the robot. See the research document for the derivation of the
                         // formula used here.
-                        ShuffleboardClass.m_entryVerticalDistance
-                                        .setDouble(horDistance * Math.tan(
-                                                        Constants.kLauncherAngle)
-                                                        - (0.5 * Constants.kAccelDueToGravity
-                                                                        * Math.pow((horDistance
-                                                                                        / (Constants.kInitialVelocityBall
-                                                                                                        * Math.cos(Constants.kLauncherAngle))),
-                                                                                        2)));
+                        m_entryVerticalDistance.setDouble(horDistance
+                                        * Math.tan(Constants.kLauncherAngle)
+                                        - (0.5 * Constants.kAccelDueToGravity
+                                                        * Math.pow((horDistance
+                                                                        / (Constants.kInitialVelocityBall
+                                                                                        * Math.cos(Constants.kLauncherAngle))),
+                                                                        2)));
                 }
 
-                if (ShuffleboardClass.m_entryRunSim.getBoolean(false)
-                                && !ShuffleboardClass.m_isRunningSim) {
-                        ShuffleboardClass.m_isRunningSim = true;
-                        ShuffleboardClass.m_timerSim.start();
-                } else if (ShuffleboardClass.m_entryRunSim.getBoolean(false)
-                                && ShuffleboardClass.m_isRunningSim) {
-                        double time = ShuffleboardClass.m_timerSim.get();
+                if (m_entryRunSim.getBoolean(false) && !m_isRunningSim) {
+                        m_isRunningSim = true;
+                        m_timerSim.start();
+                } else if (m_entryRunSim.getBoolean(false) && m_isRunningSim) {
+                        double time = m_timerSim.get();
                         double horizontalDistance =
                                         (Constants.kInitialVelocityBall * Math
                                                         .cos(Constants.kLauncherAngle))
@@ -176,25 +172,20 @@ public final class ShuffleboardClass {
                                                         + 0.5 * -Constants.kAccelDueToGravity
                                                                         * Math.pow(time, 2);
                         if (verticalDistance < 0) {
-                                ShuffleboardClass.m_isRunningSim = false;
-                                ShuffleboardClass.m_entryRunSim
-                                                .setBoolean(false);
-                                ShuffleboardClass.m_timerSim.reset();
+                                m_isRunningSim = false;
+                                m_entryRunSim.setBoolean(false);
+                                m_timerSim.reset();
                         } else {
-                                ShuffleboardClass.m_entrySimGraph
-                                                .setDoubleArray(new double[] {
-                                                                horizontalDistance,
-                                                                verticalDistance});
-                                ShuffleboardClass.m_entrySimTime
-                                                .setDouble(time);
+                                m_entrySimGraph.setDoubleArray(new double[] {
+                                                horizontalDistance,
+                                                verticalDistance});
+                                m_entrySimTime.setDouble(time);
                         }
-                } else if (!ShuffleboardClass.m_entryRunSim.getBoolean(false)
-                                && ShuffleboardClass.m_isRunningSim) {
+                } else if (!m_entryRunSim.getBoolean(false) && m_isRunningSim) {
                         // Cancel a running simulation.
-                        ShuffleboardClass.m_isRunningSim = false;
-                        ShuffleboardClass.m_timerSim.reset();
-                        ShuffleboardClass.m_entrySimGraph
-                                        .setDoubleArray(new double[] {0, 0});
+                        m_isRunningSim = false;
+                        m_timerSim.reset();
+                        m_entrySimGraph.setDoubleArray(new double[] {0, 0});
                 }
         }
 }
