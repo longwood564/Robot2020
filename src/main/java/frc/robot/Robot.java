@@ -481,7 +481,8 @@ public class Robot extends TimedRobot {
 
       double error = Constants.kProjectedHorDistanceToApex - horDistanceToHoop;
       if (Math.abs(error) > tolerance) {
-        // m_differentialDrive.arcadeDrive(error * Constants.kP, 0);
+        // TODO: Very experimental! Fine tune this.
+        m_differentialDrive.arcadeDrive(error * Constants.kP, 0);
       } else {
         m_launchBall = true;
         ShuffleboardHelper.m_entryLaunchBall.setBoolean(m_launchBall);
