@@ -447,7 +447,14 @@ public class Robot extends TimedRobot {
     if (m_launchBall)
       advanceBelt = true;
 
-    m_motorBelt.set(advanceBelt ? Constants.kSpeedBelt : 0);
+    // If a manipulator bumper is held, disregard all of the previous logic, and force a belt movement.
+    if (m_controllerManip.getRawButton(DriveStation.kIDButtonRB))
+      m_motorBelt.set(Constants.kSpeedBelt);
+    else if (m_controllerManip.getRawButton(DriveStation.kIDButtonLB))
+      m_motorBelt.set(-Constants.kSpeedBelt);
+    // Use the logic based off of the photosensors for belt movement.
+    else
+      m_motorBelt.set(advanceBelt ? Constants.kSpeedBelt : 0);
 
     // Rev up the launcher motors as soon as we start collecting balls.
     if (ballsInStorage >= 1)
