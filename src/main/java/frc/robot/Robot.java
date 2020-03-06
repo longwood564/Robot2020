@@ -126,15 +126,15 @@ public class Robot extends TimedRobot {
     // distinction to be made between assigning the ComplexWidget to a variable, and
     // assigning the SendableChooser to a variable - which we *do* do.
     m_autoChooser.setDefaultOption("Default Auto", kAutoCaseDefault);
-    ShuffleboardClass.m_layoutAutonomous.add(m_autoChooser)
+    ShuffleboardHelper.m_layoutAutonomous.add(m_autoChooser)
         .withWidget(BuiltInWidgets.kSplitButtonChooser);
-    ShuffleboardClass.m_layoutDriving.add(m_differentialDrive);
-    ShuffleboardClass.m_layoutLaunching
+    ShuffleboardHelper.m_layoutDriving.add(m_differentialDrive);
+    ShuffleboardHelper.m_layoutLaunching
         .add("Optimal Distance to Apex",
             Constants.kProjectedHorDistanceToApex
                 - Constants.kHorDistanceHexagonToHoop)
         .withWidget(BuiltInWidgets.kNumberBar)
-        .withProperties(ShuffleboardClass.kPropertiesDistanceSensor).getEntry();
+        .withProperties(ShuffleboardHelper.kPropertiesDistanceSensor).getEntry();
   }
 
   /**
@@ -142,7 +142,7 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotPeriodic() {
-    ShuffleboardClass.shuffleboardPeriodic();
+    ShuffleboardHelper.shuffleboardPeriodic();
   }
 
   /**
@@ -164,10 +164,10 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void disabledInit() {
-    ShuffleboardClass.m_entryDetectedColor.setString("N/A");
-    ShuffleboardClass.m_entryConfidence.setDouble(0);
-    ShuffleboardClass.m_entryTargetColor.setString("N/A");
-    ShuffleboardClass.m_entryTargetSpin.setDouble(0);
+    ShuffleboardHelper.m_entryDetectedColor.setString("N/A");
+    ShuffleboardHelper.m_entryConfidence.setDouble(0);
+    ShuffleboardHelper.m_entryTargetColor.setString("N/A");
+    ShuffleboardHelper.m_entryTargetSpin.setDouble(0);
   }
 
   /**
@@ -251,10 +251,10 @@ public class Robot extends TimedRobot {
   private void handleState() {
     if (m_buttonManipPressStart) {
       m_isInControlPanelMode = !m_isInControlPanelMode;
-      ShuffleboardClass.m_entryControlPanelMode
+      ShuffleboardHelper.m_entryControlPanelMode
           .setBoolean(m_isInControlPanelMode);
     } else {
-      m_isInControlPanelMode = ShuffleboardClass.m_entryControlPanelMode
+      m_isInControlPanelMode = ShuffleboardHelper.m_entryControlPanelMode
           .getBoolean(m_isInControlPanelMode);
     }
   }
@@ -304,9 +304,9 @@ public class Robot extends TimedRobot {
    * make the shot if it can't.
    */
   private void launchBall() {
-    double tolerance = ShuffleboardClass.m_entryDistanceTolerence.getDouble(1);
+    double tolerance = ShuffleboardHelper.m_entryDistanceTolerence.getDouble(1);
     double horDistanceToHex = m_ultrasonicSensor.get();
-    ShuffleboardClass.m_entryDistanceSensor.setDouble(horDistanceToHex);
+    ShuffleboardHelper.m_entryDistanceSensor.setDouble(horDistanceToHex);
     double horDistanceToHoop =
         horDistanceToHex + Constants.kHorDistanceHexagonToHoop;
 
@@ -336,7 +336,7 @@ public class Robot extends TimedRobot {
           m_controlPanelSpinAmount = 10;
 
         if (controlPanelSpinAmountInitial != m_controlPanelSpinAmount)
-          ShuffleboardClass.m_entryTargetSpin
+          ShuffleboardHelper.m_entryTargetSpin
               .setDouble(m_controlPanelSpinAmount);
       } else {
         String targetControlPanelColorInitial = m_targetControlPanelColor;
@@ -349,7 +349,7 @@ public class Robot extends TimedRobot {
         else if (m_buttonManipPressY)
           m_targetControlPanelColor = "Yellow";
         if (targetControlPanelColorInitial != m_targetControlPanelColor)
-          ShuffleboardClass.m_entryTargetColor
+          ShuffleboardHelper.m_entryTargetColor
               .setString(m_targetControlPanelColor);
       }
 
@@ -365,14 +365,14 @@ public class Robot extends TimedRobot {
         m_detectedColorString = "Yellow";
       else
         m_detectedColorString = "Unknown";
-      ShuffleboardClass.m_entryDetectedColor.setString(m_detectedColorString);
-      ShuffleboardClass.m_entryConfidence.setDouble(match.confidence);
+      ShuffleboardHelper.m_entryDetectedColor.setString(m_detectedColorString);
+      ShuffleboardHelper.m_entryConfidence.setDouble(match.confidence);
       turnControlPanel();
-      ShuffleboardClass.m_entryTargetSpin.setDouble(m_controlPanelSpinAmount);
+      ShuffleboardHelper.m_entryTargetSpin.setDouble(m_controlPanelSpinAmount);
       m_lastDetectedColorString = m_detectedColorString;
     } else {
-      ShuffleboardClass.m_entryDetectedColor.setString("N/A");
-      ShuffleboardClass.m_entryConfidence.setDouble(0);
+      ShuffleboardHelper.m_entryDetectedColor.setString("N/A");
+      ShuffleboardHelper.m_entryConfidence.setDouble(0);
     }
   }
 
