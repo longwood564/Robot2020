@@ -492,6 +492,11 @@ public class Robot extends TimedRobot {
       m_launchBall = false;
       ShuffleboardHelper.m_entryLaunchBall.setBoolean(false);
     }
+
+    // If the manipulator trigger is held, override our autonomous logic and manually spin up the
+    // launcher.
+    if (m_controllerDrive.getRawAxis(DriveStation.kIDAxisRT) > 0.5)
+      m_motorLauncherLeft.set(Constants.kSpeedLauncher);
   }
 
   /**
