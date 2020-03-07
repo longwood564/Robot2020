@@ -260,6 +260,14 @@ public class Robot extends TimedRobot {
           .getBoolean(m_isInControlPanelMode);
     }
 
+    // If control panel mode is enabled and the robot is driven, disable it.
+    if ((Math.abs(m_controllerDrive.getRawAxis(DriveStation.kIDAxisLeftY)) > 0.5
+        || Math.abs(m_controllerDrive.getRawAxis(DriveStation.kIDAxisRightX)) > 0.5)
+        && m_isInControlPanelMode) {
+      m_isInControlPanelMode = false;
+      m_entryControlPanelMode.setBoolean(m_isInControlPanelMode);
+    }
+
     // Set the Shuffleboard control panel values to their defaults when not enabled.
     if (!m_isInControlPanelMode
         && m_isInControlPanelModeLastLoop != m_isInControlPanelMode) {
@@ -271,14 +279,6 @@ public class Robot extends TimedRobot {
       m_entryTargetColor.setString(m_targetControlPanelColor);
       m_entryTargetSpin.setDouble(m_controlPanelSpinAmount);
       m_entryConfidence.setDouble(0);
-    }
-
-    // If control panel mode is enabled and the robot is driven, disable it.
-    if ((m_controllerDrive.getRawAxis(DriveStation.kIDAxisLeftY) > 0.5
-        || m_controllerDrive.getRawAxis(DriveStation.kIDAxisRightX) > 0.5)
-        && m_isInControlPanelMode) {
-      m_isInControlPanelMode = false;
-      m_entryControlPanelMode.setBoolean(m_isInControlPanelMode);
     }
     m_isInControlPanelModeLastLoop = m_isInControlPanelMode;
   }
