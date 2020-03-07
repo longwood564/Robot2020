@@ -502,6 +502,9 @@ public class Robot extends TimedRobot {
 
   /**
    * Toggles whether or not the winch is raised or declined.
+   * 
+   * TODO: Rewrite this method to better fit the actual logic of the winch.
+   * 
    */
   private void toggleWinch() {
     if (m_buttonDrivePressA) {
