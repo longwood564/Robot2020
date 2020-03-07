@@ -144,7 +144,6 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotPeriodic() {
-    ShuffleboardHelper.shuffleboardPeriodic();
   }
 
   /**
@@ -159,6 +158,7 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void simulationPeriodic() {
+    ShuffleboardHelper.updateSimulations();
   }
 
   /**
