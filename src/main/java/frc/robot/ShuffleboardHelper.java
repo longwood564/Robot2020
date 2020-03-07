@@ -106,7 +106,7 @@ public final class ShuffleboardHelper {
   /**
    * This function is called upon in the robotPeriodic() method of Robot.java.
    */
-  public static void shuffleboardPeriodic() {
+  public static void updateSimulations() {
     if (m_entryRunPred.getBoolean(false)) {
       m_entryRunPred.setBoolean(false);
       double horDistance = m_entryHorizontalDistance.getDouble(0);
