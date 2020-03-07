@@ -162,11 +162,13 @@ public class Robot extends TimedRobot {
   }
 
   /**
-   * Initializes disabled mode.
+   * Initializes disabled mode. This method is responsible for resetting state to the way it this
+   * class is when it's initialized.
    */
   @Override
   public void disabledInit() {
     m_isInControlPanelMode = false;
+    m_isInControlPanelModeLastLoop = false;
     // Running this method will update Shuffleboard to show "N/A" and such, which is desirable while the
     // robot is disabled.
     handleState();
@@ -207,14 +209,6 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void teleopInit() {
-    m_isInControlPanelMode = false;
-    m_isInControlPanelModeLastLoop = false;
-
-    m_detectedColorString = "N/A";
-    m_lastDetectedColorString = "N/A";
-    m_targetControlPanelColor = "N/A";
-    m_controlPanelSpinAmount = 0;
-
     m_compressor.start();
   }
 
