@@ -166,10 +166,10 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void disabledInit() {
-    ShuffleboardHelper.m_entryDetectedColor.setString("N/A");
-    ShuffleboardHelper.m_entryConfidence.setDouble(0);
-    ShuffleboardHelper.m_entryTargetColor.setString("N/A");
-    ShuffleboardHelper.m_entryTargetSpin.setDouble(0);
+    m_isInControlPanelMode = false;
+    // Running this method will update Shuffleboard to show "N/A" and such, which is desirable while the
+    // robot is disabled.
+    handleState();
   }
 
   /**
