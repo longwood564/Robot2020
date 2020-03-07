@@ -479,6 +479,8 @@ public class Robot extends TimedRobot {
             ? Math.min(Constants.kMultiplierHighSpeed, error * Constants.kP)
             : Math.max(-Constants.kMultiplierHighSpeed, error * Constants.kP),
             0, false);
+        m_launchBall = false;
+        ShuffleboardHelper.m_entryLaunchBall.setBoolean(m_launchBall);
       } else {
         m_differentialDrive.arcadeDrive(0, 0);
         m_launchBall = true;
