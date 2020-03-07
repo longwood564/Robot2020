@@ -20,7 +20,10 @@ public final class ShuffleboardHelper {
   public static final ShuffleboardLayout m_layoutState =
       m_tabGeneral.getLayout("State", BuiltInLayouts.kGrid).withPosition(0, 0)
           .withSize(3, 1)
-          .withProperties(Map.of("Number of columns", 1, "Number of rows", 1));
+          .withProperties(Map.of("Number of columns", 2, "Number of rows", 1));
+  public static final NetworkTableEntry m_entryLaunchingMode =
+      m_layoutState.add("Launching mode", false)
+          .withWidget(BuiltInWidgets.kToggleSwitch).getEntry();
   public static final NetworkTableEntry m_entryControlPanelMode =
       m_layoutState.add("Control panel mode", false)
           .withWidget(BuiltInWidgets.kToggleSwitch).getEntry();
@@ -32,6 +35,23 @@ public final class ShuffleboardHelper {
       m_tabGeneral.getLayout("Driving", BuiltInLayouts.kGrid).withPosition(0, 1)
           .withSize(3, 3)
           .withProperties(Map.of("Number of columns", 1, "Number of rows", 1));
+  public static final ShuffleboardLayout m_layoutBallIntake =
+      m_tabGeneral.getLayout("Ball Intake", BuiltInLayouts.kGrid)
+          .withPosition(0, 4).withSize(3, 1)
+          .withProperties(Map.of("Number of columns", 4, "Number of rows", 1));
+  public static final NetworkTableEntry m_entryBallsInStorage =
+      m_layoutBallIntake.add("Balls in storage", 0)
+          .withWidget(BuiltInWidgets.kNumberBar)
+          .withProperties(Map.of("Min", 0, "Max", 3, "Center", 0)).getEntry();
+  public static final NetworkTableEntry m_entryBallDetectedEnter =
+      m_layoutBallIntake.add("Ball detected at entrance point", false)
+          .withWidget(BuiltInWidgets.kBooleanBox).getEntry();
+  public static final NetworkTableEntry m_entryBallDetectedExit =
+      m_layoutBallIntake.add("Ball detected at leave", false)
+          .withWidget(BuiltInWidgets.kBooleanBox).getEntry();
+  public static final NetworkTableEntry m_entryLaunchBall =
+      m_layoutBallIntake.add("Launching balls", false)
+          .withWidget(BuiltInWidgets.kBooleanBox).getEntry();
   public static final ShuffleboardLayout m_layoutLaunching =
       m_tabGeneral.getLayout("Launching", BuiltInLayouts.kGrid)
           .withPosition(3, 1).withSize(3, 3)
