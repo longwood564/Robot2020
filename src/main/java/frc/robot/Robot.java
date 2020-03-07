@@ -73,9 +73,9 @@ public class Robot extends TimedRobot {
       new DigitalInput(RoboRIO.kPortPhotoelectricSensorEnter);
   private final DigitalInput photoelectricSensorExit =
       new DigitalInput(RoboRIO.kPortPhotoelectricSensorExit);
-  private boolean ballDetectedEnterLastLoop = false;
-  private int ballsInStorage = 0;
-  private boolean ballDetectedExitLastLoop = false;
+  private boolean m_ballDetectedEnterLastLoop = false;
+  private int m_ballsInStorage = 0;
+  private boolean m_ballDetectedExitLastLoop = false;
 
   // Launching
   WPI_VictorSPX m_motorLauncherLeft =
@@ -239,8 +239,8 @@ public class Robot extends TimedRobot {
     m_isInControlPanelMode = false;
     m_isInControlPanelModeLastLoop = false;
 
-    ballDetectedEnterLastLoop = false;
-    ballsInStorage = 0;
+    m_ballDetectedEnterLastLoop = false;
+    m_ballsInStorage = 0;
 
     m_launchBall = false;
 
@@ -396,7 +396,7 @@ public class Robot extends TimedRobot {
     // If the manipulator holds LT, and the storage isn't full, activate the intake.
     // TODO: Is this ballsInStorage check putting too much trust in the sensor?
     if (m_controllerDrive.getRawAxis(DriveStation.kIdAxisLt) > 0.50
-        && ballsInStorage < 3)
+        && m_ballsInStorage < 3)
       m_motorIntake.set(Constants.kSpeedIntake);
     else
       m_motorIntake.set(0);
@@ -409,27 +409,27 @@ public class Robot extends TimedRobot {
     boolean ballDetectedExit = !photoelectricSensorExit.get();
     // Advance the belt if there's a ball in the enter spot, and more room above.
     if (ballDetectedEnter) {
-      if (!ballDetectedEnterLastLoop)
-        ++ballsInStorage;
-      if (ballsInStorage < 3)
+      if (!m_ballDetectedEnterLastLoop)
+        ++m_ballsInStorage;
+      if (m_ballsInStorage < 3)
         advanceBelt = true;
       ShuffleboardHelper.m_entryBallDetectedEnter.setBoolean(ballDetectedEnter);
-      ShuffleboardHelper.m_entryBallsInStorage.setDouble(ballsInStorage);
+      ShuffleboardHelper.m_entryBallsInStorage.setDouble(m_ballsInStorage);
     } else if (!ballDetectedEnter) {
       ShuffleboardHelper.m_entryBallDetectedEnter.setBoolean(ballDetectedEnter);
       advanceBelt = false;
     }
     // Keep track of balls exiting.
     if (!ballDetectedExit) {
-      if (ballDetectedExitLastLoop)
-        --ballsInStorage;
+      if (m_ballDetectedExitLastLoop)
+        --m_ballsInStorage;
       // Stop launching the balls if we have finished.
-      if (m_launchBall && ballsInStorage == 0) {
+      if (m_launchBall && m_ballsInStorage == 0) {
         m_launchBall = false;
         ShuffleboardHelper.m_entryLaunchBall.setBoolean(m_launchBall);
       }
       ShuffleboardHelper.m_entryBallDetectedExit.setBoolean(ballDetectedExit);
-      ShuffleboardHelper.m_entryBallsInStorage.setDouble(ballsInStorage);
+      ShuffleboardHelper.m_entryBallsInStorage.setDouble(m_ballsInStorage);
     } else if (ballDetectedExit) {
       ShuffleboardHelper.m_entryBallDetectedExit.setBoolean(ballDetectedExit);
     }
@@ -449,13 +449,13 @@ public class Robot extends TimedRobot {
       m_motorBelt.set(advanceBelt ? Constants.kSpeedBelt : 0);
 
     // Rev up the launcher motors as soon as we start collecting balls.
-    if (ballsInStorage >= 1)
+    if (m_ballsInStorage >= 1)
       m_motorLauncherLeft.set(Constants.kSpeedLauncher);
     else
       m_motorLauncherLeft.set(0);
 
-    ballDetectedEnterLastLoop = ballDetectedEnter;
-    ballDetectedExitLastLoop = ballDetectedExit;
+    m_ballDetectedEnterLastLoop = ballDetectedEnter;
+    m_ballDetectedExitLastLoop = ballDetectedExit;
   }
 
   /**
