@@ -1,5 +1,5 @@
 {
-  "java.configuration.updateBuildConfiguration": "automatic",
+  // Exclude files from the explorer that we don't care about.
   "files.exclude": {
     "**/.git": true,
     "**/.svn": true,
@@ -13,5 +13,12 @@
     "**/.factorypath": true,
     "**/*~": true
   },
-  "java.format.settings.url": "eclipse-formatter.xml"
+  // Set the tab size to 2.
+  "editor.tabSize": 2,
+  // Don't automatically detect indentation, because VSCode makes incorrect assumptions when doing so.
+  "editor.detectIndentation": false,
+  // Automatically update the classpath when new files are added.
+  "java.configuration.updateBuildConfiguration": "automatic",
+  // Use the WPILib Eclipse formatting rules.
+  "java.format.settings.url": "eclipse-formatter.xml",
 }
