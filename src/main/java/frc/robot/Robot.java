@@ -168,6 +168,10 @@ public class Robot extends TimedRobot {
   @Override
   public void disabledInit() {
     m_isInControlPanelMode = false;
+    // Force a state change.
+    m_isInControlPanelModeLastLoop = true;
+    ShuffleboardHelper.m_entryControlPanelMode
+        .setBoolean(m_isInControlPanelMode);
     // Running this method will update Shuffleboard to show "N/A" and such, which is desirable while the
     // robot is disabled.
     handleState();
