@@ -265,7 +265,7 @@ public class Robot extends TimedRobot {
         || Math.abs(m_controllerDrive.getRawAxis(DriveStation.kIDAxisRightX)) > 0.5)
         && m_isInControlPanelMode) {
       m_isInControlPanelMode = false;
-      m_entryControlPanelMode.setBoolean(m_isInControlPanelMode);
+      ShuffleboardHelper.m_entryControlPanelMode.setBoolean(m_isInControlPanelMode);
     }
 
     // Set the Shuffleboard control panel values to their defaults when not enabled.
@@ -275,10 +275,10 @@ public class Robot extends TimedRobot {
       m_lastDetectedColorString = "N/A";
       m_targetControlPanelColor = "N/A";
       m_controlPanelSpinAmount = 0;
-      m_entryDetectedColor.setString(m_detectedColorString);
-      m_entryTargetColor.setString(m_targetControlPanelColor);
-      m_entryTargetSpin.setDouble(m_controlPanelSpinAmount);
-      m_entryConfidence.setDouble(0);
+      ShuffleboardHelper.m_entryDetectedColor.setString(m_detectedColorString);
+      ShuffleboardHelper.m_entryTargetColor.setString(m_targetControlPanelColor);
+      ShuffleboardHelper.m_entryTargetSpin.setDouble(m_controlPanelSpinAmount);
+      ShuffleboardHelper.m_entryConfidence.setDouble(0);
     }
     m_isInControlPanelModeLastLoop = m_isInControlPanelMode;
   }
