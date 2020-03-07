@@ -38,6 +38,7 @@ public class Robot extends TimedRobot {
   private boolean m_buttonManipPressDpadLeft = false;
   private boolean m_buttonManipPressDpadUp = false;
   private boolean m_buttonManipPressDpadRight = false;
+  private boolean m_buttonManipPressDpadDown = false;
 
   // State
   private boolean m_isInLaunchingMode = false;
@@ -284,6 +285,7 @@ public class Robot extends TimedRobot {
     m_buttonManipPressDpadLeft = pov == 270;
     m_buttonManipPressDpadUp = pov == 0;
     m_buttonManipPressDpadRight = pov == 90;
+    m_buttonManipPressDpadDown = pov == 180;
     m_povLastLoop = pov;
   }
 
@@ -522,6 +524,8 @@ public class Robot extends TimedRobot {
         m_controlPanelSpinAmount = 8;
       else if (m_buttonManipPressDpadRight)
         m_controlPanelSpinAmount = 10;
+      else if (m_buttonManipPressDpadDown)
+        m_controlPanelSpinAmount = 0;
       if (controlPanelSpinAmountInitial != m_controlPanelSpinAmount)
         ShuffleboardHelper.m_entryTargetSpin
             .setDouble(m_controlPanelSpinAmount);
