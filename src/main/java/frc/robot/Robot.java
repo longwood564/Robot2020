@@ -80,8 +80,8 @@ public class Robot extends TimedRobot {
   // Launching
   WPI_VictorSPX m_motorLauncherLeft =
       new WPI_VictorSPX(RoboRIO.kPortMotorLauncherLeft);
-  WPI_VictorSPX m_motorLauncherRight =
-      new WPI_VictorSPX(RoboRIO.kPortMotorLauncherRight);
+  WPI_TalonSRX m_motorLauncherRight =
+      new WPI_TalonSRX(RoboRIO.kPortMotorLauncherRight);
   private final AnalogInput m_analogInputUltrasonicSensor =
       new AnalogInput(RoboRIO.kPortUltrasonicSensorPort);
   // Leave this uninitialized because we have to configure the analog input.
