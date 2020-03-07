@@ -41,6 +41,7 @@ public class Robot extends TimedRobot {
 
   // State
   private boolean m_isInLaunchingMode = false;
+  private boolean m_isInLaunchingModeLastLoop = false;
   private boolean m_isInControlPanelMode = false;
   private boolean m_isInControlPanelModeLastLoop = false;
 
@@ -234,6 +235,7 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopInit() {
     m_isInLaunchingMode = false;
+    m_isInLaunchingModeLastLoop = false;
     m_isInControlPanelMode = false;
     m_isInControlPanelModeLastLoop = false;
 
@@ -344,6 +346,12 @@ public class Robot extends TimedRobot {
           .setString(m_targetControlPanelColor);
       ShuffleboardHelper.m_entryTargetSpin.setDouble(m_controlPanelSpinAmount);
       ShuffleboardHelper.m_entryConfidence.setDouble(0);
+    }
+    if (!m_isInLaunchingMode
+        && m_isInLaunchingModeLastLoop != m_isInLaunchingMode) {
+      m_launchBall = false;
+      ShuffleboardHelper.m_entryLaunchBall.setBoolean(false);
+      ShuffleboardHelper.m_entryDistanceSensor.setDouble(0);
     }
     m_isInControlPanelModeLastLoop = m_isInControlPanelMode;
   }
@@ -470,11 +478,6 @@ public class Robot extends TimedRobot {
         m_launchBall = true;
         ShuffleboardHelper.m_entryLaunchBall.setBoolean(m_launchBall);
       }
-    } else {
-      // TODO: Move this stuff into handleState, and only do this when the mode has just been switched.
-      ShuffleboardHelper.m_entryDistanceSensor.setDouble(0);
-      m_launchBall = false;
-      ShuffleboardHelper.m_entryLaunchBall.setBoolean(false);
     }
 
     // If the manipulator trigger is held, override our autonomous logic and manually spin up the
