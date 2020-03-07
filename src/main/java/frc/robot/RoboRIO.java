@@ -4,7 +4,7 @@ package frc.robot;
  * This class provides constants relating to the hardware connected to the RoboRIO.
  */
 public final class RoboRIO {
-    // CAN Devices
+  // CAN Devices
 
   /** The port of the compressor. */
   public static final int kPortCompressor = 0;
@@ -31,9 +31,9 @@ public final class RoboRIO {
   public static final int kPortMotorLauncherRight = 11;
   /** The port of the winch motor. */
   public static final int kPortMotorWinch = 12;
-  
+
   // PCM Devices
-  
+
   /** The port of the forward channel of the control panel double solenoid. */
   public static final int kPortDoubleSolenoidForwardControlPanel = 1;
   /** The port of the backward channel of the control panel double solenoid. */
@@ -42,8 +42,14 @@ public final class RoboRIO {
   public static final int kPortDoubleSolenoidForwardWinch = 5;
   /** The port of the backward channel of the winch double solenoid. */
   public static final int kPortDoubleSolenoidBackwardWinch = 6;
+  /** The port of the forward channel of the hanger double solenoid. */
+  // TODO: Verify this port.
+  public static final int kPortDoubleSolenoidForwardHanger = 7;
+  /** The port of the backward channel of the hanger double solenoid. */
+  // TODO: Verify this port.
+  public static final int kPortDoubleSolenoidBackwardHanger = 8;
 
-  // PCM Devices
+  // Analog Inputs
 
   /** The port of the ultrasonic sensor. */
   public static final int kPortUltrasonicSensorPort = 0;
@@ -75,17 +81,4 @@ public final class RoboRIO {
    */
   public static final double kUltrasonicRange =
       kMaximumReadingUltrasonic - kMinimumReadingUltrasonic;
-
-
-  // Digital Inputs
-  /**
-   * The port of the photoelectric sensor at the bottom of the storage, where balls enter. This is a
-   * 42EF-D1MNAK-A2.
-   */
-  public static final int kPortPhotoelectricSensorEnter = 1;
-  /**
-   * The port of the photoelectric sensor at the top of the storage, where balls leave. This is a
-   * 42JT-F5LET1-A2.
-   */
-  public static final int kPortPhotoelectricSensorExit = 2;
 }
