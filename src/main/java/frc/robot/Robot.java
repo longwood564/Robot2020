@@ -194,9 +194,20 @@ public class Robot extends TimedRobot {
     m_isInControlPanelModeLastLoop = true;
     ShuffleboardHelper.m_entryControlPanelMode
         .setBoolean(m_isInControlPanelMode);
+    m_isInLaunchingMode = false;
+    m_isInLaunchingModeLastLoop = false;
+    ShuffleboardHelper.m_entryLaunchingMode
+        .setBoolean(m_isInLaunchingMode);
     // Running this method will update Shuffleboard to show "N/A" and such, which is desirable while the
     // robot is disabled.
     handleState();
+
+    m_ballDetectedEnterLastLoop = false;
+    m_ballsInStorage = 0;
+    m_ballDetectedExitLastLoop = false;
+    ShuffleboardHelper.m_entryBallDetectedEnter.setBoolean(false);
+    ShuffleboardHelper.m_entryBallsInStorage.setDouble(m_ballsInStorage);
+    ShuffleboardHelper.m_entryBallDetectedExit.setBoolean(false);
   }
 
   /**
@@ -234,21 +245,6 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void teleopInit() {
-    m_isInLaunchingMode = false;
-    m_isInLaunchingModeLastLoop = false;
-    m_isInControlPanelMode = false;
-    m_isInControlPanelModeLastLoop = false;
-
-    m_ballDetectedEnterLastLoop = false;
-    m_ballsInStorage = 0;
-
-    m_launchBall = false;
-
-    m_detectedColorString = "N/A";
-    m_lastDetectedColorString = "N/A";
-    m_targetControlPanelColor = "N/A";
-    m_controlPanelSpinAmount = 0;
-
     m_compressor.start();
 
     disabledInit();
