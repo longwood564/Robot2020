@@ -135,7 +135,8 @@ public class Robot extends TimedRobot {
             Constants.kProjectedHorDistanceToApex
                 - Constants.kHorDistanceHexagonToHoop)
         .withWidget(BuiltInWidgets.kNumberBar)
-        .withProperties(ShuffleboardHelper.kPropertiesDistanceSensor).getEntry();
+        .withProperties(ShuffleboardHelper.kPropertiesDistanceSensor)
+        .getEntry();
   }
 
   /**
@@ -262,10 +263,12 @@ public class Robot extends TimedRobot {
 
     // If control panel mode is enabled and the robot is driven, disable it.
     if ((Math.abs(m_controllerDrive.getRawAxis(DriveStation.kIDAxisLeftY)) > 0.5
-        || Math.abs(m_controllerDrive.getRawAxis(DriveStation.kIDAxisRightX)) > 0.5)
+        || Math.abs(
+            m_controllerDrive.getRawAxis(DriveStation.kIDAxisRightX)) > 0.5)
         && m_isInControlPanelMode) {
       m_isInControlPanelMode = false;
-      ShuffleboardHelper.m_entryControlPanelMode.setBoolean(m_isInControlPanelMode);
+      ShuffleboardHelper.m_entryControlPanelMode
+          .setBoolean(m_isInControlPanelMode);
     }
 
     // Set the Shuffleboard control panel values to their defaults when not enabled.
@@ -276,7 +279,8 @@ public class Robot extends TimedRobot {
       m_targetControlPanelColor = "N/A";
       m_controlPanelSpinAmount = 0;
       ShuffleboardHelper.m_entryDetectedColor.setString(m_detectedColorString);
-      ShuffleboardHelper.m_entryTargetColor.setString(m_targetControlPanelColor);
+      ShuffleboardHelper.m_entryTargetColor
+          .setString(m_targetControlPanelColor);
       ShuffleboardHelper.m_entryTargetSpin.setDouble(m_controlPanelSpinAmount);
       ShuffleboardHelper.m_entryConfidence.setDouble(0);
     }
@@ -287,39 +291,32 @@ public class Robot extends TimedRobot {
    * Drives the robot at a certain speed inputted by the driver.
    */
   private void driveSpeed() {
-    if (m_isInControlPanelMode) {
-      // Explicitly stop the motors since we are in control panel mode, and do not
-      // need to be moving. This is necessary because the motor power must be updated
-      // for every iteration of the loop.
-      m_differentialDrive.stopMotor();
-    } else {
-      // Left thumb stick of the driver's joystick.
-      // The drive controller is negated here due to the y-axes of the joystick being
-      // opposite by default.
-      double axisDriveLeftY =
-          -m_controllerDrive.getRawAxis(DriveStation.kIDAxisLeftY);
-      // Right thumb stick of the driver's joystick.
-      double axisDriveRightX =
-          m_controllerDrive.getRawAxis(DriveStation.kIDAxisRightX);
-      // Left trigger of the driver's joystick.
-      double axisDriveLT = m_controllerDrive.getRawAxis(DriveStation.kIDAxisLT);
-      // Right trigger of the driver's joystick.
-      double axisDriveRT = m_controllerDrive.getRawAxis(DriveStation.kIDAxisRT);
+    // Left thumb stick of the driver's joystick.
+    // The drive controller is negated here due to the y-axes of the joystick being
+    // opposite by default.
+    double axisDriveLeftY =
+        -m_controllerDrive.getRawAxis(DriveStation.kIDAxisLeftY);
+    // Right thumb stick of the driver's joystick.
+    double axisDriveRightX =
+        m_controllerDrive.getRawAxis(DriveStation.kIDAxisRightX);
+    // Left trigger of the driver's joystick.
+    double axisDriveLT = m_controllerDrive.getRawAxis(DriveStation.kIDAxisLT);
+    // Right trigger of the driver's joystick.
+    double axisDriveRT = m_controllerDrive.getRawAxis(DriveStation.kIDAxisRT);
 
-      // Setting robot drive speed
-      if (axisDriveLT > 0.5) {
-        m_differentialDrive.arcadeDrive(
-            axisDriveLeftY * Constants.kMultiplierSlowSpeed,
-            axisDriveRightX * Constants.kMultiplierSlowSpeed);
-      } else if (axisDriveRT > 0.5) {
-        m_differentialDrive.arcadeDrive(
-            axisDriveLeftY * Constants.kMultiplierHighSpeed,
-            axisDriveRightX * Constants.kMultiplierHighSpeed);
-      } else {
-        m_differentialDrive.arcadeDrive(
-            axisDriveLeftY * Constants.kMultiplierNormalSpeed,
-            axisDriveRightX * Constants.kMultiplierNormalSpeed);
-      }
+    // Setting robot drive speed
+    if (axisDriveLT > 0.5) {
+      m_differentialDrive.arcadeDrive(
+          axisDriveLeftY * Constants.kMultiplierSlowSpeed,
+          axisDriveRightX * Constants.kMultiplierSlowSpeed);
+    } else if (axisDriveRT > 0.5) {
+      m_differentialDrive.arcadeDrive(
+          axisDriveLeftY * Constants.kMultiplierHighSpeed,
+          axisDriveRightX * Constants.kMultiplierHighSpeed);
+    } else {
+      m_differentialDrive.arcadeDrive(
+          axisDriveLeftY * Constants.kMultiplierNormalSpeed,
+          axisDriveRightX * Constants.kMultiplierNormalSpeed);
     }
   }
 
