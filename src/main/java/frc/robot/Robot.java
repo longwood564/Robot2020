@@ -346,7 +346,7 @@ public class Robot extends TimedRobot {
     if (!m_isInLaunchingMode
         && m_isInLaunchingModeLastLoop != m_isInLaunchingMode) {
       m_launchBall = false;
-      ShuffleboardHelper.m_entryLaunchBall.setBoolean(false);
+      ShuffleboardHelper.m_entryLaunchBall.setBoolean(m_launchBall);
       ShuffleboardHelper.m_entryDistanceSensor.setDouble(0);
     }
     m_isInControlPanelModeLastLoop = m_isInControlPanelMode;
