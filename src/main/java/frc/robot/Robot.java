@@ -108,23 +108,6 @@ public class Robot extends TimedRobot {
 
   // Vision
 
-  private final ShuffleboardLayout ballIntakeLayout =
-      m_tabGeneral.getLayout("Ball Intake", BuiltInLayouts.kGrid)
-          .withPosition(0, 4).withSize(3, 1)
-          .withProperties(Map.of("Number of columns", 4, "Number of rows", 1));
-  private final NetworkTableEntry ballsInStorageEntry = ballIntakeLayout
-      .add("Balls in storage", 0).withWidget(BuiltInWidgets.kNumberBar)
-      .withProperties(Map.of("Min", 0, "Max", 3, "Center", 0)).getEntry();
-  private final NetworkTableEntry ballDetectedEnterEntry =
-      ballIntakeLayout.add("Ball detected at entrance point", false)
-          .withWidget(BuiltInWidgets.kBooleanBox).getEntry();
-  private final NetworkTableEntry ballDetectedExitEntry =
-      ballIntakeLayout.add("Ball detected at leave", false)
-          .withWidget(BuiltInWidgets.kBooleanBox).getEntry();
-  private final NetworkTableEntry m_entryLaunchBall =
-      ballIntakeLayout.add("Launching balls", false)
-          .withWidget(BuiltInWidgets.kBooleanBox).getEntry();
-
   /**
    * Initializes the robot code when the robot power is turned on.
    */
@@ -421,10 +404,10 @@ public class Robot extends TimedRobot {
         ++ballsInStorage;
       if (ballsInStorage < 3)
         advanceBelt = true;
-      ballDetectedEnterEntry.setBoolean(ballDetectedEnter);
-      ballsInStorageEntry.setDouble(ballsInStorage);
+      ShuffleboardHelper.m_entryBallDetectedEnter.setBoolean(ballDetectedEnter);
+      ShuffleboardHelper.m_entryBallsInStorage.setDouble(ballsInStorage);
     } else if (!ballDetectedEnter) {
-      ballDetectedEnterEntry.setBoolean(ballDetectedEnter);
+      ShuffleboardHelper.m_entryBallDetectedEnter.setBoolean(ballDetectedEnter);
       advanceBelt = false;
     }
     // Keep track of balls exiting.
@@ -434,12 +417,12 @@ public class Robot extends TimedRobot {
       // Stop launching the balls if we have finished.
       if (m_launchBall && ballsInStorage == 0) {
         m_launchBall = false;
-        m_entryLaunchBall.setBoolean(m_launchBall);
+        ShuffleboardHelper.m_entryLaunchBall.setBoolean(m_launchBall);
       }
-      ballDetectedExitEntry.setBoolean(ballDetectedExit);
-      ballsInStorageEntry.setDouble(ballsInStorage);
+      ShuffleboardHelper.m_entryBallDetectedExit.setBoolean(ballDetectedExit);
+      ShuffleboardHelper.m_entryBallsInStorage.setDouble(ballsInStorage);
     } else if (ballDetectedExit) {
-      ballDetectedExitEntry.setBoolean(ballDetectedExit);
+      ShuffleboardHelper.m_entryBallDetectedExit.setBoolean(ballDetectedExit);
     }
 
     // If we are ready to launch the ball, override the false advanceBelt from the storage being full.
