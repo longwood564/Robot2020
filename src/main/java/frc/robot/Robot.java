@@ -142,6 +142,7 @@ public class Robot extends TimedRobot {
     m_colorMatcher.addColorMatch(kRedTarget);
     m_colorMatcher.addColorMatch(kYellowTarget);
 
+    ShuffleboardHelper.shuffleboardInit();
     // Add Shuffleboard sendables. We define the NetworkTableEntry objects as member
     // variables when adding those widgets because we need to access them to update
     // them. Contrary, we don't assign these widgets to any variables because, as
