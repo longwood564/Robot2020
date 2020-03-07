@@ -274,17 +274,17 @@ public class Robot extends TimedRobot {
    */
   private void updateInputs() {
     m_buttonManipPressA =
-        m_controllerManip.getRawButtonPressed(DriveStation.kIDButtonA);
+        m_controllerManip.getRawButtonPressed(DriveStation.kIdButtonA);
     m_buttonManipPressB =
-        m_controllerManip.getRawButtonPressed(DriveStation.kIDButtonB);
+        m_controllerManip.getRawButtonPressed(DriveStation.kIdButtonB);
     m_buttonManipPressX =
-        m_controllerManip.getRawButtonPressed(DriveStation.kIDButtonX);
+        m_controllerManip.getRawButtonPressed(DriveStation.kIdButtonX);
     m_buttonManipPressY =
-        m_controllerManip.getRawButtonPressed(DriveStation.kIDButtonY);
+        m_controllerManip.getRawButtonPressed(DriveStation.kIdButtonY);
     m_buttonManipPressBack =
-        m_controllerManip.getRawButtonPressed(DriveStation.kIDButtonBack);
+        m_controllerManip.getRawButtonPressed(DriveStation.kIdButtonBack);
     m_buttonManipPressStart =
-        m_controllerManip.getRawButtonPressed(DriveStation.kIDButtonStart);
+        m_controllerManip.getRawButtonPressed(DriveStation.kIdButtonStart);
     int pov = m_controllerManip.getPOV(DriveStation.kIdPovDpad);
     if (pov != -1 && pov == m_povLastLoop)
       pov = -1;
@@ -325,9 +325,9 @@ public class Robot extends TimedRobot {
     }
 
     // If control panel mode is enabled and the robot is driven, disable it.
-    if ((Math.abs(m_controllerDrive.getRawAxis(DriveStation.kIDAxisLeftY)) > 0.5
+    if ((Math.abs(m_controllerDrive.getRawAxis(DriveStation.kIdAxisLeftY)) > 0.5
         || Math.abs(
-            m_controllerDrive.getRawAxis(DriveStation.kIDAxisRightX)) > 0.5)
+            m_controllerDrive.getRawAxis(DriveStation.kIdAxisRightX)) > 0.5)
         && m_isInControlPanelMode) {
       m_isInControlPanelMode = false;
       ShuffleboardHelper.m_entryControlPanelMode
@@ -366,17 +366,17 @@ public class Robot extends TimedRobot {
     // The drive controller is negated here due to the y-axes of the joystick being
     // opposite by default.
     double axisDriveLeftY =
-        -m_controllerDrive.getRawAxis(DriveStation.kIDAxisLeftY);
+        -m_controllerDrive.getRawAxis(DriveStation.kIdAxisLeftY);
     double speed = Math.signum(axisDriveLeftY) * Math.pow(axisDriveLeftY, 2);
     // Right thumb stick of the driver's joystick.
     double axisDriveRightX =
-        m_controllerDrive.getRawAxis(DriveStation.kIDAxisRightX);
+        m_controllerDrive.getRawAxis(DriveStation.kIdAxisRightX);
     double zRotation =
         Math.signum(axisDriveRightX) * Math.pow(axisDriveRightX, 2);
     // Left trigger of the driver's joystick.
-    double axisDriveLT = m_controllerDrive.getRawAxis(DriveStation.kIDAxisLT);
+    double axisDriveLT = m_controllerDrive.getRawAxis(DriveStation.kIdAxisLt);
     // Right trigger of the driver's joystick.
-    double axisDriveRT = m_controllerDrive.getRawAxis(DriveStation.kIDAxisRT);
+    double axisDriveRT = m_controllerDrive.getRawAxis(DriveStation.kIdAxisRt);
 
     // Setting robot drive speed.
     if (axisDriveLT > 0.5) {
@@ -394,7 +394,7 @@ public class Robot extends TimedRobot {
   private void intakeBalls() {
     // If the manipulator holds LT, and the storage isn't full, activate the intake.
     // TODO: Is this ballsInStorage check putting too much trust in the sensor?
-    if (m_controllerDrive.getRawAxis(DriveStation.kIDAxisLT) > 0.50
+    if (m_controllerDrive.getRawAxis(DriveStation.kIdAxisLt) > 0.50
         && ballsInStorage < 3)
       m_motorIntake.set(Constants.kSpeedIntake);
     else
@@ -439,9 +439,9 @@ public class Robot extends TimedRobot {
       advanceBelt = true;
 
     // If a manipulator bumper is held, disregard all of the previous logic, and force a belt movement.
-    if (m_controllerManip.getRawButton(DriveStation.kIDButtonRB))
+    if (m_controllerManip.getRawButton(DriveStation.kIdButtonRb))
       m_motorBelt.set(Constants.kSpeedBelt);
-    else if (m_controllerManip.getRawButton(DriveStation.kIDButtonLB))
+    else if (m_controllerManip.getRawButton(DriveStation.kIdButtonLb))
       m_motorBelt.set(-Constants.kSpeedBelt);
     // Use the logic based off of the photosensors for belt movement.
     else
@@ -482,7 +482,7 @@ public class Robot extends TimedRobot {
 
     // If the manipulator trigger is held, override our autonomous logic and manually spin up the
     // launcher.
-    if (m_controllerDrive.getRawAxis(DriveStation.kIDAxisRT) > 0.5)
+    if (m_controllerDrive.getRawAxis(DriveStation.kIdAxisRt) > 0.5)
       m_motorLauncherLeft.set(Constants.kSpeedLauncher);
   }
 
