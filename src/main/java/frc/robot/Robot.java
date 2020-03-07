@@ -69,9 +69,9 @@ public class Robot extends TimedRobot {
       new WPI_TalonSRX(RoboRIO.kPortMotorIntake);
   private final WPI_VictorSPX m_motorBelt =
       new WPI_VictorSPX(RoboRIO.kPortMotorBelt);
-  private final DigitalInput photoelectricSensorEnter =
+  private final DigitalInput m_photoelectricSensorEnter =
       new DigitalInput(RoboRIO.kPortPhotoelectricSensorEnter);
-  private final DigitalInput photoelectricSensorExit =
+  private final DigitalInput m_photoelectricSensorExit =
       new DigitalInput(RoboRIO.kPortPhotoelectricSensorExit);
   private boolean m_ballDetectedEnterLastLoop = false;
   private int m_ballsInStorage = 0;
@@ -401,8 +401,8 @@ public class Robot extends TimedRobot {
     boolean advanceBelt = false;
     // The digital input returns "true" if the circuit is open. Detecting the
     // object, the power cell, closes the circuit.
-    boolean ballDetectedEnter = !photoelectricSensorEnter.get();
-    boolean ballDetectedExit = !photoelectricSensorExit.get();
+    boolean ballDetectedEnter = !m_photoelectricSensorEnter.get();
+    boolean ballDetectedExit = !m_photoelectricSensorExit.get();
     // Advance the belt if there's a ball in the enter spot, and more room above.
     if (ballDetectedEnter) {
       if (!m_ballDetectedEnterLastLoop)
