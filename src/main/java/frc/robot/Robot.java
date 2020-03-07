@@ -474,7 +474,12 @@ public class Robot extends TimedRobot {
       double error = Constants.kProjectedHorDistanceToApex - horDistanceToHoop;
       if (Math.abs(error) > tolerance) {
         // TODO: Very experimental! Fine tune this.
-        m_differentialDrive.arcadeDrive(error * Constants.kP, 0);
+        // Cap out the correction speed at the higher driving speed. Don't square the inputs because this
+        // isn't from an analog stick, so that kind of precision isn't necessary.
+        m_differentialDrive.arcadeDrive(error > 0
+            ? Math.min(Constants.kMultiplierHighSpeed, error * Constants.kP)
+            : Math.max(-Constants.kMultiplierHighSpeed, error * Constants.kP),
+            0, false);
       } else {
         m_differentialDrive.arcadeDrive(0, 0);
         m_launchBall = true;
