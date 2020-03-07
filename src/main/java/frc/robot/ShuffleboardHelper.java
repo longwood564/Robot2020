@@ -131,7 +131,7 @@ public final class ShuffleboardHelper {
   public static boolean m_isRunningSim = false;
 
   /**
-   * This function is called upon in the robotPeriodic() method of Robot.java.
+   * This function is called upon in the simulationPeriodic() method of Robot.java.
    */
   public static void updateSimulations() {
     if (m_entryRunPred.getBoolean(false)) {
