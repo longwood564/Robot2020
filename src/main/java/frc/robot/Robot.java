@@ -73,8 +73,8 @@ public class Robot extends TimedRobot {
       new DigitalInput(RoboRIO.kPortPhotoelectricSensorEnter);
   private final DigitalInput m_photoelectricSensorExit =
       new DigitalInput(RoboRIO.kPortPhotoelectricSensorExit);
-  private boolean m_ballDetectedEnterLastLoop = false;
   private int m_ballsInStorage = 0;
+  private boolean m_ballDetectedEnterLastLoop = false;
   private boolean m_ballDetectedExitLastLoop = false;
 
   // Launching
@@ -202,11 +202,11 @@ public class Robot extends TimedRobot {
     // robot is disabled.
     handleState();
 
-    m_ballDetectedEnterLastLoop = false;
     m_ballsInStorage = 0;
+    m_ballDetectedEnterLastLoop = false;
     m_ballDetectedExitLastLoop = false;
-    ShuffleboardHelper.m_entryBallDetectedEnter.setBoolean(false);
     ShuffleboardHelper.m_entryBallsInStorage.setDouble(m_ballsInStorage);
+    ShuffleboardHelper.m_entryBallDetectedEnter.setBoolean(false);
     ShuffleboardHelper.m_entryBallDetectedExit.setBoolean(false);
   }
 
@@ -424,8 +424,8 @@ public class Robot extends TimedRobot {
         m_launchBall = false;
         ShuffleboardHelper.m_entryLaunchBall.setBoolean(m_launchBall);
       }
-      ShuffleboardHelper.m_entryBallDetectedExit.setBoolean(ballDetectedExit);
       ShuffleboardHelper.m_entryBallsInStorage.setDouble(m_ballsInStorage);
+      ShuffleboardHelper.m_entryBallDetectedExit.setBoolean(ballDetectedExit);
     } else if (ballDetectedExit) {
       ShuffleboardHelper.m_entryBallDetectedExit.setBoolean(ballDetectedExit);
     }
