@@ -287,7 +287,9 @@ public class Robot extends TimedRobot {
   }
 
   /**
-   * Drives the robot at a certain speed inputted by the driver.
+   * Drives the robot at a certain speed inputted by the driver. DifferentialDrive squares the input
+   * values by default, so in order to apply a speed modifier, we have to square it ourselves, so that
+   * it is squared before the modifier is applied.
    */
   private void driveSpeed() {
     // Left thumb stick of the driver's joystick.
@@ -295,27 +297,27 @@ public class Robot extends TimedRobot {
     // opposite by default.
     double axisDriveLeftY =
         -m_controllerDrive.getRawAxis(DriveStation.kIDAxisLeftY);
+    double speed = Math.signum(axisDriveLeftY) * Math.pow(axisDriveLeftY, 2);
     // Right thumb stick of the driver's joystick.
     double axisDriveRightX =
         m_controllerDrive.getRawAxis(DriveStation.kIDAxisRightX);
+    double zRotation =
+        Math.signum(axisDriveRightX) * Math.pow(axisDriveRightX, 2);
     // Left trigger of the driver's joystick.
     double axisDriveLT = m_controllerDrive.getRawAxis(DriveStation.kIDAxisLT);
     // Right trigger of the driver's joystick.
     double axisDriveRT = m_controllerDrive.getRawAxis(DriveStation.kIDAxisRT);
 
-    // Setting robot drive speed
+    // Setting robot drive speed.
     if (axisDriveLT > 0.5) {
-      m_differentialDrive.arcadeDrive(
-          axisDriveLeftY * Constants.kMultiplierSlowSpeed,
-          axisDriveRightX * Constants.kMultiplierSlowSpeed);
+      m_differentialDrive.arcadeDrive(speed * Constants.kMultiplierSlowSpeed,
+          zRotation * Constants.kMultiplierSlowSpeed, false);
     } else if (axisDriveRT > 0.5) {
-      m_differentialDrive.arcadeDrive(
-          axisDriveLeftY * Constants.kMultiplierHighSpeed,
-          axisDriveRightX * Constants.kMultiplierHighSpeed);
+      m_differentialDrive.arcadeDrive(speed * Constants.kMultiplierHighSpeed,
+          zRotation * Constants.kMultiplierHighSpeed, false);
     } else {
-      m_differentialDrive.arcadeDrive(
-          axisDriveLeftY * Constants.kMultiplierNormalSpeed,
-          axisDriveRightX * Constants.kMultiplierNormalSpeed);
+      m_differentialDrive.arcadeDrive(speed * Constants.kMultiplierNormalSpeed,
+          zRotation * Constants.kMultiplierNormalSpeed, false);
     }
   }
 
