@@ -17,6 +17,7 @@ public final class ShuffleboardHelper {
   // Shuffleboard General
   public static final ShuffleboardTab m_tabGeneral =
       Shuffleboard.getTab("General");
+
   public static final ShuffleboardLayout m_layoutState =
       m_tabGeneral.getLayout("State", BuiltInLayouts.kGrid).withPosition(0, 0)
           .withSize(3, 1)
@@ -27,14 +28,17 @@ public final class ShuffleboardHelper {
   public static final NetworkTableEntry m_entryControlPanelMode =
       m_layoutState.add("Control panel mode", false)
           .withWidget(BuiltInWidgets.kToggleSwitch).getEntry();
+
   public static final ShuffleboardLayout m_layoutAutonomous = m_tabGeneral
       .getLayout("Autonomous", BuiltInLayouts.kGrid).withPosition(3, 0)
       .withSize(3, 1).withProperties(Map.of("Label position", "HIDDEN",
           "Number of columns", 1, "Number of rows", 1));
+
   public static final ShuffleboardLayout m_layoutDriving =
       m_tabGeneral.getLayout("Driving", BuiltInLayouts.kGrid).withPosition(0, 1)
           .withSize(3, 3)
           .withProperties(Map.of("Number of columns", 1, "Number of rows", 1));
+
   public static final ShuffleboardLayout m_layoutBallIntake =
       m_tabGeneral.getLayout("Ball Intake", BuiltInLayouts.kGrid)
           .withPosition(0, 4).withSize(3, 1)
@@ -52,6 +56,7 @@ public final class ShuffleboardHelper {
   public static final NetworkTableEntry m_entryLaunchBall =
       m_layoutBallIntake.add("Launching balls", false)
           .withWidget(BuiltInWidgets.kBooleanBox).getEntry();
+
   public static final ShuffleboardLayout m_layoutLaunching =
       m_tabGeneral.getLayout("Launching", BuiltInLayouts.kGrid)
           .withPosition(3, 1).withSize(3, 3)
@@ -70,6 +75,7 @@ public final class ShuffleboardHelper {
           .withProperties(
               Map.of("Min", 0.0, "Max", 2.0, "Block increment", 0.25))
           .getEntry();
+
   public static final ShuffleboardLayout m_layoutControlPanel =
       m_tabGeneral.getLayout("Color Sensing", BuiltInLayouts.kGrid)
           .withPosition(3, 4).withSize(3, 2)
@@ -82,6 +88,7 @@ public final class ShuffleboardHelper {
       m_layoutControlPanel.add("Target Color", "N/A").getEntry();
   public static final NetworkTableEntry m_entryTargetSpin =
       m_layoutControlPanel.add("Target Spins", 0).getEntry();
+
   public static final ShuffleboardLayout m_layoutVision =
       m_tabGeneral.getLayout("Vision", BuiltInLayouts.kGrid).withPosition(6, 0)
           .withSize(1, 1)
