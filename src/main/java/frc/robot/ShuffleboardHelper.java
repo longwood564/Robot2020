@@ -130,6 +130,22 @@ public final class ShuffleboardHelper {
   public static final Timer m_timerSim = new Timer();
   public static boolean m_isRunningSim = false;
 
+  public static void shuffleboardInit() {
+    m_entryControlPanelMode.setBoolean(false);
+    m_entryLaunchingMode.setBoolean(false);
+
+    m_entryBallsInStorage.setBoolean(false);
+    m_entryBallDetectedEnter.setBoolean(false);
+    m_entryBallDetectedExit.setBoolean(false);
+    m_entryLaunchBall.setBoolean(false);
+
+    m_entryDistanceSensor.setDouble(0);
+
+    m_entryDetectedColor.setString("N/A");
+    m_entryTargetColor.setDouble(0);
+    m_entryTargetSpin.setDouble(0);
+  }
+
   /**
    * This function is called upon in the simulationPeriodic() method of Robot.java.
    */
