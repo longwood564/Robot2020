@@ -298,11 +298,6 @@ public class Robot extends TimedRobot {
     if (m_buttonManipPressBack) {
       m_isInLaunchingMode = !m_isInLaunchingMode;
       ShuffleboardHelper.m_entryLaunchingMode.setBoolean(m_isInLaunchingMode);
-      // Disallow being in both modes simultaneously.
-      if (m_isInControlPanelMode) {
-        m_isInControlPanelMode = false;
-        ShuffleboardHelper.m_entryControlPanelMode.setBoolean(false);
-      }
     } else {
       m_isInLaunchingMode = ShuffleboardHelper.m_entryLaunchingMode
           .getBoolean(m_isInLaunchingMode);
@@ -311,11 +306,6 @@ public class Robot extends TimedRobot {
       m_isInControlPanelMode = !m_isInControlPanelMode;
       ShuffleboardHelper.m_entryControlPanelMode
           .setBoolean(m_isInControlPanelMode);
-      // Disallow being in both modes simultaneously.
-      if (m_isInLaunchingMode) {
-        m_isInLaunchingMode = false;
-        ShuffleboardHelper.m_entryLaunchingMode.setBoolean(false);
-      }
     } else {
       m_isInControlPanelMode = ShuffleboardHelper.m_entryControlPanelMode
           .getBoolean(m_isInControlPanelMode);
@@ -332,23 +322,39 @@ public class Robot extends TimedRobot {
     }
 
     // Set the Shuffleboard control panel values to their defaults when not enabled.
-    if (!m_isInControlPanelMode
-        && m_isInControlPanelModeLastLoop != m_isInControlPanelMode) {
-      m_detectedColorString = "N/A";
-      m_lastDetectedColorString = "N/A";
-      m_targetControlPanelColor = "N/A";
-      m_controlPanelSpinAmount = 0;
-      ShuffleboardHelper.m_entryDetectedColor.setString(m_detectedColorString);
-      ShuffleboardHelper.m_entryTargetColor
-          .setString(m_targetControlPanelColor);
-      ShuffleboardHelper.m_entryTargetSpin.setDouble(m_controlPanelSpinAmount);
-      ShuffleboardHelper.m_entryConfidence.setDouble(0);
+    if (m_isInControlPanelModeLastLoop != m_isInControlPanelMode) {
+      if (m_isInControlPanelMode) {
+        // Disallow being in both modes simultaneously.
+        if (m_isInLaunchingMode) {
+          m_isInLaunchingMode = false;
+          ShuffleboardHelper.m_entryLaunchingMode.setBoolean(false);
+        }
+      } else {
+        m_detectedColorString = "N/A";
+        m_lastDetectedColorString = "N/A";
+        m_targetControlPanelColor = "N/A";
+        m_controlPanelSpinAmount = 0;
+        ShuffleboardHelper.m_entryDetectedColor
+            .setString(m_detectedColorString);
+        ShuffleboardHelper.m_entryTargetColor
+            .setString(m_targetControlPanelColor);
+        ShuffleboardHelper.m_entryTargetSpin
+            .setDouble(m_controlPanelSpinAmount);
+        ShuffleboardHelper.m_entryConfidence.setDouble(0);
+      }
     }
-    if (!m_isInLaunchingMode
-        && m_isInLaunchingModeLastLoop != m_isInLaunchingMode) {
-      m_launchBall = false;
-      ShuffleboardHelper.m_entryLaunchBall.setBoolean(m_launchBall);
-      ShuffleboardHelper.m_entryDistanceSensor.setDouble(0);
+    if (m_isInLaunchingModeLastLoop != m_isInLaunchingMode) {
+      if (m_isInLaunchingMode) {
+        // Disallow being in both modes simultaneously.
+        if (m_isInControlPanelMode) {
+          m_isInControlPanelMode = false;
+          ShuffleboardHelper.m_entryControlPanelMode.setBoolean(false);
+        }
+      } else {
+        m_launchBall = false;
+        ShuffleboardHelper.m_entryLaunchBall.setBoolean(m_launchBall);
+        ShuffleboardHelper.m_entryDistanceSensor.setDouble(0);
+      }
     }
     m_isInControlPanelModeLastLoop = m_isInControlPanelMode;
     m_isInLaunchingModeLastLoop = m_isInLaunchingMode;
