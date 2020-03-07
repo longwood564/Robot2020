@@ -91,7 +91,7 @@ public final class Constants {
    * object.
    */
   // TODO: Tune this measurement.
-  public static final double kP = 0.05;
+  public static final double kP = 0.3;
 
   // Constant Calculations
 
