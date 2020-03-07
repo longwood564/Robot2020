@@ -476,6 +476,7 @@ public class Robot extends TimedRobot {
         // TODO: Very experimental! Fine tune this.
         m_differentialDrive.arcadeDrive(error * Constants.kP, 0);
       } else {
+        m_differentialDrive.arcadeDrive(0, 0);
         m_launchBall = true;
         ShuffleboardHelper.m_entryLaunchBall.setBoolean(m_launchBall);
       }
