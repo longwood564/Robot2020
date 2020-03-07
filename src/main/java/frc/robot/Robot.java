@@ -354,6 +354,7 @@ public class Robot extends TimedRobot {
       ShuffleboardHelper.m_entryDistanceSensor.setDouble(0);
     }
     m_isInControlPanelModeLastLoop = m_isInControlPanelMode;
+    m_isInLaunchingModeLastLoop = m_isInLaunchingMode;
   }
 
   /**
