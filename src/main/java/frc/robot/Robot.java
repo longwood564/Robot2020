@@ -257,6 +257,14 @@ public class Robot extends TimedRobot {
       m_isInControlPanelMode = ShuffleboardHelper.m_entryControlPanelMode
           .getBoolean(m_isInControlPanelMode);
     }
+
+    // If control panel mode is enabled and the robot is driven, disable it.
+    if ((m_controllerDrive.getRawAxis(DriveStation.kIDAxisLeftY) > 0.5
+        || m_controllerDrive.getRawAxis(DriveStation.kIDAxisRightX) > 0.5)
+        && m_isInControlPanelMode) {
+      m_isInControlPanelMode = false;
+      m_entryControlPanelMode.setBoolean(m_isInControlPanelMode);
+    }
   }
 
   /**
@@ -379,7 +387,7 @@ public class Robot extends TimedRobot {
   /**
    * Turns the control panel when called upon in spinControlPanel().
    */
-  public void turnControlPanel() {
+  private void turnControlPanel() {
     if (m_targetControlPanelColor != m_detectedColorString
         || m_controlPanelSpinAmount > 0)
       m_motorControlPanel.set(Constants.kSpeedControlPanel);
