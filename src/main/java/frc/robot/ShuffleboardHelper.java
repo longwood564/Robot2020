@@ -35,26 +35,23 @@ public final class ShuffleboardHelper {
           "Number of columns", 1, "Number of rows", 1));
 
   public static final ShuffleboardLayout m_layoutDriving =
-      m_tabGeneral.getLayout("Driving", BuiltInLayouts.kGrid).withPosition(0, 1)
-          .withSize(3, 3)
+      m_tabGeneral.getLayout("Driving (Read only)", BuiltInLayouts.kGrid)
+          .withPosition(0, 1).withSize(3, 3)
           .withProperties(Map.of("Number of columns", 1, "Number of rows", 1));
 
   public static final ShuffleboardLayout m_layoutBallIntake =
-      m_tabGeneral.getLayout("Ball Intake", BuiltInLayouts.kGrid)
+      m_tabGeneral.getLayout("Ball Intake (Read only)", BuiltInLayouts.kGrid)
           .withPosition(0, 4).withSize(3, 1)
-          .withProperties(Map.of("Number of columns", 4, "Number of rows", 1));
+          .withProperties(Map.of("Number of columns", 3, "Number of rows", 1));
   public static final NetworkTableEntry m_entryBallsInStorage =
       m_layoutBallIntake.add("Balls in storage", 0)
           .withWidget(BuiltInWidgets.kNumberBar)
           .withProperties(Map.of("Min", 0, "Max", 3, "Center", 0)).getEntry();
   public static final NetworkTableEntry m_entryBallDetectedEnter =
-      m_layoutBallIntake.add("Ball detected at entrance point", false)
+      m_layoutBallIntake.add("Ball @ Enter", false)
           .withWidget(BuiltInWidgets.kBooleanBox).getEntry();
   public static final NetworkTableEntry m_entryBallDetectedExit =
-      m_layoutBallIntake.add("Ball detected at leave", false)
-          .withWidget(BuiltInWidgets.kBooleanBox).getEntry();
-  public static final NetworkTableEntry m_entryLaunchBall =
-      m_layoutBallIntake.add("Launching balls", false)
+      m_layoutBallIntake.add("Ball @ Exit", false)
           .withWidget(BuiltInWidgets.kBooleanBox).getEntry();
 
   public static final ShuffleboardLayout m_layoutLaunching =
@@ -75,9 +72,12 @@ public final class ShuffleboardHelper {
           .withProperties(
               Map.of("Min", 0.0, "Max", 2.0, "Block increment", 0.25))
           .getEntry();
+  public static final NetworkTableEntry m_entryLaunchBall =
+      m_layoutLaunching.add("Launching balls", false)
+          .withWidget(BuiltInWidgets.kBooleanBox).getEntry();
 
   public static final ShuffleboardLayout m_layoutControlPanel =
-      m_tabGeneral.getLayout("Color Sensing", BuiltInLayouts.kGrid)
+      m_tabGeneral.getLayout("Color Sensing (Read only)", BuiltInLayouts.kGrid)
           .withPosition(3, 4).withSize(3, 2)
           .withProperties(Map.of("Number of columns", 2, "Number of rows", 2));
   public static final NetworkTableEntry m_entryDetectedColor =
