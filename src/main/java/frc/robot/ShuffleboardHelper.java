@@ -67,7 +67,7 @@ public final class ShuffleboardHelper {
           .withWidget(BuiltInWidgets.kNumberBar)
           .withProperties(kPropertiesDistanceSensor).getEntry();
   public static final NetworkTableEntry m_entryDistanceTolerence =
-      m_layoutLaunching.addPersistent("Distance Tolerance", 0.3)
+      m_layoutLaunching.addPersistent("Distance Tolerance", 0.25)
           .withWidget(BuiltInWidgets.kNumberSlider)
           .withProperties(
               Map.of("Min", 0.0, "Max", 2.0, "Block increment", 0.25))
