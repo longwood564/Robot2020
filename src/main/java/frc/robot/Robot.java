@@ -319,6 +319,16 @@ public class Robot extends TimedRobot {
           .setBoolean(m_isInControlPanelMode);
     }
 
+    // If launching mode is enabled and the robot is driven, disable it.
+    if ((Math.abs(m_controllerDrive.getRawAxis(DriveStation.kIdAxisLeftY)) > 0.5
+        || Math.abs(
+            m_controllerDrive.getRawAxis(DriveStation.kIdAxisRightX)) > 0.5)
+        && m_isInLaunchingMode) {
+      m_isInLaunchingMode = false;
+      ShuffleboardHelper.m_entryLaunchingMode
+          .setBoolean(m_isInLaunchingMode);
+    }
+
     // Set the Shuffleboard control panel values to their defaults when not enabled.
     if (m_isInControlPanelModeLastLoop != m_isInControlPanelMode) {
       if (m_isInControlPanelMode) {
@@ -341,6 +351,7 @@ public class Robot extends TimedRobot {
         ShuffleboardHelper.m_entryConfidence.setDouble(0);
       }
     }
+    // Set the Shuffleboard launching values to their defaults when not enabled.
     if (m_isInLaunchingModeLastLoop != m_isInLaunchingMode) {
       if (m_isInLaunchingMode) {
         // Disallow being in both modes simultaneously.
