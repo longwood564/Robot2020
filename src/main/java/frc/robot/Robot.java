@@ -194,6 +194,7 @@ public class Robot extends TimedRobot {
     ShuffleboardHelper.m_entryControlPanelMode
         .setBoolean(m_isInControlPanelMode);
     m_isInLaunchingMode = false;
+    // Force a state change.
     m_isInLaunchingModeLastLoop = true;
     ShuffleboardHelper.m_entryLaunchingMode.setBoolean(m_isInLaunchingMode);
     // Running this method will update Shuffleboard to show "N/A" and such, which is desirable while the
