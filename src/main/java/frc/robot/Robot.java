@@ -500,44 +500,6 @@ public class Robot extends TimedRobot {
   }
 
   /**
-   * Toggles whether or not the winch is raised or declined.
-   */
-  private void windWinch() {
-    if (!m_controllerDrive.getRawButton(DriveStation.kIDButtonA)
-        && !m_controllerDrive.getRawButton(DriveStation.kIDButtonB)) {
-      m_motorWinch.set(0);
-    }
-
-    if (m_limitSwitchSensorWinch.get()) {
-      if (m_controllerDrive.getRawButton(DriveStation.kIDButtonB)) {
-        m_doubleSolenoidWinch.set(DoubleSolenoid.Value.kReverse);
-        m_motorWinch.set(-Constants.kSpeedWinchMotor);
-      }
-    }
-
-    if (!m_limitSwitchSensorWinch.get()) {
-      m_motorWinch.set(0);
-    }
-
-    if (m_controllerDrive.getRawButton(DriveStation.kIDButtonA)) {
-      m_doubleSolenoidWinch.set(DoubleSolenoid.Value.kForward);
-      m_motorWinch.set(Constants.kSpeedWinchMotor);
-    }
-  }
-
-  /**
-   * Controls whether or not the hanger is extended.
-   */
-  private void controlHanger() {
-    if (m_buttonDrivePressX) {
-      m_doubleSolenoidHanger.set(DoubleSolenoid.Value.kForward);
-    }
-    if (m_buttonDrivePressY) {
-      m_doubleSolenoidHanger.set(DoubleSolenoid.Value.kReverse);
-    }
-  }
-
-  /**
    * Determines whether or not the ball can be launched into the power port, and adjusts the robot to
    * make the shot if it cannot.
    */
@@ -642,6 +604,44 @@ public class Robot extends TimedRobot {
         && m_lastDetectedColorString != m_detectedColorString
         && m_controlPanelSpinAmount > 0)
       m_controlPanelSpinAmount -= 1;
+  }
+
+  /**
+   * Toggles whether or not the winch is raised or declined.
+   */
+  private void windWinch() {
+    if (!m_controllerDrive.getRawButton(DriveStation.kIdButtonA)
+        && !m_controllerDrive.getRawButton(DriveStation.kIdButtonB)) {
+      m_motorWinch.set(0);
+    }
+
+    if (m_limitSwitchSensorWinch.get()) {
+      if (m_controllerDrive.getRawButton(DriveStation.kIdButtonB)) {
+        m_doubleSolenoidWinch.set(DoubleSolenoid.Value.kReverse);
+        m_motorWinch.set(-Constants.kSpeedWinchMotor);
+      }
+    }
+
+    if (!m_limitSwitchSensorWinch.get()) {
+      m_motorWinch.set(0);
+    }
+
+    if (m_controllerDrive.getRawButton(DriveStation.kIdButtonA)) {
+      m_doubleSolenoidWinch.set(DoubleSolenoid.Value.kForward);
+      m_motorWinch.set(Constants.kSpeedWinchMotor);
+    }
+  }
+
+  /**
+   * Controls whether or not the hanger is extended.
+   */
+  private void controlHanger() {
+    if (m_buttonDrivePressX) {
+      m_doubleSolenoidHanger.set(DoubleSolenoid.Value.kForward);
+    }
+    if (m_buttonDrivePressY) {
+      m_doubleSolenoidHanger.set(DoubleSolenoid.Value.kReverse);
+    }
   }
 
   /**
