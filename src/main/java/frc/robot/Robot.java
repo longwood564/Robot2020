@@ -68,6 +68,18 @@ public class Robot extends TimedRobot {
   private final DifferentialDrive m_differentialDrive =
       new DifferentialDrive(m_motorDriveFrontLeft, m_motorDriveFrontRight);
 
+  // Winch and Hanger
+  private final WPI_VictorSPX m_motorWinch =
+      new WPI_VictorSPX(RoboRIO.kPortMotorWinch);
+  private final DoubleSolenoid m_doubleSolenoidWinch =
+      new DoubleSolenoid(RoboRIO.kPortDoubleSolenoidForwardWinch,
+          RoboRIO.kPortDoubleSolenoidBackwardWinch);
+  private final DoubleSolenoid m_doubleSolenoidHanger =
+      new DoubleSolenoid(RoboRIO.kPortDoubleSolenoidForwardHanger,
+          RoboRIO.kPortDoubleSolenoidBackwardHanger);
+  private final DigitalInput m_limitSwitchSensorWinch =
+      new DigitalInput(RoboRIO.kPortLimitSwitchSensorWinch);
+
   // Ball Intake
   private final WPI_TalonSRX m_motorIntake =
       new WPI_TalonSRX(RoboRIO.kPortMotorIntake);
@@ -80,17 +92,6 @@ public class Robot extends TimedRobot {
   private int m_ballsInStorage = 0;
   private boolean m_ballDetectedEnterLastLoop = false;
   private boolean m_ballDetectedExitLastLoop = false;
-  
-  // Winch and Hanger
-  private final WPI_VictorSPX m_motorWinch =
-      new WPI_VictorSPX(RoboRIO.kPortMotorWinch);
-  private final DoubleSolenoid m_doubleSolenoidWinch =
-      new DoubleSolenoid(RoboRIO.kPortDoubleSolenoidForwardWinch,
-          RoboRIO.kPortDoubleSolenoidBackwardWinch);
-  private final DoubleSolenoid m_doubleSolenoidHanger =
-      new DoubleSolenoid(RoboRIO.kPortDoubleSolenoidForwardHanger,
-          RoboRIO.kPortDoubleSolenoidBackwardHanger);
-  private final DigitalInput m_limitSwitchSensorWinch = new DigitalInput(0);
 
   // Launching
   WPI_VictorSPX m_motorLauncherLeft =
