@@ -205,9 +205,6 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void disabledInit() {
-    m_doubleSolenoidControlPanel.set(DoubleSolenoid.Value.kReverse);
-    m_doubleSolenoidWinch.set(DoubleSolenoid.Value.kReverse);
-
     m_isInControlPanelMode = false;
     // Force a state change.
     m_isInControlPanelModeLastLoop = true;
