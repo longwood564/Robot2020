@@ -471,8 +471,8 @@ public class Robot extends TimedRobot {
   }
 
   /**
-   * This function determines whether or not the ball can be launched into the power port, and adjusts
-   * the robot to make the shot if it can't.
+   * Determines whether or not the ball can be launched into the power port, and adjusts
+   * the robot to make the shot if it cannot.
    */
   private void launchBalls() {
     if (m_isInLaunchingMode) {
