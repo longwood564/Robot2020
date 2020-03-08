@@ -309,24 +309,18 @@ public class Robot extends TimedRobot {
           .getBoolean(m_isInControlPanelMode);
     }
 
-    // If control panel mode is enabled and the robot is driven, disable it.
-    if ((Math.abs(m_controllerDrive.getRawAxis(DriveStation.kIdAxisLeftY)) > 0.5
+    // If launching or control panel mode is enabled and the robot is driven via controller, disable it.
+    if (Math.abs(m_controllerDrive.getRawAxis(DriveStation.kIdAxisLeftY)) > 0.5
         || Math.abs(
-            m_controllerDrive.getRawAxis(DriveStation.kIdAxisRightX)) > 0.5)
-        && m_isInControlPanelMode) {
-      m_isInControlPanelMode = false;
-      ShuffleboardHelper.m_entryControlPanelMode
-          .setBoolean(m_isInControlPanelMode);
-    }
-
-    // If launching mode is enabled and the robot is driven, disable it.
-    if ((Math.abs(m_controllerDrive.getRawAxis(DriveStation.kIdAxisLeftY)) > 0.5
-        || Math.abs(
-            m_controllerDrive.getRawAxis(DriveStation.kIdAxisRightX)) > 0.5)
-        && m_isInLaunchingMode) {
-      m_isInLaunchingMode = false;
-      ShuffleboardHelper.m_entryLaunchingMode
-          .setBoolean(m_isInLaunchingMode);
+            m_controllerDrive.getRawAxis(DriveStation.kIdAxisRightX)) > 0.5) {
+      if (m_isInControlPanelMode) {
+        m_isInControlPanelMode = false;
+        ShuffleboardHelper.m_entryControlPanelMode
+            .setBoolean(m_isInControlPanelMode);
+      } else if (m_isInLaunchingMode) {
+        m_isInLaunchingMode = false;
+        ShuffleboardHelper.m_entryLaunchingMode.setBoolean(m_isInLaunchingMode);
+      }
     }
 
     // Set the Shuffleboard control panel values to their defaults when not enabled.
