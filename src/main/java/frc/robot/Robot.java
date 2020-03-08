@@ -376,15 +376,15 @@ public class Robot extends TimedRobot {
     double zRotation =
         Math.signum(axisDriveRightX) * Math.pow(axisDriveRightX, 2);
     // Left trigger of the driver's joystick.
-    double axisDriveLT = m_controllerDrive.getRawAxis(DriveStation.kIdAxisLt);
+    double axisDriveLt = m_controllerDrive.getRawAxis(DriveStation.kIdAxisLt);
     // Right trigger of the driver's joystick.
-    double axisDriveRT = m_controllerDrive.getRawAxis(DriveStation.kIdAxisRt);
+    double axisDriveRt = m_controllerDrive.getRawAxis(DriveStation.kIdAxisRt);
 
     // Setting robot drive speed.
-    if (axisDriveLT > 0.5) {
+    if (axisDriveLt > 0.5) {
       m_differentialDrive.arcadeDrive(speed * Constants.kMultiplierSlowSpeed,
           zRotation * Constants.kMultiplierSlowSpeed, false);
-    } else if (axisDriveRT > 0.5) {
+    } else if (axisDriveRt > 0.5) {
       m_differentialDrive.arcadeDrive(speed * Constants.kMultiplierHighSpeed,
           zRotation * Constants.kMultiplierHighSpeed, false);
     } else {
