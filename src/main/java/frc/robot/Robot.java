@@ -401,7 +401,7 @@ public class Robot extends TimedRobot {
   private void intakeBalls() {
     // If the manipulator holds LT, and the storage isn't full, activate the intake.
     // TODO: Is this ballsInStorage check putting too much trust in the sensor?
-    if (m_controllerDrive.getRawAxis(DriveStation.kIdAxisLt) > 0.50
+    if (m_controllerManip.getRawAxis(DriveStation.kIdAxisLt) > 0.50
         && m_ballsInStorage < 3)
       m_motorIntake.set(Constants.kSpeedIntake);
     else
@@ -465,8 +465,8 @@ public class Robot extends TimedRobot {
   }
 
   /**
-   * Determines whether or not the ball can be launched into the power port, and adjusts
-   * the robot to make the shot if it cannot.
+   * Determines whether or not the ball can be launched into the power port, and adjusts the robot to
+   * make the shot if it cannot.
    */
   private void launchBalls() {
     if (m_isInLaunchingMode) {
