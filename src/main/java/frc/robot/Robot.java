@@ -126,6 +126,15 @@ public class Robot extends TimedRobot {
   // Vision
 
   /**
+   * Initializes the solenoids.
+   */
+  private void solenoidInit() {
+    m_doubleSolenoidControlPanel.set(DoubleSolenoid.Value.kReverse);
+    m_doubleSolenoidWinch.set(DoubleSolenoid.Value.kReverse);
+    m_doubleSolenoidHanger.set(DoubleSolenoid.Value.kReverse);
+  }
+
+  /**
    * Initializes the robot code when the robot power is turned on.
    */
   @Override
@@ -135,6 +144,8 @@ public class Robot extends TimedRobot {
     m_motorDriveBackLeft.follow(m_motorDriveFrontLeft);
 
     m_motorLauncherRight.follow(m_motorLauncherLeft);
+
+    solenoidInit();
 
     // Configure the ultrasonic sensor.
     // Enable 2-bit averaging, for stability,
@@ -254,19 +265,9 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void teleopInit() {
-    m_doubleSolenoidControlPanel.set(DoubleSolenoid.Value.kReverse);
-    m_doubleSolenoidWinch.set(DoubleSolenoid.Value.kReverse);
-
-    m_isInControlPanelMode = false;
-    m_isInControlPanelModeLastLoop = false;
-
-    m_detectedColorString = "N/A";
-    m_lastDetectedColorString = "N/A";
-    m_targetControlPanelColor = "N/A";
-    m_controlPanelSpinAmount = 0;
-
-    m_compressor.start();
-
+    disabledInit();
+    solenoidInit();
+  }
 
   /**
    * Maintains teleoperated mode.
