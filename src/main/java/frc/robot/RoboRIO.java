@@ -6,8 +6,6 @@ package frc.robot;
 public final class RoboRIO {
   // CAN Devices
 
-  /** The port of the compressor. */
-  public static final int kPortCompressor = 0;
   /** The port of the front left drive motor. */
   public static final int kPortMotorDriveFrontLeft = 1;
   /** The port of the back left drive motor. */
