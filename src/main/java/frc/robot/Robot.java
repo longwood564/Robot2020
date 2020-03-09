@@ -2,7 +2,6 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.AnalogPotentiometer;
-import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.I2C;
@@ -63,8 +62,6 @@ public class Robot extends TimedRobot {
       new WPI_VictorSPX(RoboRIO.kPortMotorDriveBackLeft);
   private final WPI_VictorSPX m_motorDriveBackRight =
       new WPI_VictorSPX(RoboRIO.kPortMotorDriveBackRight);
-  private final Compressor m_compressor =
-      new Compressor(RoboRIO.kPortCompressor);
   private final DifferentialDrive m_differentialDrive =
       new DifferentialDrive(m_motorDriveFrontLeft, m_motorDriveFrontRight);
 
@@ -133,9 +130,6 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotInit() {
-    // Set the PCM in closed loop control mode to enable it.
-    m_compressor.setClosedLoopControl(true);
-
     // Slave follows master
     m_motorDriveBackRight.follow(m_motorDriveFrontRight);
     m_motorDriveBackLeft.follow(m_motorDriveFrontLeft);
@@ -240,8 +234,6 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousInit() {
     m_selectedAuto = m_autoChooser.getSelected();
-
-    m_compressor.start();
   }
 
   /**
@@ -275,8 +267,6 @@ public class Robot extends TimedRobot {
 
     m_compressor.start();
 
-    disabledInit();
-  }
 
   /**
    * Maintains teleoperated mode.
