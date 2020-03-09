@@ -353,6 +353,7 @@ public class Robot extends TimedRobot {
     // Set the control panel values to their defaults when not enabled.
     if (m_isInControlPanelModeLastLoop != m_isInControlPanelMode) {
       if (m_isInControlPanelMode) {
+        m_doubleSolenoidControlPanel.set(DoubleSolenoid.Value.kForward);
         // Disallow being in both modes simultaneously.
         if (m_isInLaunchingMode) {
           m_isInLaunchingMode = false;
