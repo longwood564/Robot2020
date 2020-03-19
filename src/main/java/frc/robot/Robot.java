@@ -526,7 +526,7 @@ public class Robot extends TimedRobot {
 
     // If the manipulator trigger is held, override our autonomous logic and manually spin up the
     // launcher.
-    if (m_controllerDrive.getRawAxis(DriveStation.kIdAxisRt) > 0.5)
+    if (m_controllerManip.getRawAxis(DriveStation.kIdAxisRt) > 0.5)
       m_motorLauncherLeft.set(Constants.kSpeedLauncher);
   }
 
