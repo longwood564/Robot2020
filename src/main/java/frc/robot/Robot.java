@@ -604,23 +604,23 @@ public class Robot extends TimedRobot {
    * Toggles whether or not the winch is raised or declined.
    */
   private void windWinch() {
-    if (!m_controllerDrive.getRawButton(DriveStation.kIdButtonA)
-        && !m_controllerDrive.getRawButton(DriveStation.kIdButtonB)) {
+    boolean buttonDriveA =
+        m_controllerDrive.getRawButton(DriveStation.kIdButtonA);
+    boolean buttonDriveB =
+        m_controllerDrive.getRawButton(DriveStation.kIdButtonB);
+
+    if (!buttonDriveA && !buttonDriveB)
       m_motorWinch.set(0);
-    }
 
     if (m_limitSwitchSensorWinch.get()) {
-      if (m_controllerDrive.getRawButton(DriveStation.kIdButtonA)) {
+      if (buttonDriveA) {
         m_doubleSolenoidWinch.set(DoubleSolenoid.Value.kReverse);
         m_motorWinch.set(-Constants.kSpeedWinchMotor);
       }
-    }
-
-    if (!m_limitSwitchSensorWinch.get()) {
+    } else
       m_motorWinch.set(0);
-    }
 
-    if (m_controllerDrive.getRawButton(DriveStation.kIdButtonB)) {
+    if (buttonDriveB) {
       m_doubleSolenoidWinch.set(DoubleSolenoid.Value.kForward);
       m_motorWinch.set(Constants.kSpeedWinchMotor);
     }
@@ -630,12 +630,10 @@ public class Robot extends TimedRobot {
    * Controls whether or not the hanger is extended.
    */
   private void controlHanger() {
-    if (m_buttonDrivePressY) {
+    if (m_buttonDrivePressY)
       m_doubleSolenoidHanger.set(DoubleSolenoid.Value.kForward);
-    }
-    if (m_buttonDrivePressX) {
+    else if (m_buttonDrivePressX)
       m_doubleSolenoidHanger.set(DoubleSolenoid.Value.kReverse);
-    }
   }
 
   /**
