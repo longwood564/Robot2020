@@ -32,6 +32,7 @@ public final class RoboRIO {
 
   // PCM Devices
 
+  // TODO: Verify all of these ports.
   /** The port of the forward channel of the control panel double solenoid. */
   public static final int kPortDoubleSolenoidForwardControlPanel = 0;
   /** The port of the backward channel of the control panel double solenoid. */
@@ -41,11 +42,18 @@ public final class RoboRIO {
   /** The port of the backward channel of the winch double solenoid. */
   public static final int kPortDoubleSolenoidBackwardWinch = 5;
   /** The port of the forward channel of the hanger double solenoid. */
-  // TODO: Verify this port.
   public static final int kPortDoubleSolenoidForwardHanger = 6;
   /** The port of the backward channel of the hanger double solenoid. */
-  // TODO: Verify this port.
   public static final int kPortDoubleSolenoidBackwardHanger = 7;
+  /** The port of the forward channel of the left launcher cannon double solenoid. */
+  public static final int kPortDoubleSolenoidForwardLauncherCannonLeft = 8;
+  /** The port of the backward channel of the left launcher cannon double solenoid. */
+  public static final int kPortDoubleSolenoidBackwardLauncherCannonLeft = 9;
+  /** The port of the forward channel of the right launcher cannon double solenoid. */
+  public static final int kPortDoubleSolenoidForwardLauncherCannonRight = 10;
+  /** The port of the backward channel of the right launcher cannon double solenoid. */
+  public static final int kPortDoubleSolenoidBackwardLauncherCannonRight = 11;
+
 
   // Analog Inputs
 
