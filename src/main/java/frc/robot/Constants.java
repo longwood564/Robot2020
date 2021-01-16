@@ -71,7 +71,7 @@ public final class Constants {
   /** The number to multiply the joystick input by for driving at a slow speed. */
   public static final double kMultiplierSlowSpeed = 0.5;
   /** The number to multiply the joystick input by for driving at a normal speed. */
-  public static final double kMultiplierNormalSpeed = 0.65;
+  public static final double kMultiplierNormalSpeed = 0.85;
   /** The number to multiply the joystick input by for driving at a high speed. */
   public static final double kMultiplierHighSpeed = 0.75;
   /** The speed to set the control panel motor to. */
