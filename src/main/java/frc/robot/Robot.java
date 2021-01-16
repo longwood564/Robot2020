@@ -34,6 +34,7 @@ public class Robot extends TimedRobot {
   private boolean m_buttonManipPressB = false;
   private boolean m_buttonManipPressX = false;
   private boolean m_buttonManipPressY = false;
+  private boolean m_buttonManipPressLs = false;
   private boolean m_buttonManipPressBack = false;
   private boolean m_buttonManipPressStart = false;
   private int m_povLastLoop = -1;
@@ -91,15 +92,22 @@ public class Robot extends TimedRobot {
   private boolean m_ballDetectedExitLastLoop = false;
 
   // Launching
-  WPI_VictorSPX m_motorLauncherLeft =
+  private final WPI_VictorSPX m_motorLauncherLeft =
       new WPI_VictorSPX(RoboRIO.kPortMotorLauncherLeft);
-  WPI_TalonSRX m_motorLauncherRight =
+  private final WPI_TalonSRX m_motorLauncherRight =
       new WPI_TalonSRX(RoboRIO.kPortMotorLauncherRight);
+  private final DoubleSolenoid m_doubleSolenoidLauncherCannonLeft =
+      new DoubleSolenoid(RoboRIO.kPortDoubleSolenoidForwardLauncherCannonLeft,
+          RoboRIO.kPortDoubleSolenoidBackwardLauncherCannonLeft);
+  private final DoubleSolenoid m_doubleSolenoidLauncherCannonRight =
+      new DoubleSolenoid(RoboRIO.kPortDoubleSolenoidForwardLauncherCannonRight,
+          RoboRIO.kPortDoubleSolenoidBackwardLauncherCannonRight);
   private final AnalogInput m_analogInputUltrasonicSensor =
       new AnalogInput(RoboRIO.kPortUltrasonicSensorPort);
   // Leave this uninitialized because we have to configure the analog input.
   private AnalogPotentiometer m_ultrasonicSensor;
   private boolean m_launchBall = false;
+  private boolean m_raiseLauncherCannon = false;
 
   // Control Panel
   private final ColorSensorV3 m_colorSensor =
@@ -132,6 +140,8 @@ public class Robot extends TimedRobot {
     m_doubleSolenoidControlPanel.set(DoubleSolenoid.Value.kReverse);
     m_doubleSolenoidWinch.set(DoubleSolenoid.Value.kReverse);
     m_doubleSolenoidHanger.set(DoubleSolenoid.Value.kReverse);
+    m_doubleSolenoidLauncherCannonLeft.set(DoubleSolenoid.Value.kReverse);
+    m_doubleSolenoidLauncherCannonRight.set(DoubleSolenoid.Value.kReverse);
   }
 
   /**
@@ -211,6 +221,8 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void disabledInit() {
+    solenoidInit();
+
     m_isInControlPanelMode = false;
     // Force a state change.
     m_isInControlPanelModeLastLoop = true;
@@ -266,7 +278,6 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopInit() {
     disabledInit();
-    solenoidInit();
   }
 
   /**
@@ -302,6 +313,8 @@ public class Robot extends TimedRobot {
         m_controllerManip.getRawButtonPressed(DriveStation.kIdButtonX);
     m_buttonManipPressY =
         m_controllerManip.getRawButtonPressed(DriveStation.kIdButtonY);
+    m_buttonManipPressLs =
+        m_controllerManip.getRawButtonPressed(DriveStation.kIdButtonLs);
     m_buttonManipPressBack =
         m_controllerManip.getRawButtonPressed(DriveStation.kIdButtonBack);
     m_buttonManipPressStart =
@@ -498,6 +511,17 @@ public class Robot extends TimedRobot {
    * make the shot if it cannot.
    */
   private void launchBalls() {
+    if (m_buttonManipPressLs)
+      m_raiseLauncherCannon = !m_raiseLauncherCannon;
+
+    if (m_raiseLauncherCannon) {
+      m_doubleSolenoidLauncherCannonLeft.set(DoubleSolenoid.Value.kForward);
+      m_doubleSolenoidLauncherCannonRight.set(DoubleSolenoid.Value.kForward);
+    } else {
+      m_doubleSolenoidLauncherCannonLeft.set(DoubleSolenoid.Value.kReverse);
+      m_doubleSolenoidLauncherCannonRight.set(DoubleSolenoid.Value.kReverse);
+    }
+
     if (m_isInLaunchingMode) {
       double tolerance =
           ShuffleboardHelper.m_entryDistanceTolerence.getDouble(1);
