@@ -72,9 +72,6 @@ public class Robot extends TimedRobot {
   private final DoubleSolenoid m_doubleSolenoidWinch =
       new DoubleSolenoid(RoboRIO.kPortDoubleSolenoidForwardWinch,
           RoboRIO.kPortDoubleSolenoidBackwardWinch);
-  private final DoubleSolenoid m_doubleSolenoidHanger =
-      new DoubleSolenoid(RoboRIO.kPortDoubleSolenoidForwardHanger,
-          RoboRIO.kPortDoubleSolenoidBackwardHanger);
   private final DigitalInput m_limitSwitchSensorWinch =
       new DigitalInput(RoboRIO.kPortLimitSwitchSensorWinch);
 
@@ -96,12 +93,9 @@ public class Robot extends TimedRobot {
       new WPI_VictorSPX(RoboRIO.kPortMotorLauncherLeft);
   private final WPI_TalonSRX m_motorLauncherRight =
       new WPI_TalonSRX(RoboRIO.kPortMotorLauncherRight);
-  private final DoubleSolenoid m_doubleSolenoidLauncherCannonLeft =
-      new DoubleSolenoid(RoboRIO.kPortDoubleSolenoidForwardLauncherCannonLeft,
-          RoboRIO.kPortDoubleSolenoidBackwardLauncherCannonLeft);
-  private final DoubleSolenoid m_doubleSolenoidLauncherCannonRight =
-      new DoubleSolenoid(RoboRIO.kPortDoubleSolenoidForwardLauncherCannonRight,
-          RoboRIO.kPortDoubleSolenoidBackwardLauncherCannonRight);
+  private final DoubleSolenoid m_doubleSolenoidLauncherCannon =
+      new DoubleSolenoid(RoboRIO.kPortDoubleSolenoidForwardLauncherCannon,
+          RoboRIO.kPortDoubleSolenoidBackwardLauncherCannon);
   private final AnalogInput m_analogInputUltrasonicSensor =
       new AnalogInput(RoboRIO.kPortUltrasonicSensorPort);
   // Leave this uninitialized because we have to configure the analog input.
@@ -139,9 +133,7 @@ public class Robot extends TimedRobot {
   private void solenoidInit() {
     m_doubleSolenoidControlPanel.set(DoubleSolenoid.Value.kReverse);
     m_doubleSolenoidWinch.set(DoubleSolenoid.Value.kReverse);
-    m_doubleSolenoidHanger.set(DoubleSolenoid.Value.kReverse);
-    m_doubleSolenoidLauncherCannonLeft.set(DoubleSolenoid.Value.kReverse);
-    m_doubleSolenoidLauncherCannonRight.set(DoubleSolenoid.Value.kReverse);
+    m_doubleSolenoidLauncherCannon.set(DoubleSolenoid.Value.kReverse);
   }
 
   /**
@@ -514,13 +506,10 @@ public class Robot extends TimedRobot {
     if (m_buttonManipPressLs)
       m_raiseLauncherCannon = !m_raiseLauncherCannon;
 
-    if (m_raiseLauncherCannon) {
-      m_doubleSolenoidLauncherCannonLeft.set(DoubleSolenoid.Value.kForward);
-      m_doubleSolenoidLauncherCannonRight.set(DoubleSolenoid.Value.kForward);
-    } else {
-      m_doubleSolenoidLauncherCannonLeft.set(DoubleSolenoid.Value.kReverse);
-      m_doubleSolenoidLauncherCannonRight.set(DoubleSolenoid.Value.kReverse);
-    }
+    if (m_raiseLauncherCannon)
+      m_doubleSolenoidLauncherCannon.set(DoubleSolenoid.Value.kForward);
+    else
+      m_doubleSolenoidLauncherCannon.set(DoubleSolenoid.Value.kReverse);
 
     if (m_isInLaunchingMode) {
       double tolerance =
@@ -654,10 +643,12 @@ public class Robot extends TimedRobot {
    * Controls whether or not the hanger is extended.
    */
   private void controlHanger() {
-    if (m_buttonDrivePressY)
-      m_doubleSolenoidHanger.set(DoubleSolenoid.Value.kForward);
-    else if (m_buttonDrivePressX)
-      m_doubleSolenoidHanger.set(DoubleSolenoid.Value.kReverse);
+    //  TODO: Complete this by controlling the corresponding motors, as the previous logic with solenoids
+    //  was in error.
+     
+    if (m_buttonDrivePressY) {
+    } else if (m_buttonDrivePressX) {
+    }
   }
 
   /**
