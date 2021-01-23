@@ -38,21 +38,13 @@ public final class RoboRIO {
   /** The port of the backward channel of the control panel double solenoid. */
   public static final int kPortDoubleSolenoidBackwardControlPanel = 1;
   /** The port of the forward channel of the winch double solenoid. */
-  public static final int kPortDoubleSolenoidForwardWinch = 4;
+  public static final int kPortDoubleSolenoidForwardWinch = 3;
   /** The port of the backward channel of the winch double solenoid. */
-  public static final int kPortDoubleSolenoidBackwardWinch = 5;
-  /** The port of the forward channel of the hanger double solenoid. */
-  public static final int kPortDoubleSolenoidForwardHanger = 6;
-  /** The port of the backward channel of the hanger double solenoid. */
-  public static final int kPortDoubleSolenoidBackwardHanger = 7;
-  /** The port of the forward channel of the left launcher cannon double solenoid. */
-  public static final int kPortDoubleSolenoidForwardLauncherCannonLeft = 8;
-  /** The port of the backward channel of the left launcher cannon double solenoid. */
-  public static final int kPortDoubleSolenoidBackwardLauncherCannonLeft = 9;
-  /** The port of the forward channel of the right launcher cannon double solenoid. */
-  public static final int kPortDoubleSolenoidForwardLauncherCannonRight = 10;
-  /** The port of the backward channel of the right launcher cannon double solenoid. */
-  public static final int kPortDoubleSolenoidBackwardLauncherCannonRight = 11;
+  public static final int kPortDoubleSolenoidBackwardWinch = 4;
+  /** The port of the forward channel of the launcher cannon double solenoid. */
+  public static final int kPortDoubleSolenoidForwardLauncherCannon = 5;
+  /** The port of the backward channel of the launcher cannon double solenoid. */
+  public static final int kPortDoubleSolenoidBackwardLauncherCannon = 6;
 
 
   // Analog Inputs
