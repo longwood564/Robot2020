@@ -77,12 +77,20 @@ public final class Constants {
   /** The speed to set the control panel motor to. */
   // TODO: Tune this value.
   public static final double kSpeedControlPanel = 0.25;
+  /** The speed to set the intake motor to. */
+  // TODO: Tune this value.
+  public static final double kSpeedIntake = 0.75;
+  /** The speed to set the intake motor to. */
+  public static final double kSpeedLauncher = 1.0;
+  /** The speed to set the belt motor to. */
+  // TODO: Tune this value.
+  public static final double kSpeedBelt = 0.50;
   /**
    * The proportionality constant to use for correcting error in maintaining a distance from an
    * object.
    */
   // TODO: Tune this measurement.
-  public static final double kP = 0.05;
+  public static final double kP = 0.3;
 
   // Constant Calculations
 

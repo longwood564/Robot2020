@@ -18,8 +18,12 @@ public final class RoboRIO {
   public static final int kPortMotorDriveBackRight = 4;
   /** The port of the control panel motor. */
   public static final int kPortMotorControlPanel = 6;
+  /** The port of the intake motor. */
+  public static final int kPortMotorIntake = 7;
   /** The port of the left launcher motor. */
   public static final int kPortMotorLauncherLeft = 8;
+  /** The port of the conveyor belt. */
+  public static final int kPortMotorBelt = 10;
   /**
    * The port of the right launcher motor. On the electronics board, this is #8b, but this couldn't be
    * replicated due to software limitaitons.
@@ -58,4 +62,16 @@ public final class RoboRIO {
    */
   public static final double kUltrasonicRange =
       kMaximumReadingUltrasonic - kMinimumReadingUltrasonic;
+
+  // Digital Inputs
+  /**
+   * The port of the photoelectric sensor at the bottom of the storage, where balls enter. This is a
+   * 42EF-D1MNAK-A2.
+   */
+  public static final int kPortPhotoelectricSensorEnter = 1;
+  /**
+   * The port of the photoelectric sensor at the top of the storage, where balls leave. This is a
+   * 42JT-F5LET1-A2.
+   */
+  public static final int kPortPhotoelectricSensorExit = 2;
 }

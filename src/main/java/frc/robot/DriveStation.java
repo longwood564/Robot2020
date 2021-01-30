@@ -14,38 +14,43 @@ public final class DriveStation {
   // Button IDs
 
   /** The button ID of the A button. */
-  public static final int kIDButtonA = 1;
+  public static final int kIdButtonA = 1;
   /** The button ID of the B button. */
-  public static final int kIDButtonB = 2;
+  public static final int kIdButtonB = 2;
   /** The button ID of the X button. */
-  public static final int kIDButtonX = 3;
+  public static final int kIdButtonX = 3;
   /** The button ID of the Y button. */
-  public static final int kIDButtonY = 4;
+  public static final int kIdButtonY = 4;
   /** The button ID of LB, the right bumper. */
-  public static final int kIDButtonLB = 5;
+  public static final int kIdButtonLb = 5;
   /** The button ID of RB, the right bumper. */
-  public static final int kIDButtonRB = 6;
+  public static final int kIdButtonRb = 6;
   /** The button ID of the back button, also select on some controllers. */
-  public static final int kIDButtonBack = 7;
+  public static final int kIdButtonBack = 7;
   /** The button ID of the start button. */
-  public static final int kIDButtonStart = 8;
+  public static final int kIdButtonStart = 8;
   /** The button ID of LS, activated by clicking the left stick. */
-  public static final int kIDButtonLS = 9;
+  public static final int kIdButtonLs = 9;
   /** The button ID of RS, activated by clicking the right stick. */
-  public static final int kIDButtonRS = 10;
+  public static final int kIdButtonRs = 10;
+
+  // POV IDs
+
+  /** The POV ID of the D-pad. */
+  public static final int kIdPovDpad = 0;
 
   // Axis IDs
 
   /** The axis ID of the X dimension of the left analog stick. */
-  public static final int kIDAxisLeftX = 0;
+  public static final int kIdAxisLeftX = 0;
   /** The axis ID of the Y dimension of the left analog stick. */
-  public static final int kIDAxisLeftY = 1;
+  public static final int kIdAxisLeftY = 1;
   /** The axis ID of LT, the left trigger. */
-  public static final int kIDAxisLT = 2;
+  public static final int kIdAxisLt = 2;
   /** The axis ID of RT, the right trigger. */
-  public static final int kIDAxisRT = 3;
+  public static final int kIdAxisRt = 3;
   /** The axis ID of the X dimension of the right analog stick. */
-  public static final int kIDAxisRightX = 4;
+  public static final int kIdAxisRightX = 4;
   /** The axis ID of the Y dimension of the right analog stick. */
-  public static final int kIDAxisRightY = 5;
+  public static final int kIdAxisRightY = 5;
 }
