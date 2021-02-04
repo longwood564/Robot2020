@@ -594,7 +594,8 @@ public class Robot extends TimedRobot {
       turnControlPanel();
       ShuffleboardHelper.m_entryTargetSpin.setDouble(m_controlPanelSpinAmount);
       m_lastDetectedColorString = m_detectedColorString;
-    }
+    } else
+      m_motorControlPanel.set(0);
   }
 
   /**
@@ -643,9 +644,9 @@ public class Robot extends TimedRobot {
    * Controls whether or not the hanger is extended.
    */
   private void controlHanger() {
-    //  TODO: Complete this by controlling the corresponding motors, as the previous logic with solenoids
-    //  was in error.
-     
+    // TODO: Complete this by controlling the corresponding motors, as the previous logic with solenoids
+    // was in error.
+
     if (m_buttonDrivePressY) {
     } else if (m_buttonDrivePressX) {
     }
