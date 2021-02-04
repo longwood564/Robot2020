@@ -78,8 +78,7 @@ public final class Constants {
   // TODO: Tune this value.
   public static final double kSpeedControlPanel = 0.25;
   /** The speed to set the intake motor to. */
-  // TODO: Tune this value.
-  public static final double kSpeedIntake = 0.75;
+  public static final double kSpeedIntake = 0.9;
   /** The speed to set the intake motor to. */
   public static final double kSpeedLauncher = 1.0;
   /** The speed to set the belt motor to. */
