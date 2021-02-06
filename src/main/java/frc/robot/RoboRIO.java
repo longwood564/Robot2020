@@ -6,8 +6,6 @@ package frc.robot;
 public final class RoboRIO {
   // CAN Devices
 
-  /** The port of the compressor. */
-  public static final int kPortCompressor = 0;
   /** The port of the front left drive motor. */
   public static final int kPortMotorDriveFrontLeft = 1;
   /** The port of the back left drive motor. */
@@ -29,6 +27,24 @@ public final class RoboRIO {
    * replicated due to software limitaitons.
    */
   public static final int kPortMotorLauncherRight = 11;
+  /** The port of the winch motor. */
+  public static final int kPortMotorWinch = 12;
+
+  // PCM Devices
+
+  /** The port of the forward channel of the control panel double solenoid. */
+  public static final int kPortDoubleSolenoidForwardControlPanel = 0;
+  /** The port of the backward channel of the control panel double solenoid. */
+  public static final int kPortDoubleSolenoidBackwardControlPanel = 1;
+  /** The port of the forward channel of the winch double solenoid. */
+  public static final int kPortDoubleSolenoidForwardWinch = 3;
+  /** The port of the backward channel of the winch double solenoid. */
+  public static final int kPortDoubleSolenoidBackwardWinch = 4;
+  /** The port of the forward channel of the launcher cannon double solenoid. */
+  public static final int kPortDoubleSolenoidForwardLauncherCannon = 6;
+  /** The port of the backward channel of the launcher cannon double solenoid. */
+  public static final int kPortDoubleSolenoidBackwardLauncherCannon = 5;
+
 
   // Analog Inputs
 
@@ -64,6 +80,9 @@ public final class RoboRIO {
       kMaximumReadingUltrasonic - kMinimumReadingUltrasonic;
 
   // Digital Inputs
+  
+  /** The port of the limit switch sensor of the winch. */
+  public static final int kPortLimitSwitchSensorWinch = 0;
   /**
    * The port of the photoelectric sensor at the bottom of the storage, where balls enter. This is a
    * 42EF-D1MNAK-A2.
