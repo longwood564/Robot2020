@@ -292,10 +292,6 @@ public class Robot extends TimedRobot {
    * likely just return "false" for any button.
    */
   private void updateInputs() {
-    m_buttonDrivePressX =
-        m_controllerDrive.getRawButtonPressed(DriveStation.kIDButtonX);
-    m_buttonDrivePressY =
-        m_controllerDrive.getRawButtonPressed(DriveStation.kIDButtonY);
     m_buttonManipPressA =
         m_controllerManip.getRawButtonPressed(DriveStation.kIdButtonA);
     m_buttonManipPressB =
