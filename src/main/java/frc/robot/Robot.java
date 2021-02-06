@@ -28,8 +28,6 @@ public class Robot extends TimedRobot {
       new Joystick(DriveStation.kPortControllerDrive);
   private final Joystick m_controllerManip =
       new Joystick(DriveStation.kPortControllerManip);
-  private boolean m_buttonDrivePressX = false;
-  private boolean m_buttonDrivePressY = false;
   private boolean m_buttonManipPressA = false;
   private boolean m_buttonManipPressB = false;
   private boolean m_buttonManipPressX = false;
@@ -128,9 +126,9 @@ public class Robot extends TimedRobot {
   // Vision
 
   /**
-   * Initializes the solenoids.
+   * Resets the solenoids to the reversed state, which is their default.
    */
-  private void solenoidInit() {
+  private void solenoidReset() {
     m_doubleSolenoidControlPanel.set(DoubleSolenoid.Value.kReverse);
     m_doubleSolenoidWinch.set(DoubleSolenoid.Value.kReverse);
     m_doubleSolenoidLauncherCannon.set(DoubleSolenoid.Value.kReverse);
@@ -147,7 +145,7 @@ public class Robot extends TimedRobot {
 
     m_motorLauncherRight.follow(m_motorLauncherLeft);
 
-    solenoidInit();
+    solenoidReset();
 
     // Configure the ultrasonic sensor.
     // Enable 2-bit averaging, for stability,
@@ -213,8 +211,9 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void disabledInit() {
-    solenoidInit();
+    solenoidReset();
 
+    m_raiseLauncherCannon = false;
     m_isInControlPanelMode = false;
     // Force a state change.
     m_isInControlPanelModeLastLoop = true;
@@ -616,6 +615,10 @@ public class Robot extends TimedRobot {
 
   /**
    * Toggles whether or not the winch is raised or declined.
+   * 
+   * This method is no longer applicable to the current state of the robot as the hardware was removed
+   * that pertains to the winch.
+   * 
    */
   private void windWinch() {
     boolean buttonDriveA =
@@ -642,14 +645,12 @@ public class Robot extends TimedRobot {
 
   /**
    * Controls whether or not the hanger is extended.
+   * 
+   * This method is no longer applicable to the current state of the robot as the hardware was removed
+   * that pertains to the hanger.
+   * 
    */
   private void controlHanger() {
-    // TODO: Complete this by controlling the corresponding motors, as the previous logic with solenoids
-    // was in error.
-
-    if (m_buttonDrivePressY) {
-    } else if (m_buttonDrivePressX) {
-    }
   }
 
   /**

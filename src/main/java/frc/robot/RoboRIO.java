@@ -32,7 +32,6 @@ public final class RoboRIO {
 
   // PCM Devices
 
-  // TODO: Verify all of these ports.
   /** The port of the forward channel of the control panel double solenoid. */
   public static final int kPortDoubleSolenoidForwardControlPanel = 0;
   /** The port of the backward channel of the control panel double solenoid. */
@@ -81,6 +80,7 @@ public final class RoboRIO {
       kMaximumReadingUltrasonic - kMinimumReadingUltrasonic;
 
   // Digital Inputs
+  
   /** The port of the limit switch sensor of the winch. */
   public static final int kPortLimitSwitchSensorWinch = 0;
   /**
