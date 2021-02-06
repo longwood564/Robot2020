@@ -212,9 +212,11 @@ public class Robot extends TimedRobot {
   @Override
   public void disabledInit() {
     solenoidReset();
-
+    
+    m_launchBall = false;
     m_raiseLauncherCannon = false;
     m_isInControlPanelMode = false;
+    
     // Force a state change.
     m_isInControlPanelModeLastLoop = true;
     ShuffleboardHelper.m_entryControlPanelMode
