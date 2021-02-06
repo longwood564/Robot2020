@@ -83,7 +83,7 @@ public final class Constants {
   public static final double kSpeedLauncher = 1.0;
   /** The speed to set the belt motor to. */
   // TODO: Tune this value.
-  public static final double kSpeedBelt = 0.50;
+  public static final double kSpeedBelt = 1.0;
   /** The number to set the winch motor to when raising or retracting. */
   public static final double kSpeedWinchMotor = 0.25;
   /**
