@@ -75,14 +75,12 @@ public final class Constants {
   /** The number to multiply the joystick input by for driving at a high speed. */
   public static final double kMultiplierHighSpeed = 0.75;
   /** The speed to set the control panel motor to. */
-  // TODO: Tune this value.
   public static final double kSpeedControlPanel = 0.25;
   /** The speed to set the intake motor to. */
   public static final double kSpeedIntake = 0.9;
   /** The speed to set the intake motor to. */
   public static final double kSpeedLauncher = 1.0;
   /** The speed to set the belt motor to. */
-  // TODO: Tune this value.
   public static final double kSpeedBelt = 1.0;
   /** The number to set the winch motor to when raising or retracting. */
   public static final double kSpeedWinchMotor = 0.25;
