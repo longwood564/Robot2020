@@ -540,6 +540,10 @@ public class Robot extends TimedRobot {
 
   /**
    * Configures the conditions for spinning the control panel, and spins it if necessary.
+   * 
+   * This method is no longer applicable to the current state of the robot as the hardware was removed
+   * that pertains to the control panel.
+   * 
    */
   private void spinControlPanel() {
     if (m_isInControlPanelMode) {
@@ -595,6 +599,10 @@ public class Robot extends TimedRobot {
 
   /**
    * Turns the control panel when called upon in spinControlPanel().
+   * 
+   * This method is no longer applicable to the current state of the robot as the hardware was removed
+   * that pertains to the control panel.
+   * 
    */
   private void turnControlPanel() {
     if (m_targetControlPanelColor != m_detectedColorString
