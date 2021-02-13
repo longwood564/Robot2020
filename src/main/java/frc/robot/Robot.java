@@ -2,7 +2,6 @@ package frc.robot;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
@@ -22,44 +21,32 @@ import edu.wpi.cscore.CvSink;
 import edu.wpi.cscore.CvSource;
 import edu.wpi.cscore.UsbCamera;
 import edu.wpi.first.cameraserver.CameraServer;
-import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.AnalogPotentiometer;
-import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.I2C;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
-import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
-import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.util.Color;
-import edu.wpi.first.wpilibj.util.Color;
-import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
-import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
-
-import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
-import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
-
-import com.revrobotics.ColorSensorV3;
-import com.revrobotics.ColorMatchResult;
-import com.revrobotics.ColorMatch;
 
 /**
  * Runs the robot code. The name of this class is depended upon by build.gradle.
  */
 public class Robot extends TimedRobot {
   // Joysticks
-  private final Joystick m_controllerDrive = new Joystick(DriveStation.kPortControllerDrive);
-  private final Joystick m_controllerManip = new Joystick(DriveStation.kPortControllerManip);
+  private final Joystick m_controllerDrive =
+      new Joystick(DriveStation.kPortControllerDrive);
+  private final Joystick m_controllerManip =
+      new Joystick(DriveStation.kPortControllerManip);
   private boolean m_buttonManipPressA = false;
   private boolean m_buttonManipPressB = false;
   private boolean m_buttonManipPressX = false;
   private boolean m_buttonManipPressY = false;
+  private boolean m_buttonManipPressLs = false;
   private boolean m_buttonManipPressBack = false;
   private boolean m_buttonManipPressStart = false;
   private int m_povLastLoop = -1;
@@ -80,39 +67,71 @@ public class Robot extends TimedRobot {
   private final SendableChooser<String> m_autoChooser = new SendableChooser<>();
 
   // Driving
-  private final WPI_TalonSRX m_motorDriveFrontLeft = new WPI_TalonSRX(RoboRIO.kPortMotorDriveFrontLeft);
-  private final WPI_TalonSRX m_motorDriveFrontRight = new WPI_TalonSRX(RoboRIO.kPortMotorDriveFrontRight);
-  private final WPI_VictorSPX m_motorDriveBackLeft = new WPI_VictorSPX(RoboRIO.kPortMotorDriveBackLeft);
-  private final WPI_VictorSPX m_motorDriveBackRight = new WPI_VictorSPX(RoboRIO.kPortMotorDriveBackRight);
-  private final Compressor m_compressor = new Compressor(RoboRIO.kPortCompressor);
-  private final DifferentialDrive m_differentialDrive = new DifferentialDrive(m_motorDriveFrontLeft,
-      m_motorDriveFrontRight);
+  private final WPI_TalonSRX m_motorDriveFrontLeft =
+      new WPI_TalonSRX(RoboRIO.kPortMotorDriveFrontLeft);
+  private final WPI_TalonSRX m_motorDriveFrontRight =
+      new WPI_TalonSRX(RoboRIO.kPortMotorDriveFrontRight);
+  private final WPI_VictorSPX m_motorDriveBackLeft =
+      new WPI_VictorSPX(RoboRIO.kPortMotorDriveBackLeft);
+  private final WPI_VictorSPX m_motorDriveBackRight =
+      new WPI_VictorSPX(RoboRIO.kPortMotorDriveBackRight);
+  private final DifferentialDrive m_differentialDrive =
+      new DifferentialDrive(m_motorDriveFrontLeft, m_motorDriveFrontRight);
+
+  // Winch and Hanger
+  private final WPI_VictorSPX m_motorWinch =
+      new WPI_VictorSPX(RoboRIO.kPortMotorWinch);
+  private final DoubleSolenoid m_doubleSolenoidWinch =
+      new DoubleSolenoid(RoboRIO.kPortDoubleSolenoidForwardWinch,
+          RoboRIO.kPortDoubleSolenoidBackwardWinch);
+  private final DigitalInput m_limitSwitchSensorWinch =
+      new DigitalInput(RoboRIO.kPortLimitSwitchSensorWinch);
 
   // Ball Intake
-  private final WPI_TalonSRX m_motorIntake = new WPI_TalonSRX(RoboRIO.kPortMotorIntake);
-  private final WPI_VictorSPX m_motorBelt = new WPI_VictorSPX(RoboRIO.kPortMotorBelt);
-  private final DigitalInput m_photoelectricSensorEnter = new DigitalInput(RoboRIO.kPortPhotoelectricSensorEnter);
-  private final DigitalInput m_photoelectricSensorExit = new DigitalInput(RoboRIO.kPortPhotoelectricSensorExit);
+  private final WPI_TalonSRX m_motorIntake =
+      new WPI_TalonSRX(RoboRIO.kPortMotorIntake);
+  private final WPI_VictorSPX m_motorBelt =
+      new WPI_VictorSPX(RoboRIO.kPortMotorBelt);
+  private final DigitalInput m_photoelectricSensorEnter =
+      new DigitalInput(RoboRIO.kPortPhotoelectricSensorEnter);
+  private final DigitalInput m_photoelectricSensorExit =
+      new DigitalInput(RoboRIO.kPortPhotoelectricSensorExit);
   private int m_ballsInStorage = 0;
   private boolean m_ballDetectedEnterLastLoop = false;
   private boolean m_ballDetectedExitLastLoop = false;
 
   // Launching
-  WPI_VictorSPX m_motorLauncherLeft = new WPI_VictorSPX(RoboRIO.kPortMotorLauncherLeft);
-  WPI_TalonSRX m_motorLauncherRight = new WPI_TalonSRX(RoboRIO.kPortMotorLauncherRight);
-  private final AnalogInput m_analogInputUltrasonicSensor = new AnalogInput(RoboRIO.kPortUltrasonicSensorPort);
+  private final WPI_VictorSPX m_motorLauncherLeft =
+      new WPI_VictorSPX(RoboRIO.kPortMotorLauncherLeft);
+  private final WPI_TalonSRX m_motorLauncherRight =
+      new WPI_TalonSRX(RoboRIO.kPortMotorLauncherRight);
+  private final DoubleSolenoid m_doubleSolenoidLauncherCannon =
+      new DoubleSolenoid(RoboRIO.kPortDoubleSolenoidForwardLauncherCannon,
+          RoboRIO.kPortDoubleSolenoidBackwardLauncherCannon);
+  private final AnalogInput m_analogInputUltrasonicSensor =
+      new AnalogInput(RoboRIO.kPortUltrasonicSensorPort);
   // Leave this uninitialized because we have to configure the analog input.
   private AnalogPotentiometer m_ultrasonicSensor;
   private boolean m_launchBall = false;
+  private boolean m_raiseLauncherCannon = false;
 
   // Control Panel
-  private final ColorSensorV3 m_colorSensor = new ColorSensorV3(I2C.Port.kOnboard);
+  private final ColorSensorV3 m_colorSensor =
+      new ColorSensorV3(I2C.Port.kOnboard);
   private final ColorMatch m_colorMatcher = new ColorMatch();
-  private static final Color kBlueTarget = ColorMatch.makeColor(0.143, 0.427, 0.429);
-  private static final Color kGreenTarget = ColorMatch.makeColor(0.197, 0.561, 0.240);
-  private static final Color kRedTarget = ColorMatch.makeColor(0.561, 0.232, 0.114);
-  private static final Color kYellowTarget = ColorMatch.makeColor(0.361, 0.524, 0.113);
-  private final WPI_TalonSRX m_motorControlPanel = new WPI_TalonSRX(RoboRIO.kPortMotorControlPanel);
+  private static final Color kBlueTarget =
+      ColorMatch.makeColor(0.143, 0.427, 0.429);
+  private static final Color kGreenTarget =
+      ColorMatch.makeColor(0.197, 0.561, 0.240);
+  private static final Color kRedTarget =
+      ColorMatch.makeColor(0.561, 0.232, 0.114);
+  private static final Color kYellowTarget =
+      ColorMatch.makeColor(0.361, 0.524, 0.113);
+  private final WPI_TalonSRX m_motorControlPanel =
+      new WPI_TalonSRX(RoboRIO.kPortMotorControlPanel);
+  private final DoubleSolenoid m_doubleSolenoidControlPanel =
+      new DoubleSolenoid(RoboRIO.kPortDoubleSolenoidForwardControlPanel,
+          RoboRIO.kPortDoubleSolenoidBackwardControlPanel);
   private String m_detectedColorString = "N/A";
   private String m_lastDetectedColorString = "N/A";
   private String m_targetControlPanelColor = "N/A";
@@ -137,18 +156,26 @@ public class Robot extends TimedRobot {
   private Scalar hsvHigh = new Scalar(90, 255, 255);
 
   /**
+   * Resets the solenoids to the reversed state, which is their default.
+   */
+  private void solenoidReset() {
+    m_doubleSolenoidControlPanel.set(DoubleSolenoid.Value.kReverse);
+    m_doubleSolenoidWinch.set(DoubleSolenoid.Value.kReverse);
+    m_doubleSolenoidLauncherCannon.set(DoubleSolenoid.Value.kReverse);
+  }
+
+  /**
    * Initializes the robot code when the robot power is turned on.
    */
   @Override
   public void robotInit() {
-    // Set the PCM in closed loop control mode to enable it.
-    m_compressor.setClosedLoopControl(true);
-
     // Slave follows master
     m_motorDriveBackRight.follow(m_motorDriveFrontRight);
     m_motorDriveBackLeft.follow(m_motorDriveFrontLeft);
 
     m_motorLauncherRight.follow(m_motorLauncherLeft);
+
+    solenoidReset();
 
     // Configure the ultrasonic sensor.
     // Enable 2-bit averaging, for stability,
@@ -157,7 +184,8 @@ public class Robot extends TimedRobot {
     // The documentation for this function describes this parameter as a "scale",
     // although it is not the scale for how many units a volt represent - rather, it
     // expects the units per 5 volts.
-    m_ultrasonicSensor = new AnalogPotentiometer(m_analogInputUltrasonicSensor, RoboRIO.kMetersPerVoltUltrasonic * 5);
+    m_ultrasonicSensor = new AnalogPotentiometer(m_analogInputUltrasonicSensor,
+        RoboRIO.kMetersPerVoltUltrasonic * 5);
 
     // Add color sensor matches.
     m_colorMatcher.addColorMatch(kBlueTarget);
@@ -173,11 +201,16 @@ public class Robot extends TimedRobot {
     // distinction to be made between assigning the ComplexWidget to a variable, and
     // assigning the SendableChooser to a variable - which we *do* do.
     m_autoChooser.setDefaultOption("Default Auto", kAutoCaseDefault);
-    ShuffleboardHelper.m_layoutAutonomous.add(m_autoChooser).withWidget(BuiltInWidgets.kSplitButtonChooser);
+    ShuffleboardHelper.m_layoutAutonomous.add(m_autoChooser)
+        .withWidget(BuiltInWidgets.kSplitButtonChooser);
     ShuffleboardHelper.m_layoutDriving.add(m_differentialDrive);
     ShuffleboardHelper.m_layoutLaunching
-        .add("Optimal Distance to Apex", Constants.kProjectedHorDistanceToApex - Constants.kHorDistanceHexagonToHoop)
-        .withWidget(BuiltInWidgets.kNumberBar).withProperties(ShuffleboardHelper.kPropertiesDistanceSensor).getEntry();
+        .add("Optimal Distance to Apex",
+            Constants.kProjectedHorDistanceToApex
+                - Constants.kHorDistanceHexagonToHoop)
+        .withWidget(BuiltInWidgets.kNumberBar)
+        .withProperties(ShuffleboardHelper.kPropertiesDistanceSensor)
+        .getEntry();
 
     // Vision init
     // Configure the camera.
@@ -212,15 +245,19 @@ public class Robot extends TimedRobot {
   }
 
   /**
-   * Initializes disabled mode. This method is responsible for resetting state to
-   * the way it this class is when it's initialized.
+   * Initializes disabled mode. This method is responsible for resetting state to the way it this
+   * class is when it's initialized.
    */
   @Override
   public void disabledInit() {
+    solenoidReset();
+
+    m_raiseLauncherCannon = false;
     m_isInControlPanelMode = false;
     // Force a state change.
     m_isInControlPanelModeLastLoop = true;
-    ShuffleboardHelper.m_entryControlPanelMode.setBoolean(m_isInControlPanelMode);
+    ShuffleboardHelper.m_entryControlPanelMode
+        .setBoolean(m_isInControlPanelMode);
     m_isInLaunchingMode = false;
     // Force a state change.
     m_isInLaunchingModeLastLoop = true;
@@ -251,8 +288,6 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousInit() {
     m_selectedAuto = m_autoChooser.getSelected();
-
-    m_compressor.start();
   }
 
   /**
@@ -273,8 +308,6 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void teleopInit() {
-    m_compressor.start();
-
     disabledInit();
   }
 
@@ -288,22 +321,32 @@ public class Robot extends TimedRobot {
     driveSpeed();
     intakeBalls();
     launchBalls();
+    windWinch();
+    controlHanger();
     spinControlPanel();
     processImage();
   }
 
   /**
-   * Reads pressed states from the gamepads. This is done here because it is
-   * paramount that getRawButtonPressed() is only called once per loop, because,
-   * the second time, it will more than likely just return "false" for any button.
+   * Reads pressed states from the gamepads. This is done here because it is paramount that
+   * getRawButtonPressed() is only called once per loop, because, the second time, it will more than
+   * likely just return "false" for any button.
    */
   private void updateInputs() {
-    m_buttonManipPressA = m_controllerManip.getRawButtonPressed(DriveStation.kIdButtonA);
-    m_buttonManipPressB = m_controllerManip.getRawButtonPressed(DriveStation.kIdButtonB);
-    m_buttonManipPressX = m_controllerManip.getRawButtonPressed(DriveStation.kIdButtonX);
-    m_buttonManipPressY = m_controllerManip.getRawButtonPressed(DriveStation.kIdButtonY);
-    m_buttonManipPressBack = m_controllerManip.getRawButtonPressed(DriveStation.kIdButtonBack);
-    m_buttonManipPressStart = m_controllerManip.getRawButtonPressed(DriveStation.kIdButtonStart);
+    m_buttonManipPressA =
+        m_controllerManip.getRawButtonPressed(DriveStation.kIdButtonA);
+    m_buttonManipPressB =
+        m_controllerManip.getRawButtonPressed(DriveStation.kIdButtonB);
+    m_buttonManipPressX =
+        m_controllerManip.getRawButtonPressed(DriveStation.kIdButtonX);
+    m_buttonManipPressY =
+        m_controllerManip.getRawButtonPressed(DriveStation.kIdButtonY);
+    m_buttonManipPressLs =
+        m_controllerManip.getRawButtonPressed(DriveStation.kIdButtonLs);
+    m_buttonManipPressBack =
+        m_controllerManip.getRawButtonPressed(DriveStation.kIdButtonBack);
+    m_buttonManipPressStart =
+        m_controllerManip.getRawButtonPressed(DriveStation.kIdButtonStart);
     int pov = m_controllerManip.getPOV(DriveStation.kIdPovDpad);
     if (pov != -1 && pov == m_povLastLoop)
       pov = -1;
@@ -322,22 +365,27 @@ public class Robot extends TimedRobot {
       m_isInLaunchingMode = !m_isInLaunchingMode;
       ShuffleboardHelper.m_entryLaunchingMode.setBoolean(m_isInLaunchingMode);
     } else {
-      m_isInLaunchingMode = ShuffleboardHelper.m_entryLaunchingMode.getBoolean(m_isInLaunchingMode);
+      m_isInLaunchingMode = ShuffleboardHelper.m_entryLaunchingMode
+          .getBoolean(m_isInLaunchingMode);
     }
     if (m_buttonManipPressStart) {
       m_isInControlPanelMode = !m_isInControlPanelMode;
-      ShuffleboardHelper.m_entryControlPanelMode.setBoolean(m_isInControlPanelMode);
+      ShuffleboardHelper.m_entryControlPanelMode
+          .setBoolean(m_isInControlPanelMode);
     } else {
-      m_isInControlPanelMode = ShuffleboardHelper.m_entryControlPanelMode.getBoolean(m_isInControlPanelMode);
+      m_isInControlPanelMode = ShuffleboardHelper.m_entryControlPanelMode
+          .getBoolean(m_isInControlPanelMode);
     }
 
     // If launching or control panel mode is enabled and the robot is driven via
     // controller, disable it.
     if (Math.abs(m_controllerDrive.getRawAxis(DriveStation.kIdAxisLeftY)) > 0.5
-        || Math.abs(m_controllerDrive.getRawAxis(DriveStation.kIdAxisRightX)) > 0.5) {
+        || Math.abs(
+            m_controllerDrive.getRawAxis(DriveStation.kIdAxisRightX)) > 0.5) {
       if (m_isInControlPanelMode) {
         m_isInControlPanelMode = false;
-        ShuffleboardHelper.m_entryControlPanelMode.setBoolean(m_isInControlPanelMode);
+        ShuffleboardHelper.m_entryControlPanelMode
+            .setBoolean(m_isInControlPanelMode);
       } else if (m_isInLaunchingMode) {
         m_isInLaunchingMode = false;
         ShuffleboardHelper.m_entryLaunchingMode.setBoolean(m_isInLaunchingMode);
@@ -347,19 +395,24 @@ public class Robot extends TimedRobot {
     // Set the control panel values to their defaults when not enabled.
     if (m_isInControlPanelModeLastLoop != m_isInControlPanelMode) {
       if (m_isInControlPanelMode) {
+        m_doubleSolenoidControlPanel.set(DoubleSolenoid.Value.kForward);
         // Disallow being in both modes simultaneously.
         if (m_isInLaunchingMode) {
           m_isInLaunchingMode = false;
           ShuffleboardHelper.m_entryLaunchingMode.setBoolean(false);
         }
       } else {
+        m_doubleSolenoidControlPanel.set(DoubleSolenoid.Value.kReverse);
         m_detectedColorString = "N/A";
         m_lastDetectedColorString = "N/A";
         m_targetControlPanelColor = "N/A";
         m_controlPanelSpinAmount = 0;
-        ShuffleboardHelper.m_entryDetectedColor.setString(m_detectedColorString);
-        ShuffleboardHelper.m_entryTargetColor.setString(m_targetControlPanelColor);
-        ShuffleboardHelper.m_entryTargetSpin.setDouble(m_controlPanelSpinAmount);
+        ShuffleboardHelper.m_entryDetectedColor
+            .setString(m_detectedColorString);
+        ShuffleboardHelper.m_entryTargetColor
+            .setString(m_targetControlPanelColor);
+        ShuffleboardHelper.m_entryTargetSpin
+            .setDouble(m_controlPanelSpinAmount);
         ShuffleboardHelper.m_entryConfidence.setDouble(0);
       }
     }
@@ -382,20 +435,22 @@ public class Robot extends TimedRobot {
   }
 
   /**
-   * Drives the robot at a certain speed inputted by the driver. DifferentialDrive
-   * squares the input values by default, so in order to apply a speed modifier,
-   * we have to square it ourselves, so that it is squared before the modifier is
-   * applied.
+   * Drives the robot at a certain speed inputted by the driver. DifferentialDrive squares the input
+   * values by default, so in order to apply a speed modifier, we have to square it ourselves, so that
+   * it is squared before the modifier is applied.
    */
   private void driveSpeed() {
     // Left thumb stick of the driver's joystick.
     // The drive controller is negated here due to the y-axes of the joystick being
     // opposite by default.
-    double axisDriveLeftY = -m_controllerDrive.getRawAxis(DriveStation.kIdAxisLeftY);
+    double axisDriveLeftY =
+        -m_controllerDrive.getRawAxis(DriveStation.kIdAxisLeftY);
     double speed = Math.signum(axisDriveLeftY) * Math.pow(axisDriveLeftY, 2);
     // Right thumb stick of the driver's joystick.
-    double axisDriveRightX = m_controllerDrive.getRawAxis(DriveStation.kIdAxisRightX);
-    double zRotation = Math.signum(axisDriveRightX) * Math.pow(axisDriveRightX, 2);
+    double axisDriveRightX =
+        m_controllerDrive.getRawAxis(DriveStation.kIdAxisRightX);
+    double zRotation =
+        Math.signum(axisDriveRightX) * Math.pow(axisDriveRightX, 2);
     // Left trigger of the driver's joystick.
     double axisDriveLt = m_controllerDrive.getRawAxis(DriveStation.kIdAxisLt);
     // Right trigger of the driver's joystick.
@@ -417,7 +472,8 @@ public class Robot extends TimedRobot {
   private void intakeBalls() {
     // If the manipulator holds LT, and the storage isn't full, activate the intake.
     // TODO: Is this ballsInStorage check putting too much trust in the sensor?
-    if (m_controllerManip.getRawAxis(DriveStation.kIdAxisLt) > 0.50 && m_ballsInStorage < 3)
+    if (m_controllerManip.getRawAxis(DriveStation.kIdAxisLt) > 0.50
+        && m_ballsInStorage < 3)
       m_motorIntake.set(Constants.kSpeedIntake);
     else
       m_motorIntake.set(0);
@@ -483,15 +539,25 @@ public class Robot extends TimedRobot {
   }
 
   /**
-   * Determines whether or not the ball can be launched into the power port, and
-   * adjusts the robot to make the shot if it cannot.
+   * Determines whether or not the ball can be launched into the power port, and adjusts the robot to
+   * make the shot if it cannot.
    */
   private void launchBalls() {
+    if (m_buttonManipPressLs)
+      m_raiseLauncherCannon = !m_raiseLauncherCannon;
+
+    if (m_raiseLauncherCannon)
+      m_doubleSolenoidLauncherCannon.set(DoubleSolenoid.Value.kForward);
+    else
+      m_doubleSolenoidLauncherCannon.set(DoubleSolenoid.Value.kReverse);
+
     if (m_isInLaunchingMode) {
-      double tolerance = ShuffleboardHelper.m_entryDistanceTolerence.getDouble(1);
+      double tolerance =
+          ShuffleboardHelper.m_entryDistanceTolerence.getDouble(1);
       double horDistanceToHex = m_ultrasonicSensor.get();
       ShuffleboardHelper.m_entryDistanceSensor.setDouble(horDistanceToHex);
-      double horDistanceToHoop = horDistanceToHex + Constants.kHorDistanceHexagonToHoop;
+      double horDistanceToHoop =
+          horDistanceToHex + Constants.kHorDistanceHexagonToHoop;
 
       double error = Constants.kProjectedHorDistanceToApex - horDistanceToHoop;
       if (Math.abs(error) > tolerance) {
@@ -499,8 +565,10 @@ public class Robot extends TimedRobot {
         // Cap out the correction speed at the higher driving speed. Don't square the
         // inputs because this
         // isn't from an analog stick, so that kind of precision isn't necessary.
-        m_differentialDrive.arcadeDrive(error > 0 ? Math.min(Constants.kMultiplierHighSpeed, error * Constants.kP)
-            : Math.max(-Constants.kMultiplierHighSpeed, error * Constants.kP), 0, false);
+        m_differentialDrive.arcadeDrive(error > 0
+            ? Math.min(Constants.kMultiplierHighSpeed, error * Constants.kP)
+            : Math.max(-Constants.kMultiplierHighSpeed, error * Constants.kP),
+            0, false);
         m_launchBall = false;
         ShuffleboardHelper.m_entryLaunchBall.setBoolean(m_launchBall);
       } else {
@@ -513,13 +581,16 @@ public class Robot extends TimedRobot {
     // If the manipulator trigger is held, override our autonomous logic and
     // manually spin up the
     // launcher.
-    if (m_controllerDrive.getRawAxis(DriveStation.kIdAxisRt) > 0.5)
+    if (m_controllerManip.getRawAxis(DriveStation.kIdAxisRt) > 0.5)
       m_motorLauncherLeft.set(Constants.kSpeedLauncher);
   }
 
   /**
-   * Configures the conditions for spinning the control panel, and spins it if
-   * necessary.
+   * Configures the conditions for spinning the control panel, and spins it if necessary.
+   * 
+   * This method is no longer applicable to the current state of the robot as the hardware was removed
+   * that pertains to the control panel.
+   * 
    */
   private void spinControlPanel() {
     if (m_isInControlPanelMode) {
@@ -533,7 +604,8 @@ public class Robot extends TimedRobot {
       else if (m_buttonManipPressY)
         m_targetControlPanelColor = "Yellow";
       if (targetControlPanelColorInitial != m_targetControlPanelColor)
-        ShuffleboardHelper.m_entryTargetColor.setString(m_targetControlPanelColor);
+        ShuffleboardHelper.m_entryTargetColor
+            .setString(m_targetControlPanelColor);
 
       int controlPanelSpinAmountInitial = m_controlPanelSpinAmount;
       // During a match, the amount of revolutions needed to be completed will be
@@ -548,7 +620,8 @@ public class Robot extends TimedRobot {
       else if (m_buttonManipPressDpadDown)
         m_controlPanelSpinAmount = 0;
       if (controlPanelSpinAmountInitial != m_controlPanelSpinAmount)
-        ShuffleboardHelper.m_entryTargetSpin.setDouble(m_controlPanelSpinAmount);
+        ShuffleboardHelper.m_entryTargetSpin
+            .setDouble(m_controlPanelSpinAmount);
 
       Color detectedColor = m_colorSensor.getColor();
       ColorMatchResult match = m_colorMatcher.matchClosestColor(detectedColor);
@@ -567,19 +640,26 @@ public class Robot extends TimedRobot {
       turnControlPanel();
       ShuffleboardHelper.m_entryTargetSpin.setDouble(m_controlPanelSpinAmount);
       m_lastDetectedColorString = m_detectedColorString;
-    }
+    } else
+      m_motorControlPanel.set(0);
   }
 
   /**
    * Turns the control panel when called upon in spinControlPanel().
+   * 
+   * This method is no longer applicable to the current state of the robot as the hardware was removed
+   * that pertains to the control panel.
+   * 
    */
   private void turnControlPanel() {
-    if (m_targetControlPanelColor != m_detectedColorString || m_controlPanelSpinAmount > 0)
+    if (m_targetControlPanelColor != m_detectedColorString
+        || m_controlPanelSpinAmount > 0)
       m_motorControlPanel.set(Constants.kSpeedControlPanel);
     else
       m_motorControlPanel.set(0);
 
-    if (m_targetControlPanelColor == m_detectedColorString && m_lastDetectedColorString != m_detectedColorString
+    if (m_targetControlPanelColor == m_detectedColorString
+        && m_lastDetectedColorString != m_detectedColorString
         && m_controlPanelSpinAmount > 0)
       m_controlPanelSpinAmount -= 1;
   }
@@ -598,7 +678,8 @@ public class Robot extends TimedRobot {
         Core.inRange(m_hsvMat, hsvLow, hsvHigh, m_filteredMat);
 
         // Find contours
-        Imgproc.findContours(m_filteredMat, contours, new Mat(), Imgproc.RETR_TREE, Imgproc.CHAIN_APPROX_SIMPLE);
+        Imgproc.findContours(m_filteredMat, contours, new Mat(),
+            Imgproc.RETR_TREE, Imgproc.CHAIN_APPROX_SIMPLE);
 
         if (contours.size() > 0) {
           MatOfPoint largestContour = contours.get(0);
@@ -631,10 +712,14 @@ public class Robot extends TimedRobot {
           // Offset due to cutting off the bottom half of the camera feed
           averageCenter.y += 120;
 
-          Imgproc.circle(m_sourceMat, averageCenter, 5, Constants.kColorBlue, 3);
-          Imgproc.circle(m_sourceMat, new Point(320, averageCenter.y), 3, Constants.kColorRed, -1);
+          Imgproc.circle(m_sourceMat, averageCenter, 5, Constants.kColorBlue,
+              3);
+          Imgproc.circle(m_sourceMat, new Point(320, averageCenter.y), 3,
+              Constants.kColorRed, -1);
           Imgproc.rectangle(m_sourceMat, new Point(scanArea.x, scanArea.y),
-              new Point(scanArea.x + scanArea.width, scanArea.y + scanArea.height), Constants.kColorGreen);
+              new Point(scanArea.x + scanArea.width,
+                  scanArea.y + scanArea.height),
+              Constants.kColorGreen);
           Imgproc.drawContours(m_sourceMat, contours, -1, Constants.kColorRed);
 
           // distance sensing (this can be taken out entirely if it will not be used)
@@ -655,6 +740,46 @@ public class Robot extends TimedRobot {
     m_hsvMat.release();
     m_filteredMat.release();
     contours.clear();
+  }
+
+  /**
+   * Toggles whether or not the winch is raised or declined.
+   * 
+   * This method is no longer applicable to the current state of the robot as the hardware was removed
+   * that pertains to the winch.
+   * 
+   */
+  private void windWinch() {
+    boolean buttonDriveA =
+        m_controllerDrive.getRawButton(DriveStation.kIdButtonA);
+    boolean buttonDriveB =
+        m_controllerDrive.getRawButton(DriveStation.kIdButtonB);
+
+    if (!buttonDriveA && !buttonDriveB)
+      m_motorWinch.set(0);
+
+    if (m_limitSwitchSensorWinch.get()) {
+      if (buttonDriveA) {
+        m_doubleSolenoidWinch.set(DoubleSolenoid.Value.kReverse);
+        // m_motorWinch.set(-Constants.kSpeedWinchMotor);
+      }
+    } else
+      m_motorWinch.set(0);
+
+    if (buttonDriveB) {
+      m_doubleSolenoidWinch.set(DoubleSolenoid.Value.kForward);
+      // m_motorWinch.set(Constants.kSpeedWinchMotor);
+    }
+  }
+
+  /**
+   * Controls whether or not the hanger is extended.
+   * 
+   * This method is no longer applicable to the current state of the robot as the hardware was removed
+   * that pertains to the hanger.
+   * 
+   */
+  private void controlHanger() {
   }
 
   /**
