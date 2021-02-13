@@ -27,9 +27,11 @@ import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.I2C;
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.Sendable;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
+import edu.wpi.first.wpilibj.shuffleboard.SendableCameraWrapper;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.util.Color;
 
@@ -152,6 +154,8 @@ public class Robot extends TimedRobot {
 
   private Rect scanArea = new Rect(0, 120, 640, 120);
 
+  private SendableCameraWrapper cameraWrapper;
+
   private Scalar hsvLow = new Scalar(30, 0, 250);
   private Scalar hsvHigh = new Scalar(90, 255, 255);
 
@@ -219,7 +223,10 @@ public class Robot extends TimedRobot {
     // Obtain OpenCV helper objects.
     m_sink = CameraServer.getInstance().getVideo();
     m_sink.setEnabled(true);
-    m_source = CameraServer.getInstance().putVideo("Test", 640, 240);
+    m_source = CameraServer.getInstance().putVideo("Camera", 640, 240);
+
+    // Initializes the camera wrapper which sends video to ShuffleBoard
+    cameraWrapper = SendableCameraWrapper.wrap(m_source);
   }
 
   /**

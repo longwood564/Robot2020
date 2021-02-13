@@ -6,6 +6,7 @@ import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
+import edu.wpi.first.wpilibj.shuffleboard.SendableCameraWrapper;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
@@ -93,6 +94,7 @@ public final class ShuffleboardHelper {
       m_tabGeneral.getLayout("Vision", BuiltInLayouts.kGrid).withPosition(6, 0)
           .withSize(1, 1)
           .withProperties(Map.of("Number of columns", 1, "Number of rows", 1));
+  // TODO: 6 sliders for hsv high and low & possibly need a widget here to display the camera
 
   // Shuffleboard Tools
   public static final ShuffleboardTab m_tabTools = Shuffleboard.getTab("Tools");
