@@ -99,7 +99,6 @@ public class Robot extends TimedRobot {
   // Leave this uninitialized because we have to configure the analog input.
   private AnalogPotentiometer m_ultrasonicSensor;
   private boolean m_launchBall = false;
-  private boolean m_raiseLauncherCannon = false;
 
   // Control Panel
   private final ColorSensorV3 m_colorSensor =
@@ -214,9 +213,7 @@ public class Robot extends TimedRobot {
     solenoidReset();
     
     m_launchBall = false;
-    m_raiseLauncherCannon = false;
     m_isInControlPanelMode = false;
-    
     // Force a state change.
     m_isInControlPanelModeLastLoop = true;
     ShuffleboardHelper.m_entryControlPanelMode
@@ -501,12 +498,7 @@ public class Robot extends TimedRobot {
    */
   private void launchBalls() {
     if (m_buttonManipPressLs)
-      m_raiseLauncherCannon = !m_raiseLauncherCannon;
-
-    if (m_raiseLauncherCannon)
-      m_doubleSolenoidLauncherCannon.set(DoubleSolenoid.Value.kForward);
-    else
-      m_doubleSolenoidLauncherCannon.set(DoubleSolenoid.Value.kReverse);
+      m_doubleSolenoidLauncherCannon.toggle();
 
     if (m_isInLaunchingMode) {
       double tolerance =
