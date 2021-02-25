@@ -50,6 +50,13 @@ public final class Constants {
    */
   public static final double kHorDistanceHexagonToHoop =
       29.25 / kInchesPerMeter;
+  /**
+   * The width of the hexagon and reflective tape. Field measurements used:
+   * <ul>
+   * <li>Hexagon width = 39.25 in.
+   * </ul>
+   */
+  public static final double kWidthHexagon = 39.25 / kInchesPerMeter;
 
   // Robot Measurements
 
@@ -107,6 +114,8 @@ public final class Constants {
 
   /** The area of the camera feed which is actually used by vision processing */
   public static final Rect scanArea = new Rect(0, 120, 640, 120);
+
+
 
   // Constant Calculations
 
