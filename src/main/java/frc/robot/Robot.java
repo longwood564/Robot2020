@@ -2,6 +2,7 @@ package frc.robot;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
@@ -31,6 +32,7 @@ import edu.wpi.first.wpilibj.Sendable;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
+import edu.wpi.first.wpilibj.shuffleboard.ComplexWidget;
 import edu.wpi.first.wpilibj.shuffleboard.SendableCameraWrapper;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.util.Color;
@@ -153,6 +155,10 @@ public class Robot extends TimedRobot {
   private List<Point> m_points = new ArrayList<Point>();
 
   private SendableCameraWrapper m_cameraWrapper;
+  private ComplexWidget m_cameraStream = ShuffleboardHelper.m_layoutVision
+      .add(m_cameraWrapper).withWidget(BuiltInWidgets.kCameraStream)
+      .withProperties(Map.of("Show crosshair", true, "Crosshair color", "white",
+          "Show controls", true, "Rotation", "NONE"));
 
   private boolean m_doVisionProcessing = false;
 

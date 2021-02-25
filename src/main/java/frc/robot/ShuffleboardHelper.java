@@ -119,6 +119,7 @@ public final class ShuffleboardHelper {
           .withWidget(BuiltInWidgets.kNumberSlider)
           .withProperties(Map.of("min", 255, "max", 255)).getEntry();
 
+
   // TODO: 6 sliders for hsv high and low & possibly need a widget here to display the camera
 
   // Shuffleboard Tools
