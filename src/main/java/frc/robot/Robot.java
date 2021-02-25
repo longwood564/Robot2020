@@ -154,10 +154,6 @@ public class Robot extends TimedRobot {
 
   private SendableCameraWrapper m_cameraWrapper;
 
-  // TODO: config with shuffleboard
-  private Scalar hsvLow = new Scalar(30, 0, 250);
-  private Scalar hsvHigh = new Scalar(90, 255, 255);
-
   private boolean m_doVisionProcessing = false;
 
   /**
@@ -683,7 +679,14 @@ public class Robot extends TimedRobot {
         Imgproc.cvtColor(m_subMat, m_hsvMat, Imgproc.COLOR_BGR2HSV);
 
         // Filters for only the color of the tape.
-        Core.inRange(m_hsvMat, hsvLow, hsvHigh, m_filteredMat);
+        Core.inRange(m_hsvMat,
+            new Scalar(ShuffleboardHelper.m_entryHueLow.getDouble(30),
+                ShuffleboardHelper.m_entrySaturationLow.getDouble(0),
+                ShuffleboardHelper.m_entryValueLow.getDouble(250)),
+            new Scalar(ShuffleboardHelper.m_entryHueHigh.getDouble(90),
+                ShuffleboardHelper.m_entrySaturationHigh.getDouble(255),
+                ShuffleboardHelper.m_entryValueHigh.getDouble(255)),
+            m_filteredMat);
 
         // Find contours.
         Imgproc.findContours(m_filteredMat, m_contours, new Mat(),

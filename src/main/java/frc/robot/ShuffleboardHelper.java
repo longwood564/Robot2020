@@ -94,6 +94,31 @@ public final class ShuffleboardHelper {
       m_tabGeneral.getLayout("Vision", BuiltInLayouts.kGrid).withPosition(6, 0)
           .withSize(1, 1)
           .withProperties(Map.of("Number of columns", 1, "Number of rows", 1));
+  public static final NetworkTableEntry m_entryHueLow =
+      m_layoutVision.addPersistent("Hue Lower Bound", 0)
+          .withWidget(BuiltInWidgets.kNumberSlider)
+          .withProperties(Map.of("min", 30, "max", 179)).getEntry();
+  public static final NetworkTableEntry m_entryHueHigh =
+      m_layoutVision.addPersistent("Hue Upper Bound", 0)
+          .withWidget(BuiltInWidgets.kNumberSlider)
+          .withProperties(Map.of("min", 90, "max", 179)).getEntry();
+  public static final NetworkTableEntry m_entrySaturationLow =
+      m_layoutVision.addPersistent("Saturation Lower Bound", 0)
+          .withWidget(BuiltInWidgets.kNumberSlider)
+          .withProperties(Map.of("min", 0, "max", 255)).getEntry();
+  public static final NetworkTableEntry m_entrySaturationHigh =
+      m_layoutVision.addPersistent("Saturation Upper Bound", 0)
+          .withWidget(BuiltInWidgets.kNumberSlider)
+          .withProperties(Map.of("min", 255, "max", 255)).getEntry();
+  public static final NetworkTableEntry m_entryValueLow =
+      m_layoutVision.addPersistent("Value Lower Bound", 0)
+          .withWidget(BuiltInWidgets.kNumberSlider)
+          .withProperties(Map.of("min", 250, "max", 255)).getEntry();
+  public static final NetworkTableEntry m_entryValueHigh =
+      m_layoutVision.addPersistent("Value Upper Bound", 0)
+          .withWidget(BuiltInWidgets.kNumberSlider)
+          .withProperties(Map.of("min", 255, "max", 255)).getEntry();
+
   // TODO: 6 sliders for hsv high and low & possibly need a widget here to display the camera
 
   // Shuffleboard Tools
