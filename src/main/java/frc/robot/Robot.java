@@ -140,8 +140,8 @@ public class Robot extends TimedRobot {
   private int m_controlPanelSpinAmount = 0;
 
   // Vision
-  private boolean doVisionProcessing = false;
-  UsbCamera camera = CameraServer.getInstance().startAutomaticCapture(1);
+  private UsbCamera m_camera =
+      CameraServer.getInstance().startAutomaticCapture(1);
   private CvSink m_sink;
   private CvSource m_source;
 
@@ -149,13 +149,16 @@ public class Robot extends TimedRobot {
   private Mat m_hsvMat = new Mat();
   private Mat m_filteredMat = new Mat();
 
-  private List<MatOfPoint> contours = new ArrayList<MatOfPoint>();
-  private List<Point> points = new ArrayList<Point>();
+  private List<MatOfPoint> m_contours = new ArrayList<MatOfPoint>();
+  private List<Point> m_points = new ArrayList<Point>();
 
-  private SendableCameraWrapper cameraWrapper;
+  private SendableCameraWrapper m_cameraWrapper;
 
+  // TODO: config with shuffleboard
   private Scalar hsvLow = new Scalar(30, 0, 250);
   private Scalar hsvHigh = new Scalar(90, 255, 255);
+
+  private boolean m_doVisionProcessing = false;
 
   /**
    * Resets the solenoids to the reversed state, which is their default.
@@ -216,7 +219,7 @@ public class Robot extends TimedRobot {
 
     // Vision init
     // Configure the camera.
-    camera.setResolution(640, 480);
+    m_camera.setResolution(640, 480);
 
     // Obtain OpenCV helper objects.
     m_sink = CameraServer.getInstance().getVideo();
@@ -224,7 +227,7 @@ public class Robot extends TimedRobot {
     m_source = CameraServer.getInstance().putVideo("Camera", 640, 240);
 
     // Initializes the camera wrapper which sends video to ShuffleBoard
-    cameraWrapper = SendableCameraWrapper.wrap(m_source);
+    m_cameraWrapper = SendableCameraWrapper.wrap(m_source);
   }
 
   /**
@@ -671,7 +674,7 @@ public class Robot extends TimedRobot {
 
   private void processImage() {
     m_sink.grabFrame(m_sourceMat);
-    if (doVisionProcessing) {
+    if (m_doVisionProcessing) {
       if (!m_sourceMat.empty()) {
         // Crop out the uneccessary parts of the image
         Mat m_subMat = new Mat(m_sourceMat, Constants.scanArea);
@@ -683,37 +686,37 @@ public class Robot extends TimedRobot {
         Core.inRange(m_hsvMat, hsvLow, hsvHigh, m_filteredMat);
 
         // Find contours
-        Imgproc.findContours(m_filteredMat, contours, new Mat(),
+        Imgproc.findContours(m_filteredMat, m_contours, new Mat(),
             Imgproc.RETR_TREE, Imgproc.CHAIN_APPROX_SIMPLE);
 
-        if (contours.size() > 0) {
-          MatOfPoint largestContour = contours.get(0);
+        if (m_contours.size() > 0) {
+          MatOfPoint largestContour = m_contours.get(0);
           double largestContourSize = Imgproc.contourArea(largestContour);
-          for (MatOfPoint contour : contours) {
+          for (MatOfPoint contour : m_contours) {
             double size = Imgproc.contourArea(contour);
             if (size > largestContourSize) {
               largestContour = contour;
               largestContourSize = size;
             }
           }
-          contours.clear();
-          contours.add(largestContour);
+          m_contours.clear();
+          m_contours.add(largestContour);
 
           Rect bounds = Imgproc.boundingRect(largestContour);
           Point center = new Point(bounds.x + (bounds.width / 2), bounds.y);
-          if (points.size() >= 4) {
-            points.remove(0);
+          if (m_points.size() >= 4) {
+            m_points.remove(0);
           }
-          points.add(center);
+          m_points.add(center);
 
           Point averageCenter = new Point(0, 0);
-          for (Point point : points) {
+          for (Point point : m_points) {
             averageCenter.x += point.x;
             averageCenter.y += point.y;
           }
 
-          averageCenter.x /= points.size();
-          averageCenter.y /= points.size();
+          averageCenter.x /= m_points.size();
+          averageCenter.y /= m_points.size();
           // Offset due to cutting off the bottom half of the camera feed
           averageCenter.y += 120;
 
@@ -726,7 +729,8 @@ public class Robot extends TimedRobot {
               new Point(Constants.scanArea.x + Constants.scanArea.width,
                   Constants.scanArea.y + Constants.scanArea.height),
               Constants.kColorGreen);
-          Imgproc.drawContours(m_sourceMat, contours, -1, Constants.kColorRed);
+          Imgproc.drawContours(m_sourceMat, m_contours, -1,
+              Constants.kColorRed);
 
           // distance sensing (this can be taken out entirely if it will not be used)
           // double actualSize = bounds.width/cos(angle);
@@ -745,7 +749,7 @@ public class Robot extends TimedRobot {
     m_sourceMat.release();
     m_hsvMat.release();
     m_filteredMat.release();
-    contours.clear();
+    m_contours.clear();
   }
 
   /**
