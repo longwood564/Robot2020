@@ -115,7 +115,11 @@ public final class Constants {
   /** The area of the camera feed which is actually used by vision processing */
   public static final Rect scanArea = new Rect(0, 120, 640, 120);
 
-
+  /**
+   * The focal length of the camera, determined experimentally. This is used to determine distance
+   * with the camera.
+   */
+  public static final double kCameraFocal = 699.516;
 
   // Constant Calculations
 

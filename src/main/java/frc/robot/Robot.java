@@ -734,7 +734,8 @@ public class Robot extends TimedRobot {
               Constants.kColorRed);
 
           // This determines how far the target is using the camera.
-          double dist = (Constants.kWidthHexagon * 699.516) / bounds.width;
+          double dist = (Constants.kWidthHexagon * Constants.kInchesPerMeter
+              * Constants.kCameraFocal) / bounds.width;
           // SmartDashboard.putNumber("Dist", dist);
         }
       }
