@@ -676,16 +676,16 @@ public class Robot extends TimedRobot {
     m_sink.grabFrame(m_sourceMat);
     if (m_doVisionProcessing) {
       if (!m_sourceMat.empty()) {
-        // Crop out the uneccessary parts of the image
+        // Crop out the uneccessary parts of the image.
         Mat m_subMat = new Mat(m_sourceMat, Constants.scanArea);
 
-        // Converts m_sourceMat to hsv color
+        // Converts m_sourceMat to HSV color.
         Imgproc.cvtColor(m_subMat, m_hsvMat, Imgproc.COLOR_BGR2HSV);
 
-        // Filters for only the color of the tape
+        // Filters for only the color of the tape.
         Core.inRange(m_hsvMat, hsvLow, hsvHigh, m_filteredMat);
 
-        // Find contours
+        // Find contours.
         Imgproc.findContours(m_filteredMat, m_contours, new Mat(),
             Imgproc.RETR_TREE, Imgproc.CHAIN_APPROX_SIMPLE);
 
@@ -717,12 +717,13 @@ public class Robot extends TimedRobot {
 
           averageCenter.x /= m_points.size();
           averageCenter.y /= m_points.size();
-          // Offset due to cutting off the bottom half of the camera feed
-          averageCenter.y += 120;
+          // Offset due to cutting off the bottom half of the camera feed.
+          averageCenter.y += Constants.scanArea.y;
 
           Imgproc.circle(m_sourceMat, averageCenter, 5, Constants.kColorBlue,
               3);
-          Imgproc.circle(m_sourceMat, new Point(320, averageCenter.y), 3,
+          Imgproc.circle(m_sourceMat,
+              new Point(Constants.scanArea.width / 2, averageCenter.y), 3,
               Constants.kColorRed, -1);
           Imgproc.rectangle(m_sourceMat,
               new Point(Constants.scanArea.x, Constants.scanArea.y),
@@ -732,11 +733,9 @@ public class Robot extends TimedRobot {
           Imgproc.drawContours(m_sourceMat, m_contours, -1,
               Constants.kColorRed);
 
-          // distance sensing (this can be taken out entirely if it will not be used)
-          // double actualSize = bounds.width/cos(angle);
-
-          // dist = (SizeIn * focal)/SizePx
-          // double dist = (39.25 * 699.516)/bounds.width;
+          // This determines how far the target is using the camera.
+          // double actualSize = bounds.width / cos(angle);
+          // double dist = (39.25 * 699.516) / bounds.width;
           // SmartDashboard.putNumber("Dist", dist);
         }
       }
