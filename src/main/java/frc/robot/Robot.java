@@ -152,8 +152,6 @@ public class Robot extends TimedRobot {
   private List<MatOfPoint> contours = new ArrayList<MatOfPoint>();
   private List<Point> points = new ArrayList<Point>();
 
-  private Rect scanArea = new Rect(0, 120, 640, 120);
-
   private SendableCameraWrapper cameraWrapper;
 
   private Scalar hsvLow = new Scalar(30, 0, 250);
@@ -676,7 +674,7 @@ public class Robot extends TimedRobot {
     if (doVisionProcessing) {
       if (!m_sourceMat.empty()) {
         // Crop out the uneccessary parts of the image
-        Mat m_subMat = new Mat(m_sourceMat, scanArea);
+        Mat m_subMat = new Mat(m_sourceMat, Constants.scanArea);
 
         // Converts m_sourceMat to hsv color
         Imgproc.cvtColor(m_subMat, m_hsvMat, Imgproc.COLOR_BGR2HSV);
@@ -723,9 +721,10 @@ public class Robot extends TimedRobot {
               3);
           Imgproc.circle(m_sourceMat, new Point(320, averageCenter.y), 3,
               Constants.kColorRed, -1);
-          Imgproc.rectangle(m_sourceMat, new Point(scanArea.x, scanArea.y),
-              new Point(scanArea.x + scanArea.width,
-                  scanArea.y + scanArea.height),
+          Imgproc.rectangle(m_sourceMat,
+              new Point(Constants.scanArea.x, Constants.scanArea.y),
+              new Point(Constants.scanArea.x + Constants.scanArea.width,
+                  Constants.scanArea.y + Constants.scanArea.height),
               Constants.kColorGreen);
           Imgproc.drawContours(m_sourceMat, contours, -1, Constants.kColorRed);
 

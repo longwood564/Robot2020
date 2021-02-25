@@ -1,5 +1,6 @@
 package frc.robot;
 
+import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
 
 /**
@@ -103,6 +104,9 @@ public final class Constants {
   public static final Scalar kColorRed = new Scalar(255, 0, 0);
   public static final Scalar kColorGreen = new Scalar(0, 255, 0);
   public static final Scalar kColorBlue = new Scalar(0, 0, 255);
+
+  /** The area of the camera feed which is actually used by vision processing */
+  public static final Rect scanArea = new Rect(0, 120, 640, 120);
 
   // Constant Calculations
 
