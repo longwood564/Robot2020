@@ -1,5 +1,8 @@
 package frc.robot;
 
+import org.opencv.core.Rect;
+import org.opencv.core.Scalar;
+
 /**
  * This class provides general constants relating to the laws of physics, the measurements of the
  * field, and the measurements of the robot.
@@ -47,16 +50,27 @@ public final class Constants {
    */
   public static final double kHorDistanceHexagonToHoop =
       29.25 / kInchesPerMeter;
+  /**
+   * The width of the hexagon and reflective tape. Field measurements used:
+   * <ul>
+   * <li>Hexagon width = 39.25 in.
+   * </ul>
+   */
+  public static final double kWidthHexagon = 39.25 / kInchesPerMeter;
 
   // Robot Measurements
 
   /** The distance from the floor to the point at which the ball is launched. */
   // TODO: Verify this measurement.
   private static final double kVertDistanceFloorToLauncher = 0.3;
-  /** The distance from the point at which the ball is launched to the outer hexagon. */
+  /**
+   * The distance from the point at which the ball is launched to the outer hexagon.
+   */
   public static final double kVertDistanceLauncherToHex =
       kVertDistanceFloorToHex - kVertDistanceFloorToLauncher;
-  /** The distance from the point at which the ball is launched to the inner hoop. */
+  /**
+   * The distance from the point at which the ball is launched to the inner hoop.
+   */
   public static final double kVertDistanceLauncherToHoop =
       kVertDistanceFloorToHoop - kVertDistanceFloorToLauncher;
   /** The angle of the ball launcher. */
@@ -70,26 +84,42 @@ public final class Constants {
 
   /** The number to multiply the joystick input by for driving at a slow speed. */
   public static final double kMultiplierSlowSpeed = 0.5;
-  /** The number to multiply the joystick input by for driving at a normal speed. */
-  public static final double kMultiplierNormalSpeed = 0.85;
+  /**
+   * The number to multiply the joystick input by for driving at a normal speed.
+   */
+  public static final double kMultiplierNormalSpeed = 0.65;
   /** The number to multiply the joystick input by for driving at a high speed. */
   public static final double kMultiplierHighSpeed = 0.75;
   /** The speed to set the control panel motor to. */
+  // TODO: Tune this value.
   public static final double kSpeedControlPanel = 0.25;
   /** The speed to set the intake motor to. */
-  public static final double kSpeedIntake = 0.9;
+  // TODO: Tune this value.
+  public static final double kSpeedIntake = 0.75;
   /** The speed to set the intake motor to. */
   public static final double kSpeedLauncher = 1.0;
   /** The speed to set the belt motor to. */
-  public static final double kSpeedBelt = 1.0;
-  /** The number to set the winch motor to when raising or retracting. */
-  public static final double kSpeedWinchMotor = 0.25;
+  // TODO: Tune this value.
+  public static final double kSpeedBelt = 0.50;
   /**
    * The proportionality constant to use for correcting error in maintaining a distance from an
    * object.
    */
   // TODO: Tune this measurement.
   public static final double kP = 0.3;
+  /** Color constants for vision */
+  public static final Scalar kColorRed = new Scalar(255, 0, 0);
+  public static final Scalar kColorGreen = new Scalar(0, 255, 0);
+  public static final Scalar kColorBlue = new Scalar(0, 0, 255);
+
+  /** The area of the camera feed which is actually used by vision processing */
+  public static final Rect scanArea = new Rect(0, 120, 640, 120);
+
+  /**
+   * The focal length of the camera, determined experimentally. This is used to determine distance
+   * with the camera.
+   */
+  public static final double kCameraFocal = 699.516;
 
   // Constant Calculations
 

@@ -1,23 +1,41 @@
 package frc.robot;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
+import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
+import com.revrobotics.ColorMatch;
+import com.revrobotics.ColorMatchResult;
+import com.revrobotics.ColorSensorV3;
+
+import org.opencv.core.Core;
+import org.opencv.core.Mat;
+import org.opencv.core.MatOfPoint;
+import org.opencv.core.Point;
+import org.opencv.core.Rect;
+import org.opencv.core.Scalar;
+import org.opencv.imgproc.Imgproc;
+
+import edu.wpi.cscore.CvSink;
+import edu.wpi.cscore.CvSource;
+import edu.wpi.cscore.UsbCamera;
+import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.AnalogPotentiometer;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.I2C;
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.Sendable;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
-import edu.wpi.first.wpilibj.util.Color;
-import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
-
-import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
-import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
-
-import com.revrobotics.ColorSensorV3;
-import com.revrobotics.ColorMatchResult;
-import com.revrobotics.ColorMatch;
+import edu.wpi.first.wpilibj.shuffleboard.ComplexWidget;
+import edu.wpi.first.wpilibj.shuffleboard.SendableCameraWrapper;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.util.Color;
 
 /**
  * Runs the robot code. The name of this class is depended upon by build.gradle.
@@ -123,6 +141,25 @@ public class Robot extends TimedRobot {
   private int m_controlPanelSpinAmount = 0;
 
   // Vision
+  private UsbCamera m_camera =
+      CameraServer.getInstance().startAutomaticCapture(1);
+  private CvSink m_sink;
+  private CvSource m_source;
+
+  private Mat m_sourceMat = new Mat();
+  private Mat m_hsvMat = new Mat();
+  private Mat m_filteredMat = new Mat();
+
+  private List<MatOfPoint> m_contours = new ArrayList<MatOfPoint>();
+  private List<Point> m_points = new ArrayList<Point>();
+
+  private SendableCameraWrapper m_cameraWrapper;
+  private ComplexWidget m_cameraStream = ShuffleboardHelper.m_layoutVision
+      .add(m_cameraWrapper).withWidget(BuiltInWidgets.kCameraStream)
+      .withProperties(Map.of("Show crosshair", true, "Crosshair color", "white",
+          "Show controls", true, "Rotation", "NONE"));
+
+  private boolean m_doVisionProcessing = false;
 
   /**
    * Resets the solenoids to the reversed state, which is their default.
@@ -180,6 +217,18 @@ public class Robot extends TimedRobot {
         .withWidget(BuiltInWidgets.kNumberBar)
         .withProperties(ShuffleboardHelper.kPropertiesDistanceSensor)
         .getEntry();
+
+    // Vision init
+    // Configure the camera.
+    m_camera.setResolution(640, 480);
+
+    // Obtain OpenCV helper objects.
+    m_sink = CameraServer.getInstance().getVideo();
+    m_sink.setEnabled(true);
+    m_source = CameraServer.getInstance().putVideo("Camera", 640, 240);
+
+    // Initializes the camera wrapper which sends video to ShuffleBoard
+    m_cameraWrapper = SendableCameraWrapper.wrap(m_source);
   }
 
   /**
@@ -211,7 +260,7 @@ public class Robot extends TimedRobot {
   @Override
   public void disabledInit() {
     solenoidReset();
-    
+
     m_isInControlPanelMode = false;
     // Force a state change.
     m_isInControlPanelModeLastLoop = true;
@@ -221,7 +270,8 @@ public class Robot extends TimedRobot {
     // Force a state change.
     m_isInLaunchingModeLastLoop = true;
     ShuffleboardHelper.m_entryLaunchingMode.setBoolean(m_isInLaunchingMode);
-    // Running this method will update Shuffleboard to show "N/A" and such, which is desirable while the
+    // Running this method will update Shuffleboard to show "N/A" and such, which is
+    // desirable while the
     // robot is disabled.
     handleState();
 
@@ -282,6 +332,7 @@ public class Robot extends TimedRobot {
     windWinch();
     controlHanger();
     spinControlPanel();
+    processImage();
   }
 
   /**
@@ -334,7 +385,8 @@ public class Robot extends TimedRobot {
           .getBoolean(m_isInControlPanelMode);
     }
 
-    // If launching or control panel mode is enabled and the robot is driven via controller, disable it.
+    // If launching or control panel mode is enabled and the robot is driven via
+    // controller, disable it.
     if (Math.abs(m_controllerDrive.getRawAxis(DriveStation.kIdAxisLeftY)) > 0.5
         || Math.abs(
             m_controllerDrive.getRawAxis(DriveStation.kIdAxisRightX)) > 0.5) {
@@ -434,7 +486,8 @@ public class Robot extends TimedRobot {
     else
       m_motorIntake.set(0);
 
-    // Use this state variable to avoid setting the power of the belt motor more than once.
+    // Use this state variable to avoid setting the power of the belt motor more
+    // than once.
     boolean advanceBelt = false;
     // The digital input returns "true" if the circuit is open. Detecting the
     // object, the power cell, closes the circuit.
@@ -467,12 +520,14 @@ public class Robot extends TimedRobot {
       ShuffleboardHelper.m_entryBallDetectedExit.setBoolean(ballDetectedExit);
     }
 
-    // If we are ready to launch the ball, override the false advanceBelt from the storage being full.
+    // If we are ready to launch the ball, override the false advanceBelt from the
+    // storage being full.
     // TODO: Check to see if the launcher motor has been revved up.
     if (m_launchBall)
       advanceBelt = true;
 
-    // If a manipulator bumper is held, disregard all of the previous logic, and force a belt movement.
+    // If a manipulator bumper is held, disregard all of the previous logic, and
+    // force a belt movement.
     if (m_controllerManip.getRawButton(DriveStation.kIdButtonRb))
       m_motorBelt.set(Constants.kSpeedBelt);
     else if (m_controllerManip.getRawButton(DriveStation.kIdButtonLb))
@@ -510,7 +565,8 @@ public class Robot extends TimedRobot {
       double error = Constants.kProjectedHorDistanceToApex - horDistanceToHoop;
       if (Math.abs(error) > tolerance) {
         // TODO: Very experimental! Fine tune this.
-        // Cap out the correction speed at the higher driving speed. Don't square the inputs because this
+        // Cap out the correction speed at the higher driving speed. Don't square the
+        // inputs because this
         // isn't from an analog stick, so that kind of precision isn't necessary.
         m_differentialDrive.arcadeDrive(error > 0
             ? Math.min(Constants.kMultiplierHighSpeed, error * Constants.kP)
@@ -525,7 +581,8 @@ public class Robot extends TimedRobot {
       }
     }
 
-    // If the manipulator trigger is held, override our autonomous logic and manually spin up the
+    // If the manipulator trigger is held, override our autonomous logic and
+    // manually spin up the
     // launcher.
     if (m_controllerManip.getRawAxis(DriveStation.kIdAxisRt) > 0.5)
       m_motorLauncherLeft.set(Constants.kSpeedLauncher);
@@ -610,6 +667,92 @@ public class Robot extends TimedRobot {
       m_controlPanelSpinAmount -= 1;
   }
 
+  private void processImage() {
+    m_sink.grabFrame(m_sourceMat);
+    if (m_doVisionProcessing) {
+      if (!m_sourceMat.empty()) {
+        // Crop out the uneccessary parts of the image.
+        Mat m_subMat = new Mat(m_sourceMat, Constants.scanArea);
+
+        // Converts m_sourceMat to HSV color.
+        Imgproc.cvtColor(m_subMat, m_hsvMat, Imgproc.COLOR_BGR2HSV);
+
+        // Filters for only the color of the tape.
+        Core.inRange(m_hsvMat,
+            new Scalar(ShuffleboardHelper.m_entryHueLow.getDouble(30),
+                ShuffleboardHelper.m_entrySaturationLow.getDouble(0),
+                ShuffleboardHelper.m_entryValueLow.getDouble(250)),
+            new Scalar(ShuffleboardHelper.m_entryHueHigh.getDouble(90),
+                ShuffleboardHelper.m_entrySaturationHigh.getDouble(255),
+                ShuffleboardHelper.m_entryValueHigh.getDouble(255)),
+            m_filteredMat);
+
+        // Find contours.
+        Imgproc.findContours(m_filteredMat, m_contours, new Mat(),
+            Imgproc.RETR_TREE, Imgproc.CHAIN_APPROX_SIMPLE);
+
+        if (m_contours.size() > 0) {
+          MatOfPoint largestContour = m_contours.get(0);
+          double largestContourSize = Imgproc.contourArea(largestContour);
+          for (MatOfPoint contour : m_contours) {
+            double size = Imgproc.contourArea(contour);
+            if (size > largestContourSize) {
+              largestContour = contour;
+              largestContourSize = size;
+            }
+          }
+          m_contours.clear();
+          m_contours.add(largestContour);
+
+          Rect bounds = Imgproc.boundingRect(largestContour);
+          Point center = new Point(bounds.x + (bounds.width / 2), bounds.y);
+          if (m_points.size() >= 4) {
+            m_points.remove(0);
+          }
+          m_points.add(center);
+
+          Point averageCenter = new Point(0, 0);
+          for (Point point : m_points) {
+            averageCenter.x += point.x;
+            averageCenter.y += point.y;
+          }
+
+          averageCenter.x /= m_points.size();
+          averageCenter.y /= m_points.size();
+          // Offset due to cutting off the bottom half of the camera feed.
+          averageCenter.y += Constants.scanArea.y;
+
+          Imgproc.circle(m_sourceMat, averageCenter, 5, Constants.kColorBlue,
+              3);
+          Imgproc.circle(m_sourceMat,
+              new Point(Constants.scanArea.width / 2, averageCenter.y), 3,
+              Constants.kColorRed, -1);
+          Imgproc.rectangle(m_sourceMat,
+              new Point(Constants.scanArea.x, Constants.scanArea.y),
+              new Point(Constants.scanArea.x + Constants.scanArea.width,
+                  Constants.scanArea.y + Constants.scanArea.height),
+              Constants.kColorGreen);
+          Imgproc.drawContours(m_sourceMat, m_contours, -1,
+              Constants.kColorRed);
+
+          // This determines how far the target is using the camera.
+          double dist = (Constants.kWidthHexagon * Constants.kInchesPerMeter
+              * Constants.kCameraFocal) / bounds.width;
+          ShuffleboardHelper.m_entryDistance.setDouble(dist);
+        }
+      }
+    }
+    m_source.putFrame(m_sourceMat);
+    matCleanup();
+  }
+
+  private void matCleanup() {
+    m_sourceMat.release();
+    m_hsvMat.release();
+    m_filteredMat.release();
+    m_contours.clear();
+  }
+
   /**
    * Toggles whether or not the winch is raised or declined.
    * 
@@ -629,14 +772,14 @@ public class Robot extends TimedRobot {
     if (m_limitSwitchSensorWinch.get()) {
       if (buttonDriveA) {
         m_doubleSolenoidWinch.set(DoubleSolenoid.Value.kReverse);
-        m_motorWinch.set(-Constants.kSpeedWinchMotor);
+        // m_motorWinch.set(-Constants.kSpeedWinchMotor);
       }
     } else
       m_motorWinch.set(0);
 
     if (buttonDriveB) {
       m_doubleSolenoidWinch.set(DoubleSolenoid.Value.kForward);
-      m_motorWinch.set(Constants.kSpeedWinchMotor);
+      // m_motorWinch.set(Constants.kSpeedWinchMotor);
     }
   }
 
